@@ -1,0 +1,92 @@
+Compte-rendu de la réunion de coordination projets
+Date : jeudi 12 mars 2026, 9h00 - 11h00
+Lieu : salle Montaigne et visioconférence Teams
+
+Participants présents :
+- Marie Delcourt, directrice des opérations (animatrice)
+- Karim Benali, chef de projet CRM
+- Sophie Vandenberghe, chef de projet réorganisation du service client
+- Antoine Mercier, chef de projet refonte du site web
+- Léa Fontaine, responsable qualité
+- Pierre Lacombe, contrôle de gestion
+
+Excusés :
+- Nathalie Roussel, directrice des systèmes d'information
+- Julien Prat, responsable achats
+
+---
+
+1. Projet CRM (Karim Benali)
+
+Le déploiement de la phase 2 est terminé sur trois des cinq régions. Les
+régions Est et Sud-Ouest basculeront la semaine du 23 mars. Karim signale
+que la reprise des données historiques a pris huit jours au lieu des trois
+prévus, à cause de doublons dans les fiches clients antérieures à 2021.
+
+Le budget consommé est de 68 % pour un avancement estimé à 75 %.
+
+Marie demande que la formation des utilisateurs des deux dernières régions
+soit programmée avant la bascule, et non après comme cela avait été fait
+pour la région Nord. Karim s'en charge et confirmera les dates la semaine
+prochaine.
+
+Décision : la bascule des régions Est et Sud-Ouest est confirmée pour la
+semaine du 23 mars, sous réserve que les sessions de formation soient
+planifiées avant le 20 mars.
+
+2. Réorganisation du service client (Sophie Vandenberghe)
+
+Le nouveau découpage des équipes est en place depuis le 2 mars. Sophie
+constate une baisse du délai moyen de première réponse, de 4 h 10 à 2 h 45.
+En revanche, le taux de résolution au premier contact a reculé de trois
+points, ce qu'elle attribue à la période d'apprentissage.
+
+Deux postes restent à pourvoir sur le pôle grands comptes. Le recrutement
+patine depuis six semaines. Sophie demande l'appui des ressources humaines
+pour élargir la recherche aux profils venant d'autres secteurs.
+
+Point de blocage : sans ces deux recrutements, l'objectif de couverture
+horaire élargie (8h-19h) annoncé aux clients pour le mois de mai ne pourra
+pas être tenu. Marie prendra le sujet avec la direction des ressources
+humaines.
+
+3. Refonte du site web (Antoine Mercier)
+
+La maquette de la page d'accueil a été validée par le comité de direction
+le 5 mars. Le développement démarre la semaine prochaine. Antoine alerte
+sur un point : le prestataire retenu demande un accès à l'environnement de
+préproduction, et cette demande est en attente côté systèmes d'information
+depuis le 26 février. Nathalie Roussel étant excusée aujourd'hui, le sujet
+est reporté.
+
+Antoine rappelle également que la migration des trois cents fiches produit
+n'a toujours pas de responsable désigné. Personne ne se propose en séance.
+
+4. Qualité (Léa Fontaine)
+
+L'audit interne annuel est programmé pour la première quinzaine de juin. Léa
+a besoin des procédures à jour de chaque projet un mois avant. Elle enverra
+le modèle de fiche à compléter.
+
+Léa signale que deux non-conformités relevées lors de l'audit précédent sont
+toujours ouvertes, toutes deux sur le périmètre du service client. Sophie
+indique qu'elles seront traitées dans le cadre de la réorganisation.
+
+5. Point budgétaire transversal (Pierre Lacombe)
+
+La consommation globale du portefeuille est de 61 % à fin février, pour un
+avancement moyen de 64 %. Pierre attire l'attention sur le projet de refonte
+du site web, dont les dépenses externes dépassent de 12 % la trajectoire
+prévue.
+
+Décision : Antoine transmettra à Pierre le détail des engagements pris avec
+le prestataire, pour arbitrage au prochain comité.
+
+---
+
+Prochaine réunion : jeudi 26 mars 2026, 9h00, salle Montaigne.
+
+Marie rappelle que les personnes excusées recevront un point écrit sur les
+décisions qui les concernent, en particulier la demande d'accès à la
+préproduction et la question du recrutement des deux postes du pôle grands
+comptes.

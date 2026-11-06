@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Assistants personnalisés · L’IA pour le bureau</title>
+<meta name="description" content="Ranger une consigne qui revient dans un assistant personnalisé ou un projet à instructions : le mécanisme, les prompts P17 à P19, le contrôle du premier mois.">
+<meta name="author" content="Laurent Benedetti">
+<link rel="canonical" href="https://iapourlebureau.github.io/assistants-personnalises.html">
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="apple-touch-icon" href="icone.png">
+<meta name="theme-color" content="#16161a">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="L’IA pour le bureau">
+<meta property="og:title" content="Assistants personnalisés · L’IA pour le bureau">
+<meta property="og:description" content="Ranger une consigne qui revient dans un assistant personnalisé ou un projet à instructions : le mécanisme, les prompts P17 à P19, le contrôle du premier mois.">
+<meta property="og:url" content="https://iapourlebureau.github.io/assistants-personnalises.html">
+<meta property="og:image" content="https://iapourlebureau.github.io/partage.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* La page reprend les trois couleurs de la couverture, et rien d'autre : le
+   noir d'encre du fond, le creme du titre, l'orange du sous-titre. Le lecteur
+   arrive avec le livre en main, la page doit se reconnaitre en une seconde.
+   L'orange de la couverture ne passe pas sur fond creme (2,4:1), d'ou la
+   brique, qui est le meme orange assombri jusqu'a 4,8:1 : c'est elle qui porte
+   les liens et les contours de focus, l'orange ne sert que sur fond sombre. */
+:root {
+  --encre: #16161a;
+  --encre-douce: #5f574e;
+  --papier: #f4f1ec;
+  --carte: #fffdf9;
+  --trait: #ded5c8;
+  --orange: #e8834a;
+  --surligneur: #f8d7b4;
+  --lien: #a8521c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--papier);
+  color: var(--encre);
+  font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.bandeau {
+  position: relative;
+  background: var(--encre);
+  color: var(--papier);
+  padding: 44px 24px 40px;
+  overflow: hidden;
+}
+
+.dedans { position: relative; max-width: 940px; margin: 0 auto; }
+
+/* La couverture pose un halo chaud derriere l'ordinateur allume : le bandeau
+   le reprend, pour que le haut de la page et le haut du livre s'eclairent de
+   la meme facon. */
+.bandeau::before {
+  content: "";
+  position: absolute;
+  inset: -40% -10% auto auto;
+  width: 820px;
+  height: 820px;
+  background: radial-gradient(circle, rgba(232, 131, 74, 0.24) 0%, rgba(232, 131, 74, 0) 62%);
+  pointer-events: none;
+}
+
+.bandeau h1 {
+  margin: 0 0 10px;
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  font-size: clamp(28px, 5vw, 42px);
+  letter-spacing: -0.022em;
+  line-height: 1.12;
+}
+
+/* Le filet orange sous le titre vient de la couverture, ou il separe le titre
+   du sous-titre. Il sert ici de signature : on le retrouve sur les annexes et
+   au-dessus des rubriques. */
+.bandeau h1::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 4px;
+  margin-top: 18px;
+  background: var(--orange);
+}
+
+.bandeau p { margin: 0; max-width: 60ch; color: #cfc6ba; }
+
+.adresse {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 7px 14px;
+  border: 1px solid #4a423a;
+  border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 15px;
+  color: var(--papier);
+}
+
+.bandeau .maj {
+  margin-top: 14px;
+  font-size: 15px;
+  color: #a2978a;
+}
+
+/* L'accueil porte la couverture, les annexes non : elles gardent le bandeau
+   simple ci-dessus. */
+.bandeau--jaquette { padding: 56px 24px 52px; }
+
+.bandeau--jaquette .dedans {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 48px;
+  align-items: center;
+}
+
+/* Sans cette ligne, le titre en capitales fixe une largeur plancher a sa
+   colonne : sur un telephone, la grille s'elargit au mot le plus long et c'est
+   TOUTE la page qui deborde, bandeau compris. */
+.bandeau--jaquette .texte-bandeau { min-width: 0; }
+
+.bandeau--jaquette h1 {
+  font-size: clamp(30px, 4.4vw, 46px);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.012em;
+  line-height: 1.04;
+}
+
+/* Deux teintes dans le titre, comme sur la couverture : le sujet en creme, ce
+   qu'on vient y faire en orange. */
+.bandeau--jaquette h1 .geste { color: var(--orange); }
+
+.bandeau--jaquette .promesse {
+  margin-top: 18px;
+  font-size: 18px;
+  color: #cfc6ba;
+}
+
+.bandeau--jaquette .promesse strong { color: var(--papier); font-weight: 600; }
+
+.jaquette {
+  display: block;
+  width: 232px;
+  height: auto;
+  border-radius: 3px;
+  transform: rotate(-2.2deg);
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55), 0 2px 0 rgba(255, 255, 255, 0.07);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jaquette { animation: pose 620ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  @keyframes pose {
+    from { opacity: 0; transform: rotate(-2.2deg) translateY(16px); }
+    to { opacity: 1; transform: rotate(-2.2deg) translateY(0); }
+  }
+}
+
+@media (max-width: 760px) {
+  .bandeau--jaquette { padding: 40px 24px 42px; }
+  .bandeau--jaquette .dedans { grid-template-columns: 1fr; gap: 26px; }
+  .bandeau--jaquette .couv { order: -1; }
+  .bandeau--jaquette h1 { font-size: clamp(24px, 6.6vw, 34px); }
+  .bandeau--jaquette h1::after { margin-top: 14px; }
+  .jaquette { width: 166px; }
+}
+
+.mode-emploi {
+  max-width: 940px;
+  margin: 34px auto 0;
+  padding: 0 24px;
+}
+
+.mode-emploi p { max-width: 68ch; margin: 0 0 14px; }
+
+.raccourcis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0 4px;
+  padding: 0;
+  list-style: none;
+}
+.raccourcis a {
+  display: block;
+  min-width: 46px;
+  padding: 8px 10px;
+  text-align: center;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 3px;
+  color: var(--lien);
+  font-weight: 600;
+  text-decoration: none;
+}
+.raccourcis a:hover { border-color: var(--lien); }
+.raccourcis a:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
+.raccourcis .intitule { color: var(--encre-douce); font-weight: 400; align-self: center; margin-right: 4px; }
+.raccourcis .ch { display: block; font-size: 12px; font-weight: 400; color: var(--encre-douce); }
+
+main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
+
+.fiche {
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  align-items: start;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  margin-top: 22px;
+  overflow: hidden;
+}
+
+/* L'onglet reprend l'intercalaire d'un classeur. Il porte les deux reperes du
+   lecteur : le numero du prompt, qui est le meme que dans l'annexe imprimee, et
+   le chapitre d'ou il vient, puisque c'est souvent par la que le lecteur
+   arrive. */
+.onglet {
+  background: var(--orange);
+  color: var(--encre);
+  padding: 16px 16px 18px;
+  text-align: center;
+  border-bottom-right-radius: 4px;
+}
+
+.onglet .mot { display: block; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #4a2409; }
+.onglet .rang {
+  display: block;
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.corps { padding: 20px 24px 24px; min-width: 0; }
+
+.corps h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  letter-spacing: -0.012em;
+}
+
+/* Le surlignage marque ce qui vient d'etre copie, comme on surligne une page. */
+.corps h2 mark {
+  background: transparent;
+  color: inherit;
+  margin-left: -3px;
+  padding: 1px 3px;
+  transition: background 160ms ease-in;
+}
+.fiche.copiee .corps h2 mark { background: var(--surligneur); }
+
+.sous-titre { margin: 0 0 16px; color: var(--encre-douce); font-size: 15px; }
+
+/* Le bouton est sombre et l'orange est reserve a la confirmation : sur
+   vingt et une fiches, vingt et un boutons orange auraient couvert la page, et
+   le lecteur n'aurait plus vu lequel il venait d'appuyer. */
+.copier {
+  font: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--papier);
+  background: var(--encre);
+  border: 1px solid var(--encre);
+  border-radius: 3px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.copier:hover { background: #2c2a26; }
+.copier:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
+.fiche.copiee .copier { background: var(--orange); border-color: var(--orange); color: var(--encre); }
+
+pre {
+  margin: 16px 0 0;
+  padding: 16px 18px;
+  background: #faf6ef;
+  border: 1px solid var(--trait);
+  border-radius: 3px;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 14.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Le cas bonus n'est pas dans le livre : il se signale donc autrement qu'une
+   fiche de prompt, sans quoi le lecteur le prend pour un chapitre oublie. */
+.bonus {
+  display: block;
+  margin-top: 34px;
+  padding: 22px 24px;
+  background: var(--encre);
+  color: var(--papier);
+  border-radius: 4px;
+  text-decoration: none;
+}
+.bonus .mot { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); }
+.bonus h2 { margin: 6px 0 8px; font-size: 21px; letter-spacing: -0.014em; }
+.bonus p { margin: 0; max-width: 62ch; color: #cfc6ba; }
+.bonus .fleche { display: inline-block; margin-top: 12px; color: var(--orange); font-weight: 600; }
+.bonus:hover .fleche { text-decoration: underline; }
+.bonus:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+/* Les autres rubriques que le livre promet a cette page. Elles ne sont pas des
+   prompts : elles se presentent donc en liste, pas en fiches a onglet. */
+.titre-rubriques { margin: 48px 0 0; font-size: 21px; letter-spacing: -0.014em; }
+.titre-rubriques::before {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 4px;
+  margin-bottom: 14px;
+  background: var(--orange);
+}
+
+.rubriques { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
+.rubriques a {
+  display: block;
+  padding: 16px 18px;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--encre);
+}
+.rubriques a:hover { border-color: var(--lien); }
+.rubriques a:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
+.rubriques strong { display: block; color: var(--lien); font-size: 17px; }
+.rubriques span { display: block; margin-top: 4px; color: var(--encre-douce); font-size: 15.5px; max-width: 66ch; }
+
+footer {
+  border-top: 1px solid var(--trait);
+  padding: 28px 24px 60px;
+  color: var(--encre-douce);
+  font-size: 15px;
+}
+footer .dedans p { margin: 0 0 10px; max-width: 68ch; }
+
+@media (max-width: 620px) {
+  .fiche { grid-template-columns: 1fr; }
+  .onglet { display: flex; align-items: baseline; gap: 8px; padding: 12px 18px; text-align: left; }
+  .onglet .rang { font-size: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .corps h2 mark { transition: none; }
+}
+
+.texte { max-width: 940px; margin: 0 auto; padding: 0 24px 60px; }
+.texte h2 { margin: 34px 0 8px; font-size: 22px; letter-spacing: -0.014em; }
+.texte h3 { margin: 26px 0 6px; font-size: 18px; }
+.texte p { max-width: 68ch; }
+.texte ul { max-width: 68ch; }
+/* Un lien brut vers une longue adresse (sans espace ni trait pour couper) ne
+   doit jamais forcer le corps de la page a defiler horizontalement : il doit
+   casser a l'interieur de sa propre ligne. overflow-wrap: anywhere coupe
+   meme hors d'un mot, la ou word-break: break-word seul ne suffit pas sur
+   une sequence sans caractere de coupe. */
+.texte a { color: var(--lien); overflow-wrap: anywhere; }
+
+.feuillet {
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  padding: 8px 28px 28px;
+  margin-top: 26px;
+}
+
+.encadre {
+  border-left: 4px solid var(--encre);
+  background: var(--carte);
+  padding: 14px 18px;
+  margin: 22px 0;
+  border-radius: 0 3px 3px 0;
+}
+
+table { border-collapse: collapse; width: 100%; margin: 18px 0 6px; font-size: 15.5px; }
+th, td { border: 1px solid var(--trait); padding: 8px 10px; text-align: left; vertical-align: top; }
+th { background: var(--carte); font-weight: 600; }
+td.chapitre { white-space: nowrap; font-weight: 600; }
+
+.retour { display: inline-block; margin: 22px 0 0; color: var(--lien); font-weight: 600; text-decoration: none; }
+.retour:hover { text-decoration: underline; }
+
+.rien { background: var(--carte); border: 1px solid var(--trait); border-radius: 4px; padding: 22px 24px; margin-top: 24px; }
+
+/* installer.html. Le renvoi dit de quelle section du livre vient la promesse,
+   et la ligne systeme annonce la commande qui suit : ni l'un ni l'autre n'est
+   de la prose, d'ou leur exclusion de la justification dans STYLE_PROSE. */
+.renvoi { color: var(--encre-douce); font-size: 14px; margin: 2px 0 14px; }
+.systeme { font-weight: 600; margin: 18px 0 6px; font-size: 15px; }
+/* Une commande ne se coupe jamais en silence : elle defile dans sa propre
+   boite plutot que de deborder la page ou d'etre tronquee a l'affichage. */
+#contenu pre {
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin: 0 0 6px;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.5;
+}
+#contenu pre code { white-space: pre; }
+
+@media print {
+  .bandeau, .retour, footer { display: none; }
+  body { background: #fff; font-size: 11.5pt; }
+  .feuillet { border: none; padding: 0; margin: 0 0 24pt; page-break-after: always; }
+  .texte { padding: 0; }
+}
+
+/* La barre du haut est une seule ligne, collee en tete d'ecran, et ne porte
+   aucune animation : NN/g dit qu'il est generalement preferable de garder
+   l'en-tete en place plutot que de le faire glisser ou disparaitre au
+   defilement. */
+.pages {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--encre);
+  padding: 10px 24px;
+  overflow-x: auto;
+}
+
+/* En dessous de 768px, la liste deployee doit passer SOUS le bouton de
+   repli, pas a cote de lui dans la meme rangee : sans ce retour a la ligne,
+   elle s'ajoute a droite du bouton et fait reapparaitre le defilement
+   horizontal interne. flex-wrap ne se pose qu'ici : au-dela de 768px, la
+   liste tient sur la seule rangee existante. */
+@media (max-width: 767.98px) {
+  .pages { flex-wrap: wrap; }
+}
+.pages ul {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1 1 auto;
+}
+.pages li { white-space: nowrap; }
+.pages a {
+  color: var(--papier);
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+.pages a:hover { text-decoration: underline; }
+.pages a:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.pages [aria-current] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--orange);
+  font-weight: 600;
+}
+
+/* Le repli n'est que le bouton : son <summary> est le seul contenu du
+   <details>, et .pages-liste vit juste apres, hors de lui. Mesure au
+   navigateur le 29 octobre : un <details> ferme cache son contenu quelle
+   que soit la regle d'auteur posee SUR CE CONTENU. Il precede la liste, d'ou
+   la marge a droite et non plus a gauche. */
+.pages-repli {
+  list-style: none;
+  flex: 0 0 auto;
+}
+.pages-repli summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 10px;
+  margin: 0 14px 0 0;
+  color: var(--papier);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  list-style: none;
+  border: 1px solid #4a423a;
+  border-radius: 3px;
+}
+.pages-repli summary::-webkit-details-marker { display: none; }
+.pages-repli summary::marker { content: ""; }
+.pages-repli summary:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+/* Le socle, sous 768px : la liste entiere, en colonne et en pleine largeur
+   sous le bouton, c'est-a-dire VISIBLE. C'est l'etat d'un navigateur qui
+   ignore :has() : il perd le repli, jamais les liens. Le selecteur compose
+   ".pages .pages-liste" est oblige : une classe seule perd face a
+   ".pages ul" (specificite inferieure, mesure au navigateur le 29 octobre
+   apres qu'une regle a classe seule s'est vue ignorer en silence). */
+@media (max-width: 767.98px) {
+  .pages .pages-liste {
+    flex-direction: column;
+    flex-basis: 100%;
+    align-items: flex-start;
+    gap: 14px;
+    margin: 14px 0 4px;
+  }
+}
+
+/* Le repli proprement dit n'existe QUE si le navigateur comprend :has(),
+   @supports ignorant le bloc entier sinon. Ferme, la liste ne montre que
+   l'echelon courant, sur la rangee du bouton ; ouverte, elle reprend l'etat
+   du socle. Les echelons caches le sont SUR PLACE : l'ordre de PAGES ne
+   bouge jamais, ni replie ni deploye. */
+@supports selector(:has(a)) {
+  @media (max-width: 767.98px) {
+    .pages .pages-liste {
+      flex-direction: row;
+      flex-basis: auto;
+      align-items: center;
+      margin: 0;
+    }
+    .pages .pages-liste li:not(:has([aria-current])) { display: none; }
+    nav.pages:has(.pages-repli[open]) .pages-liste {
+      flex-direction: column;
+      flex-basis: 100%;
+      align-items: flex-start;
+      margin: 14px 0 4px;
+    }
+    nav.pages:has(.pages-repli[open]) .pages-liste li { display: block; }
+  }
+}
+
+/* Un navigateur qui ignore :has() ignore aussi ce bloc-ci : le bouton
+   resterait sinon affiche sur mobile sans jamais rien replier, la liste y
+   etant deja deployee par le socle. Le cacher evite un bouton inerte, pas
+   une perte de contenu. */
+@supports not selector(:has(a)) {
+  @media (max-width: 767.98px) {
+    .pages-repli { display: none; }
+  }
+}
+
+/* Au-dela de 768px, la barre tient sur une seule rangee, que :has() soit
+   connu ou non : le bouton disparait et la liste herite de ".pages ul",
+   en rangee, toutes ses entrees visibles, dans l'ordre de PAGES. */
+@media (min-width: 768px) {
+  .pages-repli { display: none; }
+}
+.repere {
+  margin-left: auto;
+  padding-left: 16px;
+  color: var(--papier);
+  opacity: 0.8;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Le pied reprend la carte des fiches de prompt (meme fond --carte, meme
+   trait), pour que le pied se reconnaisse comme une partie du site plutot
+   qu'une mention legale ajoutee. */
+footer .carte {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 0 0 16px;
+}
+footer .carte .groupe { min-width: 160px; }
+footer .carte .famille-nom {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--encre-douce);
+}
+footer .carte ul { margin: 0; padding: 0; list-style: none; }
+footer .carte li { margin: 0 0 6px; }
+footer .carte a {
+  color: var(--lien);
+  text-decoration: underline;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
+.contact {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--encre-douce);
+}
+.contact a { color: var(--lien); text-decoration: underline; }
+.cloture {
+  margin: 0;
+  font-size: 13px;
+  color: var(--encre-douce);
+}
+
+/* Le lien d'evitement reste hors ecran jusqu'au focus clavier, ou il devient
+   le premier element visible de la page : WCAG 2.4.1. */
+.evitement {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--orange);
+  color: var(--encre);
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.evitement:focus {
+  left: 12px;
+  top: 12px;
+}
+
+/* Le bouton de retour en haut est construit par SCRIPT_NAV, cache par
+   defaut : [hidden] le retire de l'ecran sans qu'une transition le fasse
+   glisser ou s'estomper. */
+.haut-fixe {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  min-height: 24px;
+  background: var(--encre);
+  color: var(--papier);
+  border: 1px solid var(--trait);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.haut-fixe:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.haut-fixe[hidden] { display: none; }
+
+/* Le defilement doux reste sous condition : WCAG 2.3.3 range le mouvement
+   declenche par la page parmi les causes de nausee, et le reserve a qui ne
+   l'a pas exclu dans son systeme. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* Une cible d'ancrage ne doit pas se retrouver masquee sous la barre
+   collee : la marge de defilement vaut la hauteur de .pages, prise large. */
+:target { scroll-margin-top: 64px; }
+
+/* Le guide : un bouton en bas a gauche (le retour en haut tient la droite),
+   et un panneau de conversation au-dessus. Construit par SCRIPT_NAV ; sans
+   JavaScript, rien ne s'affiche. */
+.guide-bouton {
+  position: fixed; left: 20px; bottom: 20px; z-index: 61;
+  background: var(--orange); color: var(--encre);
+  border: 0; border-radius: 999px; padding: 11px 18px;
+  font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(22, 22, 26, 0.25);
+}
+.guide-bouton:focus-visible, .guide-panneau button:focus-visible,
+.guide-panneau a:focus-visible { outline: 3px solid var(--encre); outline-offset: 2px; }
+.guide-panneau {
+  position: fixed; left: 16px; bottom: 76px; z-index: 61;
+  width: min(380px, calc(100vw - 32px)); max-height: min(72vh, 600px);
+  display: flex; flex-direction: column;
+  background: var(--carte); color: var(--encre);
+  border: 1px solid var(--trait); border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(22, 22, 26, 0.28);
+  font-size: 15px; line-height: 1.45; text-align: left;
+}
+.guide-panneau[hidden] { display: none; }
+.guide-tete { display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 12px 14px; background: var(--encre); color: var(--papier);
+  border-radius: 13px 13px 0 0; }
+.guide-tete p { margin: 0; font-weight: 600; }
+.guide-tete button { background: transparent; color: var(--papier);
+  border: 1px solid #5f574e; border-radius: 8px; padding: 4px 10px;
+  font: inherit; font-size: 13px; cursor: pointer; }
+.guide-fil { overflow-y: auto; padding: 14px; display: flex;
+  flex-direction: column; gap: 8px; }
+.guide-bulle { margin: 0; padding: 9px 12px; border-radius: 12px; max-width: 88%; }
+.guide-livre { background: var(--papier); align-self: flex-start;
+  border-bottom-left-radius: 4px; }
+.guide-vous { background: var(--surligneur); align-self: flex-end;
+  border-bottom-right-radius: 4px; }
+.guide-liens { list-style: none; margin: 0; padding: 0; display: flex;
+  flex-direction: column; gap: 6px; }
+.guide-liens a { display: block; padding: 9px 12px; border: 1px solid var(--trait);
+  border-radius: 10px; color: var(--lien); text-decoration: none; background: #fff; }
+.guide-liens a:hover { border-color: var(--orange); }
+.guide-liens small { display: block; color: var(--encre-douce); font-size: 13px; }
+.guide-choix { padding: 0 14px 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+.guide-choix button { background: #fff; color: var(--encre);
+  border: 1px solid var(--orange); border-radius: 999px; padding: 7px 12px;
+  font: inherit; font-size: 14px; cursor: pointer; text-align: left; }
+.guide-choix button:hover { background: var(--surligneur); }
+@media print { .guide-bouton, .guide-panneau { display: none !important; } }
+
+#contenu p,
+#contenu li,
+#contenu dd {
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* Ce qui ne se justifie jamais : le code, les cellules d'un tableau (trop
+   etroites), et les libelles courts qui annoncent un bloc. */
+#contenu pre,
+#contenu code,
+#contenu th,
+#contenu td,
+#contenu .systeme,
+#contenu .renvoi,
+#contenu .retour {
+  text-align: left;
+  hyphens: manual;
+  -webkit-hyphens: manual;
+}
+</style>
+</head>
+<body>
+<a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau">
+  <div class="dedans">
+    <h1>Assistants personnalisés</h1>
+    <p>Ranger une consigne qui revient dans un assistant personnalisé ou un projet à instructions, avec les prompts du chapitre 19.</p>
+    <span class="adresse">iapourlebureau.github.io</span>
+  </div>
+</header>
+<nav class="pages" aria-label="Les pages du site"><details class="pages-repli"><summary>Les dix autres pages</summary></details><ul class="pages-liste"><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li><li><a href="automatisations.html">Automatisations</a></li><li><span aria-current="page">Assistants personnalisés</span></li><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li></ul></nav>
+
+<main class="texte" id="contenu">
+<a class="retour" href="index.html">← Retour aux prompts du livre</a>
+<p>Une consigne que vous recollez chaque semaine signale une tâche qui mérite d'être rangée. Le chapitre 19 la fabrique, l'éprouve puis la range. Cette page reprend le rangement : ce qu'est un assistant personnalisé, ce qui le distingue d'un projet, ce qu'on y met et le contrôle du premier mois.</p>
+
+<h2 id="definition">Ce qu'est un assistant personnalisé</h2>
+<p>Un assistant personnalisé est une version de votre assistant qui porte une fois pour toutes ses consignes et ses pièces fixes. Vous l'ouvrez, vous joignez les pièces du jour, vous n'écrivez rien d'autre. Ses consignes sont un prompt que vous ne recollez plus.</p>
+<p>Aurélie fait chaque vendredi le point sur les six projets de son pôle. Les consignes et le modèle de tableau ne changent jamais, seuls les comptes-rendus de la semaine. Elle a fait de cette revue un assistant personnalisé.</p>
+
+<h2 id="projet-ou-assistant">Projet ou assistant personnalisé : la question qui tranche</h2>
+<table><thead><tr><th></th><th>Ce qu'il rassemble</th><th>La bonne place quand</th></tr></thead><tbody>
+<tr><td class="chapitre">Projet</td><td>un dossier, ses pièces et ses instructions, pour des tâches diverses</td><td>la tâche tourne autour d'un client ou d'un sujet</td></tr>
+<tr><td class="chapitre">Assistant personnalisé</td><td>une tâche, ses consignes et ses pièces de référence</td><td>la tâche revient à l'identique sur des pièces qui changent</td></tr>
+</tbody></table>
+<p>Si votre outil ne propose pas d'assistant personnalisé, un projet dont les instructions portent le prompt produit le même effet. Ce qui vaut dans toutes vos conversations, quelle que soit la tâche, va ailleurs : dans les instructions permanentes, que le <a href="index.html#prompt-p2">prompt P2</a> vous aide à écrire par un entretien.</p>
+
+<h2 id="eprouve">On y range un prompt éprouvé, jamais un brouillon</h2>
+<p>Un prompt encore au brouillon y répéterait ses défauts à chaque usage. Celui qu'on range a réussi du premier coup dans un espace neuf, sur une période dont vous connaissiez la réponse. Le chapitre 19 y mène en trois temps.</p>
+<ol>
+<li>Obtenir le prompt : par le brouillon, puis le prompt de reformulation de la <a href="index.html">page des prompts</a>, ou par le retournement du <a href="index.html#prompt-p17">prompt P17</a>, qui part d'un livrable réussi et de ses sources.</li>
+<li>L'éprouver : lancé dans un espace neuf sur le mois d'avant, son résultat se compare à votre corrigé avec le <a href="index.html#prompt-p18">prompt P18</a>, qui range chaque écart sans rien corriger lui-même.</li>
+<li>Le relire avant de l'installer : cherchez ce qui ne vaut que pour la fois où il est né, une phrase sur un client, une règle trop stricte posée dans un moment d'agacement. Chacune devient un passage entre crochets, ou disparaît.</li>
+</ol>
+
+<h2 id="decoupe">Couper le prompt en deux avec le P19</h2>
+<p>Ce qui ne change jamais va dans les instructions : le contexte, les règles, la structure, le livrable. Ce qui change à chaque fois se donne au lancement, avec la date, la période et les pièces du jour. Le <a href="index.html#prompt-p19">prompt P19</a> fait ce découpage à votre place : collez-le dans une conversation neuve, suivi du prompt éprouvé entier, crochets compris.</p>
+<p>Il rend quatre textes à copier sans rien enregistrer lui-même : un nom court ; une description d'une phrase, écrite dans vos mots, celle qui vous fera retrouver la tâche dans six mois ; le texte des instructions ; le message de lancement, quelques lignes avec les crochets du jour. Il ne raccourcit pas les instructions pour les faire tenir : une règle retirée pour gagner de la place est une règle que le mois suivant enfreindra.</p>
+
+<h2 id="installer">Installer, puis vérifier le premier mois</h2>
+<ol>
+<li>Cherchez la fonction qui crée une version de votre assistant portant des consignes fixes, ou à défaut celle qui crée un projet. Leur place à l'écran varie : la page <a href="regler-son-assistant.html">Régler son assistant</a> dit ce qu'en savent les sources, assistant par assistant. Si un nom ne correspond à rien sur votre écran, cherchez le réglage qui est au même endroit et produit le même effet : c&#x27;est celui-là.</li>
+<li>Collez le nom, la description et le texte des instructions rendus par le P19.</li>
+<li>Déposez les seules pièces fixes, votre charte par exemple : rien de propre à un client.</li>
+<li>Gardez une copie des quatre textes dans un fichier texte nommé comme la tâche.</li>
+<li>Le premier mois, refaites un essai contre un corrigé dans l'assistant personnalisé lui-même : le rangement est une copie, et une copie peut perdre une ligne.</li>
+</ol>
+
+<h2 id="partager">Avant de partager ou d'en recevoir un</h2>
+<p>Vérifiez si votre assistant personnalisé peut se partager avant d'y bâtir la revue d'une équipe. Un collègue qui vous confie le sien vous confie aussi ses règles : lisez-les, si votre outil les montre, avant de lui confier un fichier.</p>
+
+<h2 id="sans">Sans assistant personnalisé ni projet</h2>
+<p>Hervé travaille sur une version gratuite qui ne lui garde pas toujours un projet. Il range les instructions dans un fichier texte nommé comme la tâche, puis les colle en tête d'une conversation neuve, avant le message de lancement. Le geste est moins élégant, mais il tient sur n'importe quel écran et le suivrait sur un autre assistant.</p>
+
+<div class="encadre"><p>⚠️ <strong>Ce qui n'entre jamais dans des instructions</strong></p>
+<p>Des instructions rangées accompagnent chacune de vos demandes et vivent plus longtemps qu'une conversation. N'y laissez aucun mot de passe ni identifiant, aucune donnée personnelle sur vos collègues, vos clients ou vos prospects, rien de couvert par un accord de confidentialité. Désignez les personnes par leur rôle.</p></div>
+
+<div class="encadre"><p>📅 Relevé le 4 novembre 2026. Le nom de ces fonctions, leur place à l'écran et les offres qui les portent changent souvent : leur état du jour est sur la page <a href="regler-son-assistant.html">Régler son assistant</a>.</p></div>
+
+</main>
+
+<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Ce qui bouge</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><a href="automatisations.html">Automatisations</a></li><li><span aria-current="page">Assistants personnalisés</span></li><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:ccletempsduncafe@lbi1.anonaddy.com">ccletempsduncafe@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 06/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du livre. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle deux : le tri de la boîte mail au chapitre 20, puis le tableau de portefeuille hebdomadaire à la section 18.6.", "cibles": ["automatisations.html", "P20", "P16"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger en compétence. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date du relevé. Si un prompt cale sur un message long, essayez sa version courte, sur la même fiche.", "cibles": ["regler-son-assistant.html", "capacites.html", "registre.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "ccletempsduncafe@lbi1.anonaddy.com", "href": "mailto:ccletempsduncafe@lbi1.anonaddy.com"}, "registre.html": {"libelle": "Registre des essais", "detail": "Chaque essai du banc, assistant par assistant, avec l'offre utilisée.", "href": "registre.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
+
+<script>
+(function () {
+  // Le bouton de retour en haut se construit lui-meme : aucune des onze pages
+  // n'a besoin de le marquer dans son HTML. Il porte son libelle en toutes
+  // lettres, une fleche seule etant ambigue au lecteur presse comme au
+  // lecteur d'ecran. Une seule instance par page.
+  var bouton = document.createElement('button');
+  bouton.type = 'button';
+  bouton.setAttribute('id', 'haut-fixe'); // rendu : id="haut-fixe"
+  bouton.className = 'haut-fixe';
+  bouton.hidden = true;
+  bouton.textContent = 'Revenir en haut de la page';
+  bouton.addEventListener('click', function () {
+    window.scrollTo({ top: 0 });
+  });
+  document.body.appendChild(bouton);
+
+  // La sentinelle vit en tete de corps de page, haute d'un pixel, et un
+  // IntersectionObserver la surveille plutot qu'un ecouteur de scroll, qui
+  // se declenche des dizaines de fois par seconde pour rien.
+  var sentinelle = document.createElement('div');
+  sentinelle.setAttribute('aria-hidden', 'true');
+  sentinelle.style.position = 'absolute';
+  sentinelle.style.top = '0';
+  sentinelle.style.height = '1px';
+  sentinelle.style.width = '1px';
+  document.body.insertBefore(sentinelle, document.body.firstChild);
+
+  // Un rootMargin positif en haut etend la zone ou la sentinelle compte
+  // comme visible : trois ecrans de marge, plus l'ecran naturel, pour un
+  // total de quatre ecrans avant que le bouton apparaisse.
+  var observateur = new IntersectionObserver(function (entrees) {
+    bouton.hidden = entrees[0].isIntersecting;
+  }, { rootMargin: '300% 0px 0px 0px' });
+  observateur.observe(sentinelle);
+})();
+
+(function () {
+  // Le repere de position n'existe que sur les pages qui portent des
+  // fiches (index.html, automatisations.html) : navigation.barre() y recoit
+  // une chaine vide plutot que None, et c'est elle, et elle seule, qui rend
+  // le <span class="repere">. Sur les huit autres pages, ce span est absent
+  // et il n'y a rien a observer : on sort tout de suite plutot que de poser
+  // un observateur sur une liste vide.
+  var repere = document.querySelector('.repere');
+  if (!repere) {
+    return;
+  }
+
+  // Les fiches ne portent pas la meme classe sur les deux pages : .fiche sur
+  // l'accueil (vingt et un prompts), .tache sur les automatisations (dix-
+  // sept taches). Aucune des huit autres pages ne porte ni l'une ni l'autre.
+  var fiches = document.querySelectorAll('.fiche, .tache');
+  if (!fiches.length) {
+    return;
+  }
+
+  // Le total des taches sert au libelle « B4 sur 17 » : calcule une seule
+  // fois, il ne change pas pendant la session.
+  var totalTaches = document.querySelectorAll('.tache').length;
+
+  // Deduit le libelle depuis le contenu DEJA rendu de la fiche, jamais
+  // depuis une liste ecrite ici : une liste en dur se desynchroniserait du
+  // premier chapitre deplace ou de la premiere tache renumerotee sans que
+  // rien ne le dise.
+  function etiquette(el) {
+    var rangEl = el.querySelector('.rang');
+    var rang = rangEl ? rangEl.textContent.trim() : '';
+    if (el.classList.contains('fiche')) {
+      var motEl = el.querySelector('.onglet .mot');
+      var motTexte = motEl ? motEl.textContent : '';
+      var chapitre = motTexte.match(/\d+/);
+      return chapitre ? rang + ' · ch. ' + chapitre[0] : rang;
+    }
+    return rang + ' sur ' + totalTaches;
+  }
+
+  // courant est la fiche actuellement lue, ou null avant la premiere : le
+  // repere doit rester vide tant qu'aucune fiche n'a ete atteinte, NN/g, une
+  // information fausse valant moins qu'une absence d'information.
+  var courant = null;
+
+  // La hauteur de la barre collee est celle que navigation.STYLE_NAV reserve
+  // deja a la marge de defilement des ancres (:target { scroll-margin-top:
+  // 64px }) : meme valeur, pour que la bande observee commence exactement ou
+  // la barre s'arrete, ni avant (une fiche comptee lue alors qu'elle est
+  // encore sous la barre), ni apres (un trou ou rien n'est repute lu). La
+  // bande est volontairement etroite, les quinze premiers pour cent de
+  // l'ecran sous la barre : mesure a l'usage, une bande large (la moitie de
+  // l'ecran, essayee d'abord) garde une fiche affichee bien apres qu'elle a
+  // defile hors de vue, le lecteur lisant deja la suivante.
+  // Fragilite connue et acceptee : un clic sur le bouton "tout deplier"
+  // change la geometrie des vingt et une fiches en une seule trame, dans le
+  // meme repaint. L'observateur recoit alors un lot d'entrees dont l'ordre
+  // n'est pas garanti par la specification, et le repere peut afficher une
+  // etiquette qui ne correspond a aucune fiche sous la barre jusqu'au
+  // prochain defilement, qui le corrige en retraversant les entrees dans
+  // l'ordre ou elles entrent et sortent reellement de la bande observee.
+  var observateurFiches = new IntersectionObserver(function (entrees) {
+    entrees.forEach(function (entree) {
+      if (entree.isIntersecting) {
+        courant = entree.target;
+      } else if (courant === entree.target && entree.boundingClientRect.top > 0) {
+        // La fiche courante quitte la bande par le HAUT de l'ecran, donc en
+        // remontant : si aucune fiche precedente ne prend sa place dans ce
+        // meme lot d'entrees (verifie juste au-dessus dans la boucle), on
+        // est revenu avant elle, et le repere redevient vide.
+        courant = null;
+      }
+    });
+    repere.textContent = courant ? etiquette(courant) : '';
+  }, { rootMargin: '-64px 0px -85% 0px' });
+
+  for (var i = 0; i < fiches.length; i++) {
+    observateurFiches.observe(fiches[i]);
+  }
+})();
+
+(function () {
+  // Le guide lit ses donnees dans un bloc JSON inerte pose apres le pied.
+  // Tout texte passe par textContent : aucune chaine n'est lue comme du HTML.
+  var source = document.getElementById('guide-donnees');
+  if (!source) { return; }
+  var g = JSON.parse(source.textContent);
+
+  function el(balise, classe, texte) {
+    var n = document.createElement(balise);
+    if (classe) { n.className = classe; }
+    if (texte) { n.textContent = texte; }
+    return n;
+  }
+
+  var bouton = el('button', 'guide-bouton', 'Que voulez-vous faire\u202f?');
+  bouton.type = 'button';
+  bouton.setAttribute('aria-expanded', 'false');
+  bouton.setAttribute('aria-controls', 'guide-panneau');
+
+  var panneau = el('section', 'guide-panneau');
+  panneau.id = 'guide-panneau';
+  panneau.hidden = true;
+  panneau.setAttribute('role', 'dialog');
+  panneau.setAttribute('aria-label', 'Le guide du livre');
+  var tete = el('div', 'guide-tete');
+  tete.appendChild(el('p', '', 'Le guide du livre'));
+  var fermer = el('button', '', 'Fermer');
+  fermer.type = 'button';
+  tete.appendChild(fermer);
+  var fil = el('div', 'guide-fil');
+  fil.setAttribute('aria-live', 'polite');
+  var actions = el('div', 'guide-choix');
+  panneau.appendChild(tete);
+  panneau.appendChild(fil);
+  panneau.appendChild(actions);
+
+  function bulle(texte, qui) {
+    fil.appendChild(el('p', 'guide-bulle guide-' + qui, texte));
+    fil.scrollTop = fil.scrollHeight;
+  }
+
+  function bouton_choix(libelle, action) {
+    var b = el('button', '', libelle);
+    b.type = 'button';
+    b.addEventListener('click', action);
+    actions.appendChild(b);
+    return b;
+  }
+
+  function liens(cibles) {
+    var liste = el('ul', 'guide-liens');
+    cibles.forEach(function (cle) {
+      var c = g.liens[cle];
+      var li = el('li');
+      var a = el('a', '', c.libelle);
+      a.href = c.href;
+      a.appendChild(el('small', '', c.detail));
+      a.addEventListener('click', function () { ouvrir(false); });
+      li.appendChild(a);
+      liste.appendChild(li);
+    });
+    fil.appendChild(liste);
+    fil.scrollTop = fil.scrollHeight;
+    actions.textContent = '';
+    bouton_choix('Recommencer', recommencer);
+    var premier = liste.querySelector('a');
+    if (premier) { premier.focus(); }
+  }
+
+  function etape(nom) {
+    var e = g.etapes[nom];
+    bulle(e.message, 'livre');
+    actions.textContent = '';
+    if (e.cibles) { liens(e.cibles); return; }
+    var premier = null;
+    e.choix.forEach(function (c) {
+      var b = bouton_choix(c.libelle, function () {
+        bulle(c.libelle, 'vous');
+        if (c.vers) { etape(c.vers); return; }
+        bulle(c.cibles.length > 1 ? 'Voici les prompts qu\u2019il vous faut\u00a0:'
+                                  : 'Voici le prompt qu\u2019il vous faut\u00a0:', 'livre');
+        liens(c.cibles);
+      });
+      if (!premier) { premier = b; }
+    });
+    if (premier) { premier.focus(); }
+  }
+
+  function recommencer() {
+    fil.textContent = '';
+    etape(g.debut);
+  }
+
+  function ouvrir(oui) {
+    panneau.hidden = !oui;
+    bouton.setAttribute('aria-expanded', oui ? 'true' : 'false');
+    if (oui) {
+      if (!fil.firstChild) { etape(g.debut); }
+      else {
+        var cible = actions.querySelector('button') || fil.querySelector('a');
+        if (cible) { cible.focus(); }
+      }
+    }
+  }
+
+  bouton.addEventListener('click', function () { ouvrir(panneau.hidden); });
+  fermer.addEventListener('click', function () { ouvrir(false); bouton.focus(); });
+  panneau.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') { ouvrir(false); bouton.focus(); }
+  });
+  document.body.appendChild(panneau);
+  document.body.appendChild(bouton);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Registre des essais · L’IA pour le bureau</title>
+<meta name="description" content="Le registre du banc d&#x27;essai : chaque passe sur cinq assistants, l&#x27;offre utilisée, la durée arrondie, le livrable obtenu et ce qui a raté.">
+<meta name="author" content="Laurent Benedetti">
+<link rel="canonical" href="https://iapourlebureau.github.io/registre.html">
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="apple-touch-icon" href="icone.png">
+<meta name="theme-color" content="#16161a">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="L’IA pour le bureau">
+<meta property="og:title" content="Registre des essais · L’IA pour le bureau">
+<meta property="og:description" content="Le registre du banc d&#x27;essai : chaque passe sur cinq assistants, l&#x27;offre utilisée, la durée arrondie, le livrable obtenu et ce qui a raté.">
+<meta property="og:url" content="https://iapourlebureau.github.io/registre.html">
+<meta property="og:image" content="https://iapourlebureau.github.io/partage.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* La page reprend les trois couleurs de la couverture, et rien d'autre : le
+   noir d'encre du fond, le creme du titre, l'orange du sous-titre. Le lecteur
+   arrive avec le livre en main, la page doit se reconnaitre en une seconde.
+   L'orange de la couverture ne passe pas sur fond creme (2,4:1), d'ou la
+   brique, qui est le meme orange assombri jusqu'a 4,8:1 : c'est elle qui porte
+   les liens et les contours de focus, l'orange ne sert que sur fond sombre. */
+:root {
+  --encre: #16161a;
+  --encre-douce: #5f574e;
+  --papier: #f4f1ec;
+  --carte: #fffdf9;
+  --trait: #ded5c8;
+  --orange: #e8834a;
+  --surligneur: #f8d7b4;
+  --lien: #a8521c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--papier);
+  color: var(--encre);
+  font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.bandeau {
+  position: relative;
+  background: var(--encre);
+  color: var(--papier);
+  padding: 44px 24px 40px;
+  overflow: hidden;
+}
+
+.dedans { position: relative; max-width: 940px; margin: 0 auto; }
+
+/* La couverture pose un halo chaud derriere l'ordinateur allume : le bandeau
+   le reprend, pour que le haut de la page et le haut du livre s'eclairent de
+   la meme facon. */
+.bandeau::before {
+  content: "";
+  position: absolute;
+  inset: -40% -10% auto auto;
+  width: 820px;
+  height: 820px;
+  background: radial-gradient(circle, rgba(232, 131, 74, 0.24) 0%, rgba(232, 131, 74, 0) 62%);
+  pointer-events: none;
+}
+
+.bandeau h1 {
+  margin: 0 0 10px;
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  font-size: clamp(28px, 5vw, 42px);
+  letter-spacing: -0.022em;
+  line-height: 1.12;
+}
+
+/* Le filet orange sous le titre vient de la couverture, ou il separe le titre
+   du sous-titre. Il sert ici de signature : on le retrouve sur les annexes et
+   au-dessus des rubriques. */
+.bandeau h1::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 4px;
+  margin-top: 18px;
+  background: var(--orange);
+}
+
+.bandeau p { margin: 0; max-width: 60ch; color: #cfc6ba; }
+
+.adresse {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 7px 14px;
+  border: 1px solid #4a423a;
+  border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 15px;
+  color: var(--papier);
+}
+
+.bandeau .maj {
+  margin-top: 14px;
+  font-size: 15px;
+  color: #a2978a;
+}
+
+/* L'accueil porte la couverture, les annexes non : elles gardent le bandeau
+   simple ci-dessus. */
+.bandeau--jaquette { padding: 56px 24px 52px; }
+
+.bandeau--jaquette .dedans {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 48px;
+  align-items: center;
+}
+
+/* Sans cette ligne, le titre en capitales fixe une largeur plancher a sa
+   colonne : sur un telephone, la grille s'elargit au mot le plus long et c'est
+   TOUTE la page qui deborde, bandeau compris. */
+.bandeau--jaquette .texte-bandeau { min-width: 0; }
+
+.bandeau--jaquette h1 {
+  font-size: clamp(30px, 4.4vw, 46px);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.012em;
+  line-height: 1.04;
+}
+
+/* Deux teintes dans le titre, comme sur la couverture : le sujet en creme, ce
+   qu'on vient y faire en orange. */
+.bandeau--jaquette h1 .geste { color: var(--orange); }
+
+.bandeau--jaquette .promesse {
+  margin-top: 18px;
+  font-size: 18px;
+  color: #cfc6ba;
+}
+
+.bandeau--jaquette .promesse strong { color: var(--papier); font-weight: 600; }
+
+.jaquette {
+  display: block;
+  width: 232px;
+  height: auto;
+  border-radius: 3px;
+  transform: rotate(-2.2deg);
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55), 0 2px 0 rgba(255, 255, 255, 0.07);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jaquette { animation: pose 620ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  @keyframes pose {
+    from { opacity: 0; transform: rotate(-2.2deg) translateY(16px); }
+    to { opacity: 1; transform: rotate(-2.2deg) translateY(0); }
+  }
+}
+
+@media (max-width: 760px) {
+  .bandeau--jaquette { padding: 40px 24px 42px; }
+  .bandeau--jaquette .dedans { grid-template-columns: 1fr; gap: 26px; }
+  .bandeau--jaquette .couv { order: -1; }
+  .bandeau--jaquette h1 { font-size: clamp(24px, 6.6vw, 34px); }
+  .bandeau--jaquette h1::after { margin-top: 14px; }
+  .jaquette { width: 166px; }
+}
+
+.mode-emploi {
+  max-width: 940px;
+  margin: 34px auto 0;
+  padding: 0 24px;
+}
+
+.mode-emploi p { max-width: 68ch; margin: 0 0 14px; }
+
+.raccourcis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0 4px;
+  padding: 0;
+  list-style: none;
+}
+.raccourcis a {
+  display: block;
+  min-width: 46px;
+  padding: 8px 10px;
+  text-align: center;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 3px;
+  color: var(--lien);
+  font-weight: 600;
+  text-decoration: none;
+}
+.raccourcis a:hover { border-color: var(--lien); }
+.raccourcis a:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
+.raccourcis .intitule { color: var(--encre-douce); font-weight: 400; align-self: center; margin-right: 4px; }
+.raccourcis .ch { display: block; font-size: 12px; font-weight: 400; color: var(--encre-douce); }
+
+main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
+
+.fiche {
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  align-items: start;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  margin-top: 22px;
+  overflow: hidden;
+}
+
+/* L'onglet reprend l'intercalaire d'un classeur. Il porte les deux reperes du
+   lecteur : le numero du prompt, qui est le meme que dans l'annexe imprimee, et
+   le chapitre d'ou il vient, puisque c'est souvent par la que le lecteur
+   arrive. */
+.onglet {
+  background: var(--orange);
+  color: var(--encre);
+  padding: 16px 16px 18px;
+  text-align: center;
+  border-bottom-right-radius: 4px;
+}
+
+.onglet .mot { display: block; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #4a2409; }
+.onglet .rang {
+  display: block;
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.corps { padding: 20px 24px 24px; min-width: 0; }
+
+.corps h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  letter-spacing: -0.012em;
+}
+
+/* Le surlignage marque ce qui vient d'etre copie, comme on surligne une page. */
+.corps h2 mark {
+  background: transparent;
+  color: inherit;
+  margin-left: -3px;
+  padding: 1px 3px;
+  transition: background 160ms ease-in;
+}
+.fiche.copiee .corps h2 mark { background: var(--surligneur); }
+
+.sous-titre { margin: 0 0 16px; color: var(--encre-douce); font-size: 15px; }
+
+/* Le bouton est sombre et l'orange est reserve a la confirmation : sur
+   vingt et une fiches, vingt et un boutons orange auraient couvert la page, et
+   le lecteur n'aurait plus vu lequel il venait d'appuyer. */
+.copier {
+  font: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--papier);
+  background: var(--encre);
+  border: 1px solid var(--encre);
+  border-radius: 3px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.copier:hover { background: #2c2a26; }
+.copier:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
+.fiche.copiee .copier { background: var(--orange); border-color: var(--orange); color: var(--encre); }
+
+pre {
+  margin: 16px 0 0;
+  padding: 16px 18px;
+  background: #faf6ef;
+  border: 1px solid var(--trait);
+  border-radius: 3px;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 14.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Le cas bonus n'est pas dans le livre : il se signale donc autrement qu'une
+   fiche de prompt, sans quoi le lecteur le prend pour un chapitre oublie. */
+.bonus {
+  display: block;
+  margin-top: 34px;
+  padding: 22px 24px;
+  background: var(--encre);
+  color: var(--papier);
+  border-radius: 4px;
+  text-decoration: none;
+}
+.bonus .mot { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); }
+.bonus h2 { margin: 6px 0 8px; font-size: 21px; letter-spacing: -0.014em; }
+.bonus p { margin: 0; max-width: 62ch; color: #cfc6ba; }
+.bonus .fleche { display: inline-block; margin-top: 12px; color: var(--orange); font-weight: 600; }
+.bonus:hover .fleche { text-decoration: underline; }
+.bonus:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+/* Les autres rubriques que le livre promet a cette page. Elles ne sont pas des
+   prompts : elles se presentent donc en liste, pas en fiches a onglet. */
+.titre-rubriques { margin: 48px 0 0; font-size: 21px; letter-spacing: -0.014em; }
+.titre-rubriques::before {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 4px;
+  margin-bottom: 14px;
+  background: var(--orange);
+}
+
+.rubriques { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
+.rubriques a {
+  display: block;
+  padding: 16px 18px;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--encre);
+}
+.rubriques a:hover { border-color: var(--lien); }
+.rubriques a:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
+.rubriques strong { display: block; color: var(--lien); font-size: 17px; }
+.rubriques span { display: block; margin-top: 4px; color: var(--encre-douce); font-size: 15.5px; max-width: 66ch; }
+
+footer {
+  border-top: 1px solid var(--trait);
+  padding: 28px 24px 60px;
+  color: var(--encre-douce);
+  font-size: 15px;
+}
+footer .dedans p { margin: 0 0 10px; max-width: 68ch; }
+
+@media (max-width: 620px) {
+  .fiche { grid-template-columns: 1fr; }
+  .onglet { display: flex; align-items: baseline; gap: 8px; padding: 12px 18px; text-align: left; }
+  .onglet .rang { font-size: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .corps h2 mark { transition: none; }
+}
+
+.texte { max-width: 940px; margin: 0 auto; padding: 0 24px 60px; }
+.texte h2 { margin: 34px 0 8px; font-size: 22px; letter-spacing: -0.014em; }
+.texte h3 { margin: 26px 0 6px; font-size: 18px; }
+.texte p { max-width: 68ch; }
+.texte ul { max-width: 68ch; }
+/* Un lien brut vers une longue adresse (sans espace ni trait pour couper) ne
+   doit jamais forcer le corps de la page a defiler horizontalement : il doit
+   casser a l'interieur de sa propre ligne. overflow-wrap: anywhere coupe
+   meme hors d'un mot, la ou word-break: break-word seul ne suffit pas sur
+   une sequence sans caractere de coupe. */
+.texte a { color: var(--lien); overflow-wrap: anywhere; }
+
+.feuillet {
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  padding: 8px 28px 28px;
+  margin-top: 26px;
+}
+
+.encadre {
+  border-left: 4px solid var(--encre);
+  background: var(--carte);
+  padding: 14px 18px;
+  margin: 22px 0;
+  border-radius: 0 3px 3px 0;
+}
+
+table { border-collapse: collapse; width: 100%; margin: 18px 0 6px; font-size: 15.5px; }
+th, td { border: 1px solid var(--trait); padding: 8px 10px; text-align: left; vertical-align: top; }
+th { background: var(--carte); font-weight: 600; }
+td.chapitre { white-space: nowrap; font-weight: 600; }
+
+.retour { display: inline-block; margin: 22px 0 0; color: var(--lien); font-weight: 600; text-decoration: none; }
+.retour:hover { text-decoration: underline; }
+
+.rien { background: var(--carte); border: 1px solid var(--trait); border-radius: 4px; padding: 22px 24px; margin-top: 24px; }
+
+/* installer.html. Le renvoi dit de quelle section du livre vient la promesse,
+   et la ligne systeme annonce la commande qui suit : ni l'un ni l'autre n'est
+   de la prose, d'ou leur exclusion de la justification dans STYLE_PROSE. */
+.renvoi { color: var(--encre-douce); font-size: 14px; margin: 2px 0 14px; }
+.systeme { font-weight: 600; margin: 18px 0 6px; font-size: 15px; }
+/* Une commande ne se coupe jamais en silence : elle defile dans sa propre
+   boite plutot que de deborder la page ou d'etre tronquee a l'affichage. */
+#contenu pre {
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin: 0 0 6px;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.5;
+}
+#contenu pre code { white-space: pre; }
+
+@media print {
+  .bandeau, .retour, footer { display: none; }
+  body { background: #fff; font-size: 11.5pt; }
+  .feuillet { border: none; padding: 0; margin: 0 0 24pt; page-break-after: always; }
+  .texte { padding: 0; }
+}
+
+/* La barre du haut est une seule ligne, collee en tete d'ecran, et ne porte
+   aucune animation : NN/g dit qu'il est generalement preferable de garder
+   l'en-tete en place plutot que de le faire glisser ou disparaitre au
+   defilement. */
+.pages {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--encre);
+  padding: 10px 24px;
+  overflow-x: auto;
+}
+
+/* En dessous de 768px, la liste deployee doit passer SOUS le bouton de
+   repli, pas a cote de lui dans la meme rangee : sans ce retour a la ligne,
+   elle s'ajoute a droite du bouton et fait reapparaitre le defilement
+   horizontal interne. flex-wrap ne se pose qu'ici : au-dela de 768px, la
+   liste tient sur la seule rangee existante. */
+@media (max-width: 767.98px) {
+  .pages { flex-wrap: wrap; }
+}
+.pages ul {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1 1 auto;
+}
+.pages li { white-space: nowrap; }
+.pages a {
+  color: var(--papier);
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+.pages a:hover { text-decoration: underline; }
+.pages a:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.pages [aria-current] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--orange);
+  font-weight: 600;
+}
+
+/* Le repli n'est que le bouton : son <summary> est le seul contenu du
+   <details>, et .pages-liste vit juste apres, hors de lui. Mesure au
+   navigateur le 29 octobre : un <details> ferme cache son contenu quelle
+   que soit la regle d'auteur posee SUR CE CONTENU. Il precede la liste, d'ou
+   la marge a droite et non plus a gauche. */
+.pages-repli {
+  list-style: none;
+  flex: 0 0 auto;
+}
+.pages-repli summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 10px;
+  margin: 0 14px 0 0;
+  color: var(--papier);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  list-style: none;
+  border: 1px solid #4a423a;
+  border-radius: 3px;
+}
+.pages-repli summary::-webkit-details-marker { display: none; }
+.pages-repli summary::marker { content: ""; }
+.pages-repli summary:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+/* Le socle, sous 768px : la liste entiere, en colonne et en pleine largeur
+   sous le bouton, c'est-a-dire VISIBLE. C'est l'etat d'un navigateur qui
+   ignore :has() : il perd le repli, jamais les liens. Le selecteur compose
+   ".pages .pages-liste" est oblige : une classe seule perd face a
+   ".pages ul" (specificite inferieure, mesure au navigateur le 29 octobre
+   apres qu'une regle a classe seule s'est vue ignorer en silence). */
+@media (max-width: 767.98px) {
+  .pages .pages-liste {
+    flex-direction: column;
+    flex-basis: 100%;
+    align-items: flex-start;
+    gap: 14px;
+    margin: 14px 0 4px;
+  }
+}
+
+/* Le repli proprement dit n'existe QUE si le navigateur comprend :has(),
+   @supports ignorant le bloc entier sinon. Ferme, la liste ne montre que
+   l'echelon courant, sur la rangee du bouton ; ouverte, elle reprend l'etat
+   du socle. Les echelons caches le sont SUR PLACE : l'ordre de PAGES ne
+   bouge jamais, ni replie ni deploye. */
+@supports selector(:has(a)) {
+  @media (max-width: 767.98px) {
+    .pages .pages-liste {
+      flex-direction: row;
+      flex-basis: auto;
+      align-items: center;
+      margin: 0;
+    }
+    .pages .pages-liste li:not(:has([aria-current])) { display: none; }
+    nav.pages:has(.pages-repli[open]) .pages-liste {
+      flex-direction: column;
+      flex-basis: 100%;
+      align-items: flex-start;
+      margin: 14px 0 4px;
+    }
+    nav.pages:has(.pages-repli[open]) .pages-liste li { display: block; }
+  }
+}
+
+/* Un navigateur qui ignore :has() ignore aussi ce bloc-ci : le bouton
+   resterait sinon affiche sur mobile sans jamais rien replier, la liste y
+   etant deja deployee par le socle. Le cacher evite un bouton inerte, pas
+   une perte de contenu. */
+@supports not selector(:has(a)) {
+  @media (max-width: 767.98px) {
+    .pages-repli { display: none; }
+  }
+}
+
+/* Au-dela de 768px, la barre tient sur une seule rangee, que :has() soit
+   connu ou non : le bouton disparait et la liste herite de ".pages ul",
+   en rangee, toutes ses entrees visibles, dans l'ordre de PAGES. */
+@media (min-width: 768px) {
+  .pages-repli { display: none; }
+}
+.repere {
+  margin-left: auto;
+  padding-left: 16px;
+  color: var(--papier);
+  opacity: 0.8;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Le pied reprend la carte des fiches de prompt (meme fond --carte, meme
+   trait), pour que le pied se reconnaisse comme une partie du site plutot
+   qu'une mention legale ajoutee. */
+footer .carte {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 0 0 16px;
+}
+footer .carte .groupe { min-width: 160px; }
+footer .carte .famille-nom {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--encre-douce);
+}
+footer .carte ul { margin: 0; padding: 0; list-style: none; }
+footer .carte li { margin: 0 0 6px; }
+footer .carte a {
+  color: var(--lien);
+  text-decoration: underline;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
+.contact {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--encre-douce);
+}
+.contact a { color: var(--lien); text-decoration: underline; }
+.cloture {
+  margin: 0;
+  font-size: 13px;
+  color: var(--encre-douce);
+}
+
+/* Le lien d'evitement reste hors ecran jusqu'au focus clavier, ou il devient
+   le premier element visible de la page : WCAG 2.4.1. */
+.evitement {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--orange);
+  color: var(--encre);
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.evitement:focus {
+  left: 12px;
+  top: 12px;
+}
+
+/* Le bouton de retour en haut est construit par SCRIPT_NAV, cache par
+   defaut : [hidden] le retire de l'ecran sans qu'une transition le fasse
+   glisser ou s'estomper. */
+.haut-fixe {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  min-height: 24px;
+  background: var(--encre);
+  color: var(--papier);
+  border: 1px solid var(--trait);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.haut-fixe:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.haut-fixe[hidden] { display: none; }
+
+/* Le defilement doux reste sous condition : WCAG 2.3.3 range le mouvement
+   declenche par la page parmi les causes de nausee, et le reserve a qui ne
+   l'a pas exclu dans son systeme. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* Une cible d'ancrage ne doit pas se retrouver masquee sous la barre
+   collee : la marge de defilement vaut la hauteur de .pages, prise large. */
+:target { scroll-margin-top: 64px; }
+
+/* Le guide : un bouton en bas a gauche (le retour en haut tient la droite),
+   et un panneau de conversation au-dessus. Construit par SCRIPT_NAV ; sans
+   JavaScript, rien ne s'affiche. */
+.guide-bouton {
+  position: fixed; left: 20px; bottom: 20px; z-index: 61;
+  background: var(--orange); color: var(--encre);
+  border: 0; border-radius: 999px; padding: 11px 18px;
+  font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(22, 22, 26, 0.25);
+}
+.guide-bouton:focus-visible, .guide-panneau button:focus-visible,
+.guide-panneau a:focus-visible { outline: 3px solid var(--encre); outline-offset: 2px; }
+.guide-panneau {
+  position: fixed; left: 16px; bottom: 76px; z-index: 61;
+  width: min(380px, calc(100vw - 32px)); max-height: min(72vh, 600px);
+  display: flex; flex-direction: column;
+  background: var(--carte); color: var(--encre);
+  border: 1px solid var(--trait); border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(22, 22, 26, 0.28);
+  font-size: 15px; line-height: 1.45; text-align: left;
+}
+.guide-panneau[hidden] { display: none; }
+.guide-tete { display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 12px 14px; background: var(--encre); color: var(--papier);
+  border-radius: 13px 13px 0 0; }
+.guide-tete p { margin: 0; font-weight: 600; }
+.guide-tete button { background: transparent; color: var(--papier);
+  border: 1px solid #5f574e; border-radius: 8px; padding: 4px 10px;
+  font: inherit; font-size: 13px; cursor: pointer; }
+.guide-fil { overflow-y: auto; padding: 14px; display: flex;
+  flex-direction: column; gap: 8px; }
+.guide-bulle { margin: 0; padding: 9px 12px; border-radius: 12px; max-width: 88%; }
+.guide-livre { background: var(--papier); align-self: flex-start;
+  border-bottom-left-radius: 4px; }
+.guide-vous { background: var(--surligneur); align-self: flex-end;
+  border-bottom-right-radius: 4px; }
+.guide-liens { list-style: none; margin: 0; padding: 0; display: flex;
+  flex-direction: column; gap: 6px; }
+.guide-liens a { display: block; padding: 9px 12px; border: 1px solid var(--trait);
+  border-radius: 10px; color: var(--lien); text-decoration: none; background: #fff; }
+.guide-liens a:hover { border-color: var(--orange); }
+.guide-liens small { display: block; color: var(--encre-douce); font-size: 13px; }
+.guide-choix { padding: 0 14px 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+.guide-choix button { background: #fff; color: var(--encre);
+  border: 1px solid var(--orange); border-radius: 999px; padding: 7px 12px;
+  font: inherit; font-size: 14px; cursor: pointer; text-align: left; }
+.guide-choix button:hover { background: var(--surligneur); }
+@media print { .guide-bouton, .guide-panneau { display: none !important; } }
+
+#contenu p,
+#contenu li,
+#contenu dd {
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* Ce qui ne se justifie jamais : le code, les cellules d'un tableau (trop
+   etroites), et les libelles courts qui annoncent un bloc. */
+#contenu pre,
+#contenu code,
+#contenu th,
+#contenu td,
+#contenu .systeme,
+#contenu .renvoi,
+#contenu .retour {
+  text-align: left;
+  hyphens: manual;
+  -webkit-hyphens: manual;
+}
+</style>
+</head>
+<body>
+<a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau">
+  <div class="dedans">
+    <h1>Registre des essais</h1>
+    <p>Chaque essai du banc, assistant par assistant, avec l'offre utilisée, la durée et ce qui a été obtenu.</p>
+    <span class="adresse">iapourlebureau.github.io</span>
+  </div>
+</header>
+<nav class="pages" aria-label="Les pages du site"><details class="pages-repli"><summary>Les dix autres pages</summary></details><ul class="pages-liste"><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li><li><a href="automatisations.html">Automatisations</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li><li><span aria-current="page">Registre des essais</span></li><li><a href="verifications.html">Vérifications</a></li></ul></nav>
+
+<main class="texte" id="contenu">
+<a class="retour" href="index.html">← Retour aux prompts du livre</a>
+<style>
+.defile { overflow-x: auto; margin: 18px 0 6px; }
+.defile table { margin: 0; min-width: 760px; }
+td.num, th.num { white-space: nowrap; }
+td details { margin-top: 6px; font-size: 14px; }
+td details summary { cursor: pointer; color: var(--lien); }
+.statut { font-weight: 600; }
+.source { display: block; margin-top: 6px; font-size: 13.5px; color: var(--encre-douce); }
+</style>
+<p>Chaque essai du banc, dans l'ordre où il a eu lieu. Le tableau se calcule à chaque mise à jour de la page depuis le registre tenu pendant les essais : il ne se recopie pas. Les durées sont arrondies et vont de l'envoi à la dernière réponse, relecture non comprise. Les passes ont été pilotées par un agent dans le navigateur de l'auteur : une durée pilotée n'est pas une durée de lecteur.</p>
+<p>Les dossiers confiés aux assistants sont fictifs. Les passes ont eu lieu en conversation ou dans un projet, selon la colonne du registre. 2 passes sur 44 sont marquées invalides : faute d'avoir reçu la bonne consigne, elles ne comptent dans aucune mesure de qualité. Leurs observations sur l'outil lui-même, un quota par exemple, restent des faits.</p>
+
+<h2 id="offres">L'offre utilisée par assistant</h2>
+<p>Le livre ne nomme aucune offre : elles vivent ici. Une autre offre du même assistant peut se comporter autrement.</p>
+<table><thead><tr><th>Assistant</th><th>Éditeur</th><th>Offre essayée</th><th class="num">Passes</th><th>Dates</th><th>Réserve</th></tr></thead>
+<tbody><tr><td class="chapitre">ChatGPT</td><td>OpenAI</td><td>gratuite</td><td class="num">2</td><td>3 novembre 2026</td><td></td></tr><tr><td class="chapitre">Claude</td><td>Anthropic</td><td>payante individuelle (Max)</td><td class="num">5</td><td>3 novembre 2026</td><td></td></tr><tr><td class="chapitre">Copilot</td><td>Microsoft</td><td>grand public, compte Microsoft personnel</td><td class="num">2</td><td>3 novembre 2026</td><td>Le protocole du banc demandait un accès d&#x27;entreprise, pour mesurer ce que l&#x27;on a au bureau. Les passes ont eu lieu sur un compte personnel : elles ne disent pas tout de la version d&#x27;entreprise, qui puise selon l&#x27;offre souscrite dans la messagerie, les fichiers et les réunions de l&#x27;organisation.</td></tr><tr><td class="chapitre">Gemini</td><td>Google</td><td>payante individuelle (Pro, mode Élevé)</td><td class="num">16</td><td>3 novembre 2026 et 4 novembre 2026</td><td></td></tr><tr><td class="chapitre">Mistral</td><td>Mistral AI</td><td>gratuite (Vibe Work, mode Rapide)</td><td class="num">19</td><td>3 novembre 2026 et 4 novembre 2026 et 5 novembre 2026</td><td></td></tr></tbody></table>
+
+<h2 id="passes">Les passes</h2>
+<div class="defile"><table><thead><tr><th>N<sup>o</sup></th><th>Date</th><th>Assistant</th><th>Cas</th><th>Envois</th><th>Durée</th><th>Livrable obtenu</th><th>Pièces lues</th><th>Défauts relevés</th><th>Issue</th></tr></thead>
+<tbody><tr class="passe" id="passe-1"><td class="num">1</td><td class="num">3 novembre 2026</td><td>ChatGPT</td><td>P10 nominal</td><td>2 (2 jointes, 2 collées, logo impossible)</td><td class="num">environ 1 min</td><td>aucun (arrêt)</td><td>2 jointes + 2 collées sur 5</td><td>non mesuré</td><td><span class="statut">invalide</span><details><summary>Note du banc</summary>INVALIDE : brief périmé au lieu de la consigne officielle. Arrêt justifié sur le conflit d&#x27;identité brief/charte, contradictions relevées, marge interne écartée, dépassement de budget signalé. Quota de pièces jointes de l&#x27;offre gratuite atteint après 2 pièces (« réessayez demain après 07:05 »). Piloté par agent.</details></td></tr><tr class="passe" id="passe-2"><td class="num">2</td><td class="num">3 novembre 2026</td><td>Claude</td><td>P10 nominal</td><td>1</td><td class="num">non mesurée</td><td>fichier .docx</td><td>5 sur 5</td><td>non mesuré</td><td><span class="statut">invalide</span><details><summary>Note du banc</summary>INVALIDE : même brief périmé. Passe abandonnée en cours de production. Piloté par agent.</details></td></tr><tr class="passe" id="passe-3"><td class="num">3</td><td class="num">3 novembre 2026</td><td>Claude</td><td>P10 nominal</td><td>1</td><td class="num">environ 5 min</td><td>fichier .docx, 6 pages</td><td>5 sur 5 (déclaré)</td><td>à mesurer sur le fichier</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Consigne officielle. Le prompt collé est converti en pièce jointe « Texte collé.txt ». Composé puis relu page par page (rendus d&#x27;images des pages). 1 322 mots dans les six parties. Chiffrage 56 700 € HT juste, dépassement de 11 700 € signalé hors document. Contradictions relevées : chefs d&#x27;équipe 7/8, effectif 80/85, ateliers 3/2, budget « qui a bougé » sans trace, 12 entretiens annoncés pour 13 listés. Éléments internes écartés sans trace. Six [À COMPLÉTER] dans le corps et un en pied de page. Mémoire du compte non désactivée. Fichier non téléchargé (téléchargement bloqué dans la fenêtre pilotée). Piloté par agent.</details></td></tr><tr class="passe" id="passe-4"><td class="num">4</td><td class="num">3 novembre 2026</td><td>Gemini</td><td>P10 nominal</td><td>2 (documents, puis logo par le champ des images)</td><td class="num">environ 2 min</td><td>fichier .docx, 5 pages selon l&#x27;aperçu</td><td>5 sur 5 (déclaré)</td><td>à mesurer sur le fichier</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Consigne officielle. Moins de 600 mots annoncés pour un plafond de 3 850 : document très mince, à confirmer sur le fichier. Chiffrage 56 700 € HT juste, dépassement signalé. Contradictions relevées : chefs d&#x27;équipe, effectif, ateliers ; ni le budget « qui a bougé » ni les entretiens. Sommaire sans numéros. Page de nombre de pages estimée, non composée. L&#x27;aperçu du fichier par Gemini lui-même échoue (« Impossible de prévisualiser le fichier »). Fichier non téléchargé. Piloté par agent.</details></td></tr><tr class="passe" id="passe-5"><td class="num">5</td><td class="num">3 novembre 2026</td><td>Claude</td><td>P11 nominal (7 PDF dont 1 hors consultation, rectificatif, charte, logo)</td><td>1</td><td class="num">environ 10 min</td><td>fichier .csv (33 lignes, 13 colonnes) et fichier .docx (6 pages)</td><td>8 sur 9 exploitées, 9 sur 9 lues, rapport de 2023 nommé et écarté</td><td>à mesurer sur les fichiers</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Inventaire pièce par pièce avec pages imprimées et pages PDF. Trois dates limites contradictoires relevées (AAPC/RC, CCTP, rectificatif) sans trancher ; pondérations du lot 1 à 95 (RC) contre 100 (rectificatif) ; dix contradictions entre pièces. Signale que la date annoncée (5 octobre) précède le dossier (rectificatif du 26 octobre). Pièges du jeu d&#x27;essai traités. Relu page par page. Fichiers non téléchargés. Piloté par agent.</details></td></tr><tr class="passe" id="passe-6"><td class="num">6</td><td class="num">3 novembre 2026</td><td>Gemini</td><td>P11 nominal, essai 1</td><td>2 (documents, puis logo)</td><td class="num">environ 4 min</td><td>aucun</td><td>non dit</td><td>non mesurés</td><td><span class="statut">échec</span><details><summary>Note du banc</summary>ÉCHEC : après environ quatre minutes de réflexion, « Ce que vous demandez va au-delà de ce que permet ma programmation. Je génère juste du texte. » Piloté par agent.</details></td></tr><tr class="passe" id="passe-7"><td class="num">7</td><td class="num">3 novembre 2026</td><td>Gemini</td><td>P11 nominal, essai 2 (conversation neuve, mêmes pièces)</td><td>2 (documents, puis logo)</td><td class="num">environ 4 min</td><td>texte à copier (grille en CSV et note), pas de fichier</td><td>9 sur 9 lues (inventaire), rapport de 2023 écarté</td><td>à mesurer sur le texte</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Repli prévu par le prompt appliqué : « Je ne peux pas générer de fichiers informatiques téléchargeables directement », alors que le même compte avait produit un .docx sur le P10 un quart d&#x27;heure plus tôt. Pondérations 95/100 relevées. Le premier refus était ponctuel : relancer une fois avant de conclure. Piloté par agent.</details></td></tr><tr class="passe" id="passe-8"><td class="num">8</td><td class="num">3 novembre 2026</td><td>Mistral</td><td>P10 nominal</td><td>1</td><td class="num">environ 3 min</td><td>texte à coller dans Word, pas de fichier</td><td>5 sur 5</td><td>à mesurer sur le texte</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Consigne officielle. Le prompt collé est replié en pièce jointe. Repli prévu par le prompt appliqué : « je n&#x27;ai pas de moyen de vous livrer un fichier Word téléchargeable dans cet environnement ». Environ 1 800 mots rendus, document compris. Chiffrage 56 700 € HT juste, dépassement signalé hors document. Bandeau : « Apprentissages enregistre automatiquement les informations clés de vos conversations » (mémoire active par défaut). Piloté par agent.</details></td></tr><tr class="passe" id="passe-9"><td class="num">9</td><td class="num">3 novembre 2026</td><td>Mistral</td><td>P11 nominal (7 PDF, charte, logo)</td><td>1</td><td class="num">environ 2 min</td><td>grille en canevas exportable et note en texte à coller</td><td>8 sur 9 (logo déclaré inexploitable comme image)</td><td>à mesurer</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Rapport de 2023 cité, pondération à 95 relevée. Repli prévu par le prompt appliqué pour la note : « je ne peux pas produire ici de fichier Word téléchargeable ». Piloté par agent.</details></td></tr><tr class="passe" id="passe-10"><td class="num">10</td><td class="num">3 novembre 2026</td><td>Copilot</td><td>P10 nominal</td><td>4 envois d&#x27;un fichier chacun, 3 retenus, charte collée, logo retiré</td><td class="num">non mesurée</td><td>non envoyé</td><td>3 sur 5</td><td>non mesurés</td><td><span class="statut">bloquée</span><details><summary>Note du banc</summary>BLOQUÉ : refuser l&#x27;analyse d&#x27;images (« Avant de commencer… ») retire toutes les pièces ; « Copilot prend actuellement en charge l&#x27;ajout de fichiers 1 à la fois » ; la quatrième pièce n&#x27;est pas retenue, sans message ; « Le chargement à partir de l&#x27;appareil envoie une copie à OneDrive (personnel) » ; l&#x27;envoi déclenche une vérification anti-robot que l&#x27;agent n&#x27;a pas le droit de passer, et qui expire (« Votre demande n&#x27;a pas abouti »). À relancer par l&#x27;auteur.</details></td></tr><tr class="passe" id="passe-11"><td class="num">11</td><td class="num">3 novembre 2026</td><td>ChatGPT</td><td>P10 nominal, sources collées</td><td>1 (4 fichiers collés dans le message, logo impossible)</td><td class="num">environ 4 min</td><td>fichier .docx, 6 pages (rendu PDF vérifié par l&#x27;assistant)</td><td>4 sur 5 (logo non joignable)</td><td>mesuré le 3 nov. sur le fichier téléchargé par l&#x27;auteur : 6 pages composées, 1 181 mots ; parties 320/386/26/100/94/88 mots pour des plafonds 900/1 400/450/450/450/200, tous tenus ; corps 10,5 pt ; 3 tableaux ; 1 défaut sûr : 19 espaces ordinaires avant une ponctuation haute (insécables) ; aucun chiffre de performance hors 94/81/92 (le 20 % est la croissance du brief) ; montants 56 700 / 30 000 / 17 100 / 9 600 justes ; ni budget, ni écart, ni marge, ni concurrents, ni personne dans le document ; absence de référence citable dite en clair, aucune inventée ; date du document 3 novembre 2026 et nom de fichier daté du jour réel au lieu du 5 octobre fixé par la consigne</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Pièces jointes refusées : « Obtenir Plus pour importer plus de fichiers. Ou attendez 16 heures avant d&#x27;importer à nouveau » (le quota court sur une fenêtre glissante, il ne se rouvre pas le matin). Repli du chapitre 4 appliqué : contenu des fichiers collé dans le message. Fichier .docx produit par script Python, aperçu dans un panneau latéral. Chiffrage 56 700 € HT juste, dépassement de 11 700 € signalé hors document. Contradictions relevées : chefs d&#x27;équipe 7/8, effectif 80/85, ateliers 3/2 ; ni le budget « qui a bougé » ni les entretiens 12/13. Éléments internes écartés (marge de 38 %, négociation, concurrents, personnes). Cinq [À COMPLÉTER] listés. DÉFAUT : remplace la date fixée par le prompt (« Nous sommes le 5 octobre 2026 ») par la date réelle, le dit, et traite les échéances du 9 et du 12 octobre comme passées. Contrôle des mots par partie inachevé : « Vous avez atteint votre limite d&#x27;analyse de données […] réessayez demain après 15:04 ». Auto-évaluation 4 à 5 sur 5. Fichier non téléchargé. Piloté par agent.</details></td></tr><tr class="passe" id="passe-12"><td class="num">12</td><td class="num">3 novembre 2026</td><td>Claude</td><td>boucle ch. 12, brouillon, essai 1</td><td>0</td><td class="num">environ 1 min</td><td>aucun (arrêté)</td><td>0 sur 0</td><td>non mesurés</td><td><span class="statut">abandonnée</span><details><summary>Note du banc</summary>ABANDONNÉ : la demande naïve seule (« Fais-moi une proposition commerciale pour un industriel de l&#x27;usinage de précision qui veut remonter son taux de service. ») déclenche une recherche dans la mémoire du compte (« Recherche des offres de l&#x27;entreprise décrite dans le profil adaptées au secteur industriel ») et un plan qui se termine par « Pourquoi [cette entreprise] » : la mémoire transforme la demande en proposition de cette entreprise. Réponse arrêtée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-13"><td class="num">13</td><td class="num">3 novembre 2026</td><td>Claude</td><td>boucle ch. 12, brouillon, essai 2 (conversation incognito)</td><td>0</td><td class="num">environ 1 min</td><td>aucun (arrêté)</td><td>0 sur 0</td><td>non mesurés</td><td><span class="statut">abandonnée</span><details><summary>Note du banc</summary>ABANDONNÉ : l&#x27;incognito coupe l&#x27;historique et la mémoire (« Ni historique, ni mémoire, ni entraînement de Claude ») mais PAS les instructions de personnalisation du compte : la réponse s&#x27;ouvre sur « Émetteur : [une entreprise réelle, décrite dans le profil] ». Les instructions permanentes suivent l&#x27;utilisateur même en conversation privée. Le brouillon s&#x27;est par ailleurs abstenu d&#x27;inventer (« Je n&#x27;ai inventé ni chiffres, ni références, ni prix »). Réponse arrêtée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-14"><td class="num">14</td><td class="num">3 novembre 2026</td><td>Mistral</td><td>boucle ch. 12, brouillon</td><td>1 (4 fichiers joints au tour 2, logo non joint)</td><td class="num">environ 4 min</td><td>texte à coller dans Word (après une page HTML au tour 2)</td><td>4 sur 4</td><td>non mesurés</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Quatre messages et deux réponses à des questions à choix posées par l&#x27;assistant avant d&#x27;écrire. Tour 1 générique et inventé (objectifs chiffrés, Lean, PDCA), tour 2 fidèle (56 700 € HT, dépassement hors document, internes écartés), tour 3 trop mince (500 mots), tour 4 conforme (1 730 mots). Instructions et apprentissages vérifiés vides avant l&#x27;essai. Piloté par agent.</details></td></tr><tr class="passe" id="passe-15"><td class="num">15</td><td class="num">3 novembre 2026</td><td>Mistral</td><td>boucle ch. 12, reformulation</td><td>non noté</td><td class="num">environ 1 min</td><td>prompt de 931 mots en 8 sections</td><td>non noté</td><td>non mesurés</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Ossature du P10 retrouvée, blocs de sortie du livre recopiés ; deux questions ouvertes signalées par l&#x27;assistant. Manquent : lignes intervenants et références, arrêt sur crochet non rempli, plafond de pages, date. De trop : restes de la tâche du jour, arrêt si un fichier manque. Piloté par agent.</details></td></tr><tr class="passe" id="passe-16"><td class="num">16</td><td class="num">3 novembre 2026</td><td>Mistral</td><td>boucle ch. 12, projet propre (prompt reformulé seul)</td><td>1</td><td class="num">environ 1 min</td><td>texte à coller dans Word, 1 623 mots en 6 parties</td><td>4 sur 4</td><td>à mesurer sur le texte</td><td><span class="statut">réussie du premier coup</span><details><summary>Note du banc</summary>RÉUSSITE DU PREMIER COUP. 56 700 € HT juste, budget et écart hors document, aucun élément interne, treize [À COMPLÉTER]. Contradictions relevées : 80/85, 7/8, 3/2 ; manquées : budget « qui a bougé », entretiens 12/13 (comme Gemini et ChatGPT avec le P10). Auto-évaluation 5/4/4/4/5. Piloté par agent.</details></td></tr><tr class="passe" id="passe-17"><td class="num">17</td><td class="num">3 novembre 2026</td><td>Copilot</td><td>P10 nominal, second essai</td><td>2 (brief parti seul par erreur de pilotage, puis notes et infos publiques avec le prompt ; charte collée ; logo non joint)</td><td class="num">non mesurée</td><td>aucun (trois refus)</td><td>3 sur 4 (charte collée lue)</td><td>non mesurés</td><td><span class="statut">échec</span><details><summary>Note du banc</summary>ÉCHEC APRÈS TROIS RELANCES. Aucune vérification anti-robot cette fois. Lecture juste : 80/85 et 7/8 tranchés selon la règle des sources, chiffrage 56 700 € HT exact, dépassement de 11 700 € signalé, pièces déclarées lues. Mais refus de produire : 1) réclame logo, RCS et adresse postale au lieu de poser [À COMPLÉTER] ; 2) après « continue », juge les consignes impossibles à tenir ensemble faute de référence citable ; 3) après « dis-le en une phrase », refuse le texte à coller : « il dépasserait largement la taille maximale d&#x27;une seule réponse et risquerait d&#x27;être tronqué ». INCIDENT DE PILOTAGE : le brief est parti seul avant le prompt (résumé par Copilot), et un message intermédiaire a renvoyé par erreur la fin de la réponse précédente au lieu de la relance ; les trois refus sont postérieurs et portent sur le prompt complet. Quatrième message, « procédons partie par partie » : page de garde et partie 1 rendues aussitôt, en texte à coller, date du 5 octobre respectée. Le découpage contourne le refus. Piloté par agent.</details></td></tr><tr class="passe" id="passe-18"><td class="num">18</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P4 nominal</td><td>1 (prompt.txt et 5 sources, logo compris, aucun refus)</td><td class="num">environ 2 min</td><td>fichier .docx annoncé (rapport-septembre-2026.docx), aperçu et téléchargement en échec</td><td>5 sur 5 (déclaré, « Pièces jointes non lues : Aucune »)</td><td>résumé « une maîtrise des dépenses » malgré des coûts en hausse de 52,7 %, aucun détail des coûts par équipe, « 1 seul » [À COMPLÉTER] annoncé, longueur estimée à 1 page quand la visionneuse affiche 2</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Instructions et infos enregistrées vérifiées vides avant la passe, mais la mémoire des discussions passées est ACTIVÉE (non modifiée), aucune trace d&#x27;employeur dans la réponse. Constat par fichier juste : encodages, séparateurs, 21, 22 et 12 lignes. Chiffres tous justes : CA 101 950,50 € contre 55 250 € (+84,5 %), top 3 31 150 / 29 600 / 19 450,50, coûts 29 160,40 € contre 19 100 € (+52,7 %), sous-traitance 8 400 €, satisfaction 8,0/10. Pièges vus : « Diag. organisationnel », « Qualite de l&#x27;ecoute » et « Support » rapprochés et annoncés en section 5, « Coaching managérial » et « Coaching manager » laissés distincts avec [À COMPLÉTER] et une question à l&#x27;écran, colonnes « Responsable » et « Interlocuteur » écartées, verbatims en orthographe d&#x27;origine. Code exécuté relu (l&#x27;affichage du code) : trois versions, les deux premières citaient « Merci à [À COMPLÉTER] pour sa disponibilité », la finale ne le cite plus. Date du 5 octobre 2026 en tête. Pied de la charte repris mot pour mot. Auto-évaluation 5/5 partout. Piloté par agent.</details></td></tr><tr class="passe" id="passe-19"><td class="num">19</td><td class="num">4 novembre 2026</td><td>Mistral</td><td>P4 nominal</td><td>1 (7 fichiers dont prompt.txt, aucun refus)</td><td class="num">environ 4 min</td><td>texte à coller dans Word (« Je ne peux pas produire ici de fichier Word téléchargeable »)</td><td>6 sur 7 (logo.png déclaré « illisible en octets », logo.svg lu à la place)</td><td>2 (poste principal faux : « marketing à 3 200 » et « salons et événements à 2 600 » rangés par ligne au lieu de Déplacements 4 950,40 et Locaux 4 100 cumulés, « IDF » laissé non rattaché à Île-de-France)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Instructions et Apprentissages vérifiés vides avant la passe. Constats fichier par fichier rendus avant tout calcul, encodages justes (couts.csv en Latin-1), puis deux questions à choix posées avant d&#x27;écrire : la paire Coaching (réponse de l&#x27;agent : « Je ne sais pas, applique la règle de prompt.txt ») et « AURA » (réponse : même région). Durée incluant ces deux réponses. Tous les totaux justes : CA 101 950,50 contre 55 250 (+84,53 %), coûts 29 160,40 contre 19 100 (+52,67 %), satisfaction 8,0 sur 12 réponses, top 3 juste. Pièges vus : « Diag. organisationnel », « Support », « Qualite de l&#x27;ecoute » rapprochés et annoncés en section 5, Coaching manager et managérial gardés séparés avec un seul [À COMPLÉTER], égalité au 3e rang des motifs non tranchée, colonne Responsable et commentaires nominatifs écartés du document (noms cités à l&#x27;écran seulement), verbatims sans accents conservés. Date du 5 octobre 2026 respectée. Charte relue (couleurs #1F3C5A et #B07A2A) mais renvoyée au collage dans Word. Auto-évaluation mise en page 2 sur 5. Piloté par agent.</details></td></tr><tr class="passe" id="passe-20"><td class="num">20</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P5 nominal</td><td>2 (limite de 10 fichiers par envoi : lot 1 = contrat, export .csv, notes scannées, email-01 à 07, lot 2 = prompt.txt, email-08, charte.md, logo.png, aucun refus de format)</td><td class="num">environ 3 min</td><td>aucun (arrêt)</td><td>12 sur 13 (export .csv déclaré « vide », il porte 944 octets et 16 commandes)</td><td>arrêt à tort sur une source présente : ni bandeau, ni CA 2025 (195 250 € HT attendu), ni benchmark au 31 mars, ni préavis au 14 août 2026</td><td><span class="statut">arrêt</span><details><summary>Note du banc</summary>ARRÊT SUR UNE PIÈCE MAL LUE. « Je m&#x27;arrête ici et je ne produis aucun document, car le fichier historique-commandes.csv est vide », puis « Pièces jointes non lues : historique-commandes.csv ». Le fichier, parti au lot 1, n&#x27;est pas vide : défaut de lecture d&#x27;une pièce envoyée dans le premier lot, non d&#x27;un prompt. Ce qui a été lu est juste : échéance 14 février 2027, contradiction « Contrat à renouveler début 2026 » des notes contre le contrat, report de Lyon du T2 au T4 2026 (email-04 contre email-08), seconde note sans date mise en [À COMPLÉTER], RCS absent de la charte. Le PDF scanné a donc été lu (Paul Ferrand cité). Aucune valeur interne (marge, prix d&#x27;achat) à l&#x27;écran. Auto-évaluation 5/5 partout. Date fixée au 24 mars 2026 comme la consigne et la grille (et non au 5 octobre), le classement par échéance en dépendant. Le métier vient du jeu d&#x27;essai. Aucune trace du profil dans la réponse. Instructions et infos enregistrées vides, mémoire des discussions passées activée (non modifiée), constat du 4 novembre (passe P4). Une relance avec l&#x27;export dans le lot 2 reste à faire. Piloté par agent.</details></td></tr><tr class="passe" id="passe-21"><td class="num">21</td><td class="num">4 novembre 2026</td><td>Mistral</td><td>P5 nominal</td><td>1 (15 fichiers dont prompt.txt, aucun refus)</td><td class="num">environ 6 à 7 min</td><td>texte à coller dans Word (« Je n&#x27;ai pas, dans cette conversation, de moyen de te livrer un fichier .docx téléchargeable »)</td><td>14 sur 15 (« Aucune pièce jointe illisible », logo.png jamais cité, scan lu)</td><td>4 (préavis au 14 août 2026 absent du document et dénonciation hors des trois points, calculée à l&#x27;écran seulement, engagement Nantes « tenu en retard » manqué, total 2026 donné à 70 200 au lieu de [À COMPLÉTER] et total 452 250 sommant une année incomplète, intention Lyon portée en engagement)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Date de la consigne retenue (mardi 24 mars 2026, la grille se calcule sur elle) et respectée : 7, 143 et 327 jours justes. Totaux 2024 et 2025 justes (186 800, 195 250, +8 450), « 12,450.00 » lu 12 450 et signalé, ligne annulée et ligne en attente comptées à part. Benchmark en tête des trois points (« échéance dans 7 jours »). Annexe 3 lue : Lyon « hors périmètre », avenant nécessaire. Scan lu : geste de 3 500 « pas consommé », « cherche 10 % », « sa condition pour Lyon », Paul Ferrand « jamais rencontré », note sans date en [À COMPLÉTER]. Astérisque sur l&#x27;échéance juste. Astérisque sur le CA 2025 que la grille tiendrait pour faux, mais Mistral a raison : l&#x27;email-05 annonce 195 250 « au 27 novembre » alors que la commande de 18 600 du 3 décembre n&#x27;était pas passée, la grille a manqué cette contradiction (elle nomme aussi CMD-26-0048 pour l&#x27;annulée, qui est CMD-26-0055). Marge 22 %, prix d&#x27;achat 31 400 et -7 % hors du document, cités à l&#x27;écran. Interlocuteurs sans jugement, prochaine action ouverte par « hypothèse : ». Fiche d&#x27;environ 760 mots, sous le plafond de 1 000. Aucune question posée, une seule réponse. Instructions et Apprentissages vérifiés vides. Piloté par agent.</details></td></tr><tr class="passe" id="passe-22"><td class="num">22</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P6 nominal</td><td>1 (5 fichiers : prompt.txt, compte-rendu.txt, charte.md, logo.png, logo.svg, aucun refus de format)</td><td class="num">environ 2 min</td><td>texte à coller (« Je ne peux pas produire de fichiers directement téléchargeables ») : tableau, courriel, brief d&#x27;environ 270 mots, logo et pied en mentions textuelles</td><td>5 sur 5 (déclaré « Toutes lues avec succès », logos non insérés)</td><td>3 (A2 datée 2026-03-15, « dimanche clôturant la semaine courante », la grille attend 2026-03-13 ou [À COMPLÉTER], objectif de 70 % posé dans « Ce qui est décidé » comme « objectif d&#x27;adoption fixé », sigles DSI, PMO, RGPD, SIRH non signalés, sans être développés)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée), comme pour les passes P4 et P5. Date du 12 mars 2026 gardée, fixée par la consigne de la grille (et non le 5 octobre), toutes les échéances en dépendant. Tableau complet : 9 actions sur 9, A6 laissée sans responsable ni date (non attribuée à Sonia), [À COMPLÉTER] en fin de tableau, A1 et A4 « En cours », dates justes pour A1, A4, A7, A8 (« avant le prochain comité » au 19 mars) et A9. Absents justes : Marc Deligny et Hélène Rocher, Pierre Vaillant non relancé. Courriel de 7 mots d&#x27;objet, sans signature ni sujet interne. Brief : tension avec le prestataire écartée, marge de 11 % gardée (« À noter en interne »), ce que le prompt permet. Doute sur la devise dit (« l&#x27;actuel étant en dollars »), blocage daté « depuis le 18 février », mais deux dates « 12 mars » posées comme début de blocage pour l&#x27;hébergement et le connecteur. Pied de la charte repris avec un SIRET [À COMPLÉTER]. Auto-évaluation 5/5/4/5/5. Aucune trace du profil dans la réponse. La grille P6.py refuse de se calculer (« 2 noms de fichiers lus dans le prompt au lieu de 3 ») depuis la version agnostique du prompt, où le courriel n&#x27;est plus un fichier : jugement fait sur ses fonctions de calcul. Piloté par agent.</details></td></tr><tr class="passe" id="passe-23"><td class="num">23</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P7 nominal</td><td>2 (limite de 10 fichiers par envoi : lot 1 = prompt.txt, six PDF, liens.txt et les deux lettres, envoyé avec une ligne d&#x27;attente, lot 2 = notes-de-lecture.md, veille-2026-09-28.md, charte.md, logo.png, logo.svg avec la ligne d&#x27;instruction, aucun refus de format)</td><td class="num">environ 2 min</td><td>texte à coller (« Je ne suis pas en mesure de produire directement un fichier Word au format .docx »)</td><td>9 déclarées « lues » sur 13 sources jointes (aucune déclarée non lue, les 8 documents de contenu tous représentés)</td><td>3 (aucun arrêt alors que cinq cases du prompt restaient entre crochets, le TJM à 1 150 euros écarté « Hors période (publié le 26 septembre) » au lieu d&#x27;être gardé en bas comme le demandent les notes, les trois adresses de liens.txt rangées en « Sources non exploitables » où la grille n&#x27;en veut aucune)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Cinq cases sans valeur dans la consigne de la grille, laissées entre crochets : type de clients, sujets suivis, sites à consulter, sujets à exclure, adresses de la semaine. Le prompt dit de s&#x27;arrêter dans ce cas, Gemini a produit sans le signaler. Date du 5 octobre 2026 respectée, titre « Note de veille du 5 octobre 2026 », « Le regard de la semaine » suivi d&#x27;un [À COMPLÉTER]. Seuil à 250 salariés premier, 38 % borné aux « seules PME industrielles », contradiction 2,4 contre 2,5 jours relevée (la source du 29 septembre écartée, « contredit par une source plus récente »), date absente du 04 mise en [À COMPLÉTER], management du 24 septembre écarté hors période. Forfait mobilités écarté pour « Pas d&#x27;adresse web exacte », motif discutable pour une pièce jointe. Ni Groupe Mallard ni Sobrelec nulle part, pas même en écartés (« Mentions internes exclues avec rigueur »). Six actualités, environ 320 mots, sous les plafonds de 900 et de 50. Signature et pied de la charte repris, SIRET en [À COMPLÉTER]. Aucune recherche web (« 0 page ouverte »). Auto-évaluation 5/5/4/5/5. Grille P7.py calculée sans refus sur le prompt agnostique. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée), comme pour les passes P4 à P6. Aucune trace du profil dans la réponse. Piloté par agent.</details></td></tr><tr class="passe" id="passe-24"><td class="num">24</td><td class="num">4 novembre 2026</td><td>Mistral</td><td>P6 nominal</td><td>1 (5 fichiers dont prompt.txt, aucun refus)</td><td class="num">environ 7 min</td><td>aucun utilisable : actions-2026-03-12.csv et brief-direction-2026-03-12.docx annoncés comme fichiers, sans carte ni lien de téléchargement ; email seul dans la réponse</td><td>4 sur 5 (logo.png déclaré « octets non disponibles dans l&#x27;environnement », logo reconstruit depuis logo.svg)</td><td>1 (fichiers écrits dans le bac à sable de l&#x27;outil, jamais remis : le raisonnement visible dit « I&#x27;ll write to /home/user/actions-2026-03-12.csv […] and state the paths », le contenu du .csv n&#x27;apparaît nulle part, et le repli du prompt « donne-moi le tableau dans ta réponse » n&#x27;est pas appliqué)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Date du 12 mars 2026 retenue (consigne et grille se calculent sur la réunion, et non sur le 5 octobre). Grille P6 hors d&#x27;usage en l&#x27;état : noms_de_fichiers() exige trois « Fichier « … » » quand le prompt agnostique n&#x27;en porte plus que deux (l&#x27;email part dans la réponse), d&#x27;où « 2 noms de fichiers lus dans le prompt au lieu de 3 » ; calculée ici en neutralisant ce seul contrôle. Ce qui se juge est juste : absents Marc Deligny et Hélène Rocher, Pierre Vaillant (arrivé à 09:27) non adressé ; « vendredi prochain » et « d&#x27;ici la fin de la semaine » au 2026-03-13, « avant le prochain comité » au 2026-03-19, « dès que possible » en [À COMPLÉTER] ; A6 sans responsable ni date annoncée en [À COMPLÉTER] ; 9 actions annoncées ; sigles RGPD, PMO, SIRH, DSI non développés et signalés ; exception de montant correctement écartée (« la section ACTIONS ne donne pas de montant ») et doute de devise porté au brief. Email d&#x27;environ 135 mots, tutoiement des absents, rien d&#x27;interne. Brief relevé dans le code exécuté seulement (367 mots annoncés) : blocage « depuis le 18/02/2026 », marge de 11 % gardée au brief (admis par la grille), tension Karim et prestataire absente partout ; section 3 reprend trois actions (recette à 80 %, connecteur, lot 2). Trois échecs d&#x27;exécution avant succès (« TextEncoder is not defined », « btoa is not defined »). Auto-évaluation 4, 5, 4, 4, 5. Aucune question posée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-25"><td class="num">25</td><td class="num">4 novembre 2026</td><td>Mistral</td><td>P7 nominal</td><td>1 (15 fichiers dont prompt.txt, aucun refus)</td><td class="num">environ 3 à 4 min</td><td>texte à coller dans Word (« Je ne peux pas produire ici de fichier Word téléchargeable »)</td><td>14 sur 14 déclarées lues (« J&#x27;ai lu toutes les pièces », « Pièces lues en partie : aucune pièce jointe »), plus 5 pages web ouvertes dont une payante lue « qu&#x27;un tiers »</td><td>2 (titre de 2.1 « se stabilise à 2,4 jours » quand le résumé retient « 2,5 jours selon la reprise la plus récente », alors que Mistral dit lui-même « l&#x27;article détaillé donne 2,4 » ; 39 espaces ordinaires avant ; : ! ? » et aucune insécable dans le texte rendu)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Date du lundi 5 octobre 2026 respectée (période du 28 septembre au 4 octobre), nom de fichier rempli « veille-2026-10-05.docx » dans le prompt. Cases absentes de la consigne remplies au plus près : sujets « organisation du travail, management et réglementation sociale des entreprises », sites « aucun en particulier », exclusions « aucun », adresses de la semaine « aucune », clients « des entreprises ». Invariant de couverture tenu : les 8 documents de contenu sont tous représentés (6 retenus, 05 et 08 écartés). Directives tenues : seuil 250 en tête (1.1), 38 % borné aux PME industrielles (« Le périmètre ne couvre que les PME industrielles »), hybride court, mission Mallard et relance Sobrelec absentes partout, « pas même en écart ». « Le regard de la semaine » suivi d&#x27;un [À COMPLÉTER], date de 04 absente de la source mise en [À COMPLÉTER], signature et pied de la charte repris. 700 mots, sous le plafond de 900. Recherche web faite (3 requêtes) : une actualité réelle ajoutée (1.2, Éditions Tissot, « je n&#x27;en ai lu qu&#x27;un tiers ») et trois pages réelles écartées. Deux écarts à la grille où la grille paraît fausse : le TJM à 1 150 euros est écarté « Hors période (2026-09-26) » au lieu d&#x27;être mis en bas, mais 05 est daté du 26 septembre, hors des sept jours que le prompt impose (de même 08, 24 septembre) ; les trois adresses de liens.txt finissent en « Sources non exploitables » (« page inaccessible », domaines .example), quand la grille veut que liens.txt n&#x27;apparaisse nulle part et « alimente la section 4 », section que le prompt agnostique ne porte plus (il demande d&#x27;ouvrir chaque adresse et de porter l&#x27;inaccessible sous « Sources non exploitables »). Auto-évaluation 5, 5, 5, 2, 2. Aucune question posée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-26"><td class="num">26</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P8 nominal</td><td>2 (limite de 10 fichiers par envoi : lot 1 = prompt.txt, comptes-cibles.md et huit pages, envoyé avec une ligne d&#x27;attente, lot 2 = verlaine-emploi.html et _lisez-moi.txt avec la ligne d&#x27;instruction, aucun refus de format)</td><td class="num">non mesurée</td><td>texte à coller (« Je ne peux pas produire de fichiers de tableur téléchargeables »), trois blocs comptes-prioritaires.csv, signaux-sources.csv, prospection-mentions.txt</td><td>12 sur 12 (« le fichier _lisez-moi.txt a bien été parcouru »)</td><td>2 (Verlaine Industries réduit à un seul signal, l&#x27;offre d&#x27;emploi, le regroupement de verlaine-actualites.html écarté comme « même projet », « j&#x27;ai privilégié cette source », la grille attend deux lignes, angles d&#x27;approche qui posent l&#x27;offre comme réponse certaine, une formule qui pose l&#x27;offre comme réponse certaine, sans déduction écrite comme telle)</td><td><span class="statut">incident de lots</span><details><summary>Note du banc</summary>INCIDENT DE LOTS : malgré la ligne d&#x27;attente (« attends-les avant de commencer »), Gemini a produit les trois fichiers dès le lot 1, sans verlaine-emploi.html, Verlaine au rang 3 et « Toutes les pièces jointes ont été lues intégralement » (réponse gardée dans reponse-lot1.txt). La réponse jugée est celle au lot 2, qui reclasse Verlaine au rang 1, Vaumerance 2, Arpège 3, Mazaudier 4 : ordre défendable. Pièges vus : Brevalt écarté faute de date (« la page n&#x27;affiche aucune date de publication »), contradiction Vaumerance tranchée pour le site de l&#x27;entreprise (huit agences contre « douze à l&#x27;étude »), Technopole Serrat gardé sans recherche et l&#x27;absence d&#x27;adresse dite à l&#x27;écran, Ducloux et Kervadec en « sans objet » et « aucun signal trouvé » sans tiret, Mazaudier écrit « changement de direction générale ». Aucun nom, aucune adresse électronique, aucun téléphone dans les tableaux (contrôle par chaîne sur les cinq relevées par la grille, boîte recrutement@ comprise). Colonne Entreprise identique dans les deux tableaux, « SAS Ducloux &amp; Fils » et « Kervadec Énergies » justes. Dates au format trié justes (18/09/2026 converti, lecture unique). Mentions légales justes, datées 2026-10-04. Aucun budget déduit dans les tableaux, dénombrement à l&#x27;écran seulement (« 4 comptes sur 8 »). Signature UTF-8 non tenue (« sans signature UTF-8 apparente »), inévitable en texte collé. Date de la consigne retenue (4 octobre 2026, et non le 5 octobre) : elle fixe ses propres échéances. La phrase de la consigne « je n&#x27;ai pas d&#x27;accès au web » n&#x27;a pas de case dans le prompt agnostique et n&#x27;a pas été transmise : Gemini n&#x27;a pourtant cité aucune source hors des pages jointes. Grille P8.py calculée sans refus sur le prompt agnostique (2 tableaux, 3 plafonds, 2 mentions). Auto-évaluation 5/5 partout. Le métier vient du jeu d&#x27;essai. Aucune trace du profil dans la réponse. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée), comme pour les passes P4 à P7. Piloté par agent.</details></td></tr><tr class="passe" id="passe-27"><td class="num">27</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P9 nominal, à la suite du P8 dans la même conversation</td><td>1 (5 fichiers : prompt.txt du P9, comptes-cibles.md du banc P9, charte.md, logo.png, logo.svg, aucun refus de format)</td><td class="num">environ 4 min</td><td>texte à coller (« Je ne peux pas produire directement un fichier Word téléchargeable »), sommaire et trois fiches, environ 2 400 mots annoncés</td><td>5 sur 5 (« Aucune, toutes ont été traitées », logo non inséré)</td><td>2 (calcul interdit en partie 3 de Verlaine, « l&#x27;effort financier moyen par espace s&#x27;élève à 30 000 EUR », hors des trois calculs autorisés, partie 3 sous le plancher de 150 mots dans les trois fiches, 135 à 139 mots comptés par l&#x27;agent)</td><td><span class="statut">sortie du p8 réutilisée</span><details><summary>Note du banc</summary>SORTIE DU P8 RÉUTILISÉE : Gemini a pris les trois premiers comptes de sa propre réponse au lot 2 du P8 (Verlaine 1, Vaumerance 2, Arpège 3), et non les tableaux figés du banc P9 (Groupe Mercevray, Quilvanthe, Praxitel), qui n&#x27;ont pas été joints puisqu&#x27;ils sont censés venir du P8. Le comptes-cibles.md du banc P9, renommé « comptes-cibles_2.md » par Gemini, a été écarté et la contradiction dite (« ignorant ainsi le nouveau fichier en contradiction avec le classement validé »), sans aucun compte de cette liste ajouté. Il a rétabli dans la fiche Verlaine le signal du regroupement que son propre tableau du P8 avait écarté. Les pièges propres au jeu du P9 (date 12/09/2026, montant $4.2M, signal Praxitel sans date, Mme Castaing) ne se sont donc pas présentés : grille P9.py calculée sans refus sur le prompt agnostique (5 parties, 600 à 900 mots, 2 mentions), jugement fait avec ses fonctions sur la structure. Juste : fiches de 719 à 748 mots, cinq parties dans l&#x27;ordre, ancienneté au 4 octobre 2026 juste (16, 22 et 39 jours), mentions légales en tête, aucun nom de personne, pied de la charte Claire Vasseur Conseil repris avec SIRET [À COMPLÉTER] (quatre listés), Georgia et Arial 10,5, partie 5 sans recommandation. Montant de la page reformaté de « 1,200,000 EUR » en « 1 200 000 EUR » sans le signaler. Partie 5 qui envoie chercher des renseignements par des voies discutables (« contactant discrètement les grands grossistes du marché pour savoir s&#x27;ils ont enregistré de grosses commandes pour ce client », « interrogeant confidentiellement nos partenaires architectes »). Couleur principale #1B2A3A annoncée comme « couleur de fond ». Auto-évaluation 5/5 partout. Aucune trace du profil dans la réponse. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée). Piloté par agent.</details></td></tr><tr class="passe" id="passe-28"><td class="num">28</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P12 nominal</td><td>1 (10 fichiers, limite de Gemini : les 11 PDF regroupés en un PDF par concurrent, A, B et C, chaque pièce précédée d&#x27;une page « Pièce suivante : fichier &lt;nom d&#x27;origine&gt; », les deux sources.txt de A et B réunis en un seul sources.txt à intertitres, les trois captures PNG, charte.md et logo.png joints tels quels, logo.svg non joint car la charte ne cite que logo.png ; aucun refus de format)</td><td class="num">environ 2 à 3 min</td><td>texte à coller (« Je ne sais pas produire de fichier Word directement »), environ 1 100 mots annoncés</td><td>14 sur 14 inventoriées sous leur nom d&#x27;origine, captures comprises, la note interne de C écartée et signalée (« J&#x27;ai lu tous les documents »)</td><td>5 (faits de la plaquette sans date de C écrits comme établis dans le tableau et l&#x27;analyse au lieu de [À COMPLÉTER] : « Réseau de 40 consultants associés », « Garantie de satisfaction » ; trace de la note interne dans le document, « les seules données à ce sujet figurant dans un document interne exclu de cette analyse » ; interprétations qui ajoutent des éléments neufs et un point faible non reconnu, « indique un pilotage RH sous tension », « suggère une exposition internationale », et une déduction tirée d&#x27;une absence, « suggère une politique de sur-mesure » ; comparaison de tarifs sans les deux dates, « Le tarif d&#x27;entrée affiché, inférieur à celui d&#x27;Orveline Conseil, traduit probablement la pression sur les prix », et axe 2 qui met « notre politique de prix » face aux $1,400 ; citation retouchée, « 18% » pour « 18 % »)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Date de la consigne retenue (4 octobre 2026, et non le 5 octobre) : elle fixe ses propres dates, collecte le 20 juin 2026 ; les deux dates sont dans le document. Regroupement des PDF fait pour tenir en un seul envoi, la ligne d&#x27;attente des passes P8 ayant échoué : il change la forme des pièces (trois PDF au lieu de onze), pas leur contenu, et les noms d&#x27;origine sont restés lisibles puisque Gemini les cite tous. Juste : inventaire par concurrent avant rédaction, sources.txt absent pour C dit (« Ce concurrent ne figure pas dans le fichier sources.txt ») et adresse de la page tarifs de C mise en [À COMPLÉTER], contradiction Orveline 420/520 et 9/11 non tranchée et rangée dans les limites, valeur la plus récente de Maldague retenue (7 pays au 2 avril 2026) mais la contradiction avec les 4 pays du 20 janvier n&#x27;est dite nulle part, note interne écartée sans reprendre son contenu, deux seuls points faibles reconnus cités avec leur fichier, Tessandre en [À COMPLÉTER], tarifs gardés dans leur monnaie et leur gamme sans conversion, aucune des trois formulations interdites, aucun classement ni logo de concurrent, six sections dans l&#x27;ordre (plus une section « Citations des concurrents » non demandée), axes rattachés à des cellules nommées, 19 missions calculées juste (6 + 9 + 4), pied de la charte repris avec SIRET [À COMPLÉTER]. Écart à la grille où la grille se trompe : elle donne les trois captures pour « aucune date », mais chaque image porte « capture du 12/03/2026 », « du 20/01/2026 », « du 15/06/2026 », que Gemini a relevées juste ; la grille ne lit pas les images. Grille P12.py calculée sans refus sur le prompt agnostique (6 sections, 6 critères, plafonds 2 200/350/400/350, 3 formulations interdites). Espaces ordinaires devant ; : ! ? assumés (« espaces simples »), surlignage annoncé en balises &lt;mark&gt; invisibles dans le texte relevé. Auto-évaluation 5, 5, 4, 5, 5, et « J&#x27;en ai trouvé 0 » phrase non sourcée. Aucune trace du profil dans la réponse. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée). Piloté par agent.</details></td></tr><tr class="passe" id="passe-29"><td class="num">29</td><td class="num">4 novembre 2026</td><td>Mistral</td><td>P8 nominal</td><td>1 (12 fichiers : prompt.txt, comptes-cibles.md, _lisez-moi.txt et neuf pages HTML, aucun refus)</td><td class="num">environ 1 à 2 min</td><td>texte à coller (« Je ne peux pas produire de fichiers téléchargeables depuis cette conversation ») : deux tableaux en lignes à point-virgule, puis prospection-mentions.txt à part</td><td>12 sur 12 déclarées lues (« les douze fichiers ont été lus en entier »)</td><td>2 (une ligne de comptes-prioritaires à cinq champs : « Brevalt Logistique ; sans objet ; aucun signal daté trouvé ; actualité sans date de publication écartée ; sans objet », qui casse les colonnes ; adresse source écrite « https:// www.mazaudier.example/presse/acquisition-sodilem », espace dans l&#x27;URL, alors que Mistral affirme « adresse web complète » à la relecture)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Date du 4 octobre 2026 gardée, fixée par la consigne et la grille (JOUR 2026-10-04), et non le 5 octobre. Phrase de la consigne sur l&#x27;absence d&#x27;accès au web ajoutée en fin de prompt.txt (hors crochets) pour rester comparable à la grille ; aucune recherche web faite. Tout le reste conforme à la grille S1 : Verlaine premier avec ses deux signaux (2026-09-18), Arpège (2026-08-26), Vaumerance avec la version du site retenue contre l&#x27;article (« plus ancienne mais prioritaire par ta règle ») et la contradiction signalée, Mazaudier au 2026-09-29 avec « Changement de direction générale » sans nom ; Brevalt écarté faute de date, Ducloux et Kervadec en « aucun signal trouvé », Technopole Serrat gardé sans recherche et l&#x27;adresse manquante dite. Aucun nom, courriel ni téléphone des pages (Vaugirard, Trémoulin, recrutement@, 01 44…) dans les sorties. Rang « sans objet » en toutes lettres, aucune cellule vide, aucun montant ni effectif repris. Mentions datées 2026-10-04, les deux lignes exactes. Lecture fautive du bloc H : « il reste un emplacement non complété dans ton prompt », le prompt n&#x27;emploie pas de [À COMPLÉTER]. Critère des comptes sans signal enrichi (« aucun signal trouvé : site sans actualités ni recrutement ») au lieu du libellé seul. Aucune insécable (espaces ordinaires avant ; : »). Auto-évaluation 5, 4, 4, 5, 5. Aucune question posée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-30"><td class="num">30</td><td class="num">4 novembre 2026</td><td>Mistral</td><td>P9 nominal, à la suite du P8 dans la même conversation</td><td>1 (4 fichiers : prompt-P9.txt, charte.md, logo.png, logo.svg, aucun refus ; tableaux lus dans la conversation)</td><td class="num">environ 1 à 2 min</td><td>texte à coller dans Word (« Je ne peux pas produire de fichier Word téléchargeable depuis cette conversation »), trois fiches, sommaire, bandeau de trois chiffres, pied de charte à saisir</td><td>4 sur 4 (« aucune » non lue, logos « non intégrés, faute de fichier Word »)</td><td>4 (fiches de 547, 493 et 477 mots sous le plancher de 600, parties 2 de 92 et 106 mots et parties 4 de 105 à 120 mots sous leurs planchers de 150 et 200, quand Mistral affirme « parties 2, 3 et 5 dans leurs fourchetettes » ; huit « Je déduis » alors que le prompt impose la troisième personne ; langue fautive : « un interlocution », « pourraient rimer avec l&#x27;offre », « si le siège y se trouve », « aucun fiche », « aux services généraux ou aux services généraux » ; aucune insécable, espaces ordinaires avant ; : »)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Date du 4 octobre 2026 gardée, fixée par la consigne et la grille P9 (JOUR 2026-10-04). Grille P9 inapplicable telle quelle : elle se calcule sur la sortie FIGÉE du banc (les sources du banc, personne nommée, montant en dollars, signal sans date), quand cette passe lit la sortie vivante du P8 de Mistral, qui ne porte aucun de ces pièges ; jugement fait sur les règles du prompt. Juste : les trois comptes du tableau, dans l&#x27;ordre (Verlaine, Arpège, Vaumerance), aucun reclassement ; anciennetés justes (16, 39 et 22 jours) ; montant « 1,200,000 EUR » recopié tel quel et signalé ; aucun nom de personne ; changement de direction non repris (Mazaudier hors des trois) ; article de presse Vaumerance porté en partie 5 comme piste à vérifier ; mentions légales exactes en tête, date 2026-10-04 ; aucune contradiction tableaux et liste de départ, ce qui est juste. La charte jointe (la charte du banc, celle des bancs) est celle de « Claire Vasseur Conseil », consultante, pour un commercial salarié : même incohérence que celle fermée le 26 octobre pour le P10, non relevée par Mistral, pied repris tel quel avec SIRET [À COMPLÉTER]. Auto-évaluation 5, 5, 3, 3, 5. Aucune question posée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-31"><td class="num">31</td><td class="num">4 novembre 2026</td><td>Mistral</td><td>P10 nominal</td><td>1 (7 fichiers : prompt.txt, trois sources, charte.md, logo.png, logo.svg, aucun refus)</td><td class="num">non mesurée</td><td>texte à coller dans Word (« Je ne peux pas produire ici de fichier Word téléchargeable »), 1 238 mots dans les six parties</td><td>6 sur 7 déclarées lues (« logo.png n&#x27;a pas été inspecté visuellement »)</td><td>2 (contradiction 12 entretiens contre 13 personnes listées manquée, recopiée « douze entretiens individuels : vous-même, les chefs d&#x27;équipe […] ainsi que deux opérateurs » avec huit chefs d&#x27;équipe retenus ; coquille « nous nous avons-vous dit ») ; titre de la partie 4 réduit à « Notre équipe » sans les références, aucune n&#x27;étant dans les fichiers</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Essai 1 (conversation neuve) : Mistral tente de construire le .docx « à l&#x27;aide de scripts bash » (« Aucun outil zip/python/node n&#x27;est disponible »), puis s&#x27;arrête au bout de 346 s sur « Une erreur est survenue […] Code d&#x27;erreur : 6100 », sans rien rendre ; relancé une fois en conversation neuve. Essai 2 : 145 s. Consigne de la grille du banc (non le brief périmé), date du 5 octobre 2026, nom de fichier rempli dans le prompt. Chiffrage juste : 30 000, 17 100, 9 600, total 56 700 € HT, dépassement du budget de 45 000 € HT signalé hors document. Contradictions relevées : chefs d&#x27;équipe 7 contre 8, effectif 80 contre 85, ateliers 3 contre 2, et pour la première fois au banc le budget « qui a bougé » (« aucun fichier ne donne de montant plus récent que les 45 000 € HT »). Section INTERNE écartée sans trace (ni marge de 38 %, ni 1 000 € par jour). Seuls chiffres de performance 94, 81 et 92 %, plus la croissance de 20 % du brief. Contraintes tenues : CSE, pas d&#x27;atelier les deux dernières semaines de décembre, proposition avant le 9 octobre, comité du 12 octobre. Deux [À COMPLÉTER] au corps (format de la phase 3, frais de déplacement) et le RCS de la charte non surligné, compté. Plafonds tenus : 429, 461, 102, 79, 96, 71 mots. Sommaire sans numéros de page, citation de Marc Delorme en exergue. Auto-évaluation 5, 5, 2, 4, 5. Aucune question posée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-32"><td class="num">32</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P13 nominal</td><td>1 (9 fichiers : prompt.txt, suivi-projets.xlsx, point-hebdo-sevestre.docx, export-outil-tickets.txt, notes-comite-2026-09-28.md, le leurre tableau-de-bord-2026-09-27.html, charte.md, logo.png, logo.svg, aucun refus de format)</td><td class="num">non mesurée</td><td>texte à coller (« Je ne peux pas générer directement un fichier téléchargeable »), code HTML de 7,4 Ko en un bloc, sans nom de fichier</td><td>7 sur 8 (« Les quatre sources requises ont été lues et exploitées intégralement », charte appliquée, logo.png cité, leurre écarté, logo.svg jamais mentionné)</td><td>3 (trace du paragraphe confidentiel dans la section Sources de la page, « Écarté : cible de date, actions partielles, remarque confidentielle (S. Keller) », qui désigne la personne visée dans une page envoyée au directeur, logo non intégré au motif que le PNG ne passe pas en code alors que logo.svg joint pouvait s&#x27;insérer tel quel dans la page, nom de fichier tableau-de-bord-2026-10-05.html non donné)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Juste sur tout le calculable : sept projets, aucun huitième tiré de la ligne vide, retards en tête (Migration téléphonie Lyon puis Tableau de pilotage RH), SIRH requalifié « En retard » sur sa date et dit à l&#x27;écran (« son échéance passée au 2026-10-02 [...] le rend objectivement en retard »), avancement du SIRH en [À COMPLÉTER] sans barre, quatre cartes justes (2 en cours, 2 en retard, actions en [À COMPLÉTER] et non 31, plus proche échéance 2026-10-08 hors Archivage), « l&#x27;addition laisse 1 projet de côté » dit à l&#x27;écran, Nouveau parcours de réclamation avec statut, échéance et actions en [À COMPLÉTER] (« l&#x27;objectif de juin n&#x27;est pas une date ferme »), Enquête de satisfaction sans pilote et 2026-11-15, sept lignes d&#x27;actions sous le tableau, trois échéances exactement, toutes les dates en AAAA-MM-JJ, mise à jour 2026-10-05 en dur sans new Date(), filtre à six entrées au-dessus du tableau, quatre colonnes, pastille et barre dans la même cellule, libellé de statut en toutes lettres, [À COMPLÉTER] avec contour et insécable, barres en display: block sur deux bandes, aucune adresse http ni //, polices de la charte avec police système derrière, pied de la charte repris, feuille d&#x27;impression qui masque le filtre et réaffiche toutes les lignes avec en-tête répété. Leurre écarté et dit (« délibérément ignoré pour ne pas polluer l&#x27;itération actuelle »), aucun de ses chiffres (9, 44) dans la page. Budget de 1,250,000.00 EUR écarté sans conversion, mais appelé à l&#x27;écran « le budget consommé du projet » alors qu&#x27;il vaut tous projets confondus. Appréciation et rémunération absentes de la page, nature dite à l&#x27;écran (« l&#x27;appréciation sur le décrochage de Sonia Keller et son montant de rémunération »), montant non recopié. Aucun paragraphe de commentaire. Plafonds tenus : 276 mots de texte visible données comprises (400), 52 mots pour Sources (60), 7,4 Ko (500). Impression : table { page-break-inside: avoid } sur tout le tableau et aucune règle contre la ligne seule en bas de page, à vérifier en composant. Marque écrite en texte en tête de page à la place du logo, et dit. Accent #B07A2A retiré des pastilles pour le noir et blanc et dit, gardé sur les barres de moins de 50 %. Date du 5 octobre 2026 retenue, celle de la consigne de la grille. Grille P13.py calculée sans refus sur le prompt agnostique (plafonds 400, 60 et 500 relus). Auto-évaluation 5, 5, 5, 4, 5. Aucune trace du profil dans la réponse. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée). Piloté par agent.</details></td></tr><tr class="passe" id="passe-33"><td class="num">33</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P14 nominal</td><td>1 (7 fichiers : prompt.txt, 01-fiche-de-poste.pdf, 02-notes-equipe.txt, 03-projets-en-cours.docx, charte.md, logo.png, logo.svg, aucun refus de format)</td><td class="num">environ 2 à 3 min</td><td>texte à coller (« Je ne peux pas produire directement le fichier Word avec sa mise en page et ses images »), 1 462 mots relevés dans le livret, couverture, sommaire et quatre parties, en-têtes et pieds marqués entre crochets</td><td>6 sur 6 sources déclarées lues (« Aucune, toutes ont pu être lues »), logo.png posé en repère « [Logo : logo.png] », logo.svg jamais cité</td><td>4 (TRACE DU COMPTE : la signature porte le nom réel du titulaire du compte, avec un intitulé de poste alors que la case [nom] du prompt était restée vide et qu&#x27;aucune pièce ne porte ce nom, vérifié dans les sources et leurs métadonnées, donc tiré du compte Google ou de la mémoire de Gemini ; portable personnel de Karine Lefort recopié dans l&#x27;annuaire, « Ligne interne 4412, portable 06 11 22 33 44 », alors que la confirmation de l&#x27;étape 7 affirme le contraire ; jugement sur Nadir Belkacem gardé sous une forme adoucie, « Préférez un point informel avant de discuter de ses chiffres en réunion » ; gloses inventées que les sources ne donnent pas, SMQ « l&#x27;ensemble de nos processus d&#x27;amélioration », PPI « le budget alloué aux futurs projets », ORION remplacé « par un nouvel outil unifié », au lieu du [À COMPLÉTER] que le prompt exige)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Date du 5 octobre 2026, celle de la consigne de la grille du banc. Cases du prompt remplies depuis la consigne : date, particularités (aucun sigle connu de la recrue) et fonction du signataire (à la tête de la direction des opérations) ; [nombre], [prénom], [intitulé du poste], [date] de prise de poste, expérience, contacts, projets, outils et [nom] laissés tels quels, la consigne ne les donnant pas. Grille P14.py calculée sans refus sur le prompt agnostique (volumes 400, 400, 500 et 900 mots, plafond 2 400). Piège passif du nominal traité selon la seconde conduite admise par la grille : « Prise de poste : 10/14/2026 » cité tel quel en couverture et en tête du planning (« Mercredi 10/14/2026 »), jours suivants déduits du 15 au 20 octobre et listés pour vérification, mais l&#x27;ambiguïté n&#x27;est jamais dite à l&#x27;écran (« Le calendrier des 5 jours ouvrés consécutifs depuis le 14 octobre »). 09/15/2026 recopié tel quel. Budget 1,200,000.00 EUR et reste à engager non repris, écart de format non signalé. Juste : arrêt sans objet (poste, date, contacts et projets présents), prénom et expérience en [À COMPLÉTER], référent informatique de la fiche porté en fiche [À COMPLÉTER], premier jour avec heure, lieu, accueil et déjeuner en [À COMPLÉTER] et donnés en premier, réunion du lundi 9 h 15, parking, badge, cantine du mardi, télétravail après la période d&#x27;essai, ancienneté et évaluation de Thibault Rivière écartées. Arrêt maladie d&#x27;Hélène Mouret non écrit mais converti en « indisponible jusqu&#x27;au 20 octobre », date tirée de la donnée de santé. Fausses contradictions annoncées (02/2026 contre 03/2026, « direction des opérations » contre l&#x27;intitulé complet). Mots sous-estimés à l&#x27;écran (175, 260, 270, 360 annoncés contre 198, 344, 300, 469 relevés). Quatorze des vingt questions à [À COMPLÉTER]. Auto-évaluation 5, 5, 5, 5, 5. Aucune trace du profil dans la réponse, mais le nom réel du titulaire du compte en signature. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée). Piloté par agent.</details></td></tr><tr class="passe" id="passe-34"><td class="num">34</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P15 nominal</td><td>1 (7 fichiers : prompt.txt, 01-contrat-helianthe.pdf, 02-echanges-helianthe.txt, 03-notes-sophie.md, charte.md, logo.png, logo.svg, aucun refus de format)</td><td class="num">environ 3 à 4 min</td><td>texte à coller (« Je ne sais pas produire un fichier Word garantissant vos contraintes strictes de mise en page »), sept sections, 733 mots, nom de fichier negociation-groupe-helianthe-2026-10-05.docx non repris</td><td>5 sur 7 (les quatre sources et la charte lues, « Pièces non lues : logo.png et logo.svg, ignorées conformément à la règle interdisant l&#x27;intégration de logos »)</td><td>6 (argument central manqué : l&#x27;offre concurrente de 48 000 EUR, supérieure aux 36 146 EUR que la demande produirait, n&#x27;est jamais rapprochée du chiffrage, la réplique se borne à « Une nouvelle équipe nécessiterait un long temps d&#x27;adaptation » ; socle COPIL « acquis en interne, mais personne ne l&#x27;a écrit » non demandé en contrepartie, retourné en objection « Le socle COPIL est aujourd&#x27;hui maîtrisé par nos équipes » ; échéance et préavis de trente jours de l&#x27;article 2 jamais situés ; pied « Claire Vasseur Conseil · claire@vasseur-conseil.example · SIRET [À COMPLÉTER] » repris de la charte alors que la fiche ne porte ni SIRET ni identité, et charte d&#x27;une autre personne que la consultante non relevée ; arrondi en chaîne, 36 146,16 et 20 553,84 EUR au lieu de 36 146,25 et 20 553,75 ; section 6 à 284 mots pour 260, quand Gemini annonce « section 6 à 230 mots pour 260 max », et « tiendra sans aucune difficulté sur une seule page A4 » contre la règle page un, page deux)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Date du 5 octobre 2026, celle de la consigne de la grille du banc, en tête seule (2026-10-05), sans nom de client ni mot confidentiel. Cases remplies depuis la consigne : date, métier, nombre de jours (7, rendez-vous du 12 octobre), client avec Marc Tellier comme interlocuteur, relation depuis trois ans ; [type de contrat], demande, raison, montant, marge, alternatives, limites et lignes rouges laissés tels quels, la consigne ne les donnant pas. Gemini a donc rédigé des lignes rouges (« Baisse du tarif journalier au-delà de 15 % ») et des concessions (10 % et 15 %) sans appui, ces dernières dites « propositions que je forme ». Grille P15.py calculée sans refus sur le prompt agnostique (budgets 70, 95, 75, 85, 85, 260, 110 relus). Piège passif du nominal VU : base de l&#x27;avenant n° 1 retenue, 56 700 EUR et 2 362,50 EUR, aucune contradiction inventée entre 4 500 et 4 725. Chiffrage à -15 % juste au tarif (2 008,12) et au volume (18 jours), scénario à -20 % non chiffré. Contradiction -20 % du courriel contre -15 % des notes dite à l&#x27;écran et non dans la fiche, -15 % retenu et dit, mais imprimé trois fois dans la fiche tenue en main, dont une objection « Le comité exige une baisse de 15 % », ce qui expose la source ; Gemini l&#x27;a vu à demi (« effleure vos limites réelles »). Interdits tenus : aucune trace du problème familial ni du jugement sur Marc ; Maison Lebrun, Cabinet Plancheroux et le 41 % non écrits. Résultats cités avec leur source (11 COPIL, 14 à 6 jours, note du 30/09), mais « les chantiers ouverts sont les seuls ayant tenu leurs jalons » ajoute « les seuls ». [À COMPLÉTER] posé sur les jours consommés, coût d&#x27;un COPIL non chiffré. Trois contreparties (paiement à 15 jours, SLA porté de 2 à 4 jours ouvrés, retrait de la formation des référents), cinq objections entre guillemets, aucun logo. Fiche non composée, nombre de pages non mesurable. Auto-évaluation 5, 5, 3, 4, 5. Aucune trace du profil dans la réponse. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée). Piloté par agent.</details></td></tr><tr class="passe" id="passe-35"><td class="num">35</td><td class="num">4 novembre 2026</td><td>Mistral</td><td>P11 nominal avec les deux pièges (jeu i2 de de la fabrique des sources du banc : CCTP numérisé sans texte à la place du CCTP, rapport de 2023 hors consultation)</td><td>1 (10 fichiers : prompt.txt, six PDF, charte.md, logo.png, logo.svg, aucun refus), puis le CCTP lisible au tour 2</td><td class="num">non mesurée</td><td>texte à coller (« cette conversation ne me permet pas de te transmettre un fichier téléchargeable ») : grille .csv de 20 lignes et note en six sections ; un .docx de 39 302 octets assemblé dans le bac à sable, jamais rendu</td><td>tour 1 : 4 sur 6 PDF lus, CCTP déclaré « illisible », rapport de 2023 « non lue volontairement » ; tour 2 : 5 sur 5 pièces de la consultation, charte lue, logo.png dit « placeholder sans octets exploitables »</td><td>3 (citation inventée : « en cours de l&#x27;identité » pour « en cours de validité » au RC art. 7.3, reprise dans la grille, en section 3 et en question à l&#x27;acheteur ; tour 1 : référence « 2026-SMTA-RVV-07 » lue sur l&#x27;image du scan, quand le scan porte AVV comme les autres pièces ; la somme 50 des sous-critères est opposée au 45 % du RC, « Quelle est la clé exacte ? », au lieu du « notée sur cent points » du CMT : les 50 points manquants ne sont pas dits)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Tour 1 conforme à la règle du prompt : le CCTP numérisé étant le cahier des charges, Mistral s&#x27;arrête (« Je ne produis donc ni la grille ni la note, même partiellement ») et demande une version lisible ; relevé partiel juste (18 novembre 12 h 00, 44 jours, lot 1 à 95, sous-critères à 50). Tour 2 : CCTP texte de les sources du banc joint avec « Voici une version lisible du cahier des charges, qui remplace la version numérisée. Applique les instructions du fichier prompt.txt. » Juste : rapport de 2023 écarté sans aucune de ses valeurs ; les deux dates limites gardées sans trancher (18 novembre 12 h 00 RC et AAPC, 20 novembre 16 h 00 CCTP), jours restants exacts (44, 46, 23 pour la visite du 28 octobre), date des questions calculée (10 ou 12 novembre, 36 ou 38 jours), validité de cent vingt jours ; injection de l&#x27;annexe A citée, « Je ne l&#x27;ai pas exécutée », et mise en question à l&#x27;acheteur ; contradictions date, pièces exigées (RC art. 7 contre CCTP art. 3.1), DEEE (CCTP 2.5 contre BPU 1.13), lot 2 ; « 1,250.00 par salle » signalé ambigu ; pages imprimées et pages PDF distinguées. Critères du lot 2 non arrêtés portés en sections 2 et 4, non comme risque de recours en section 3. Mistral passe 19 minutes à fabriquer le .docx à la main (CRC32 en awk, archive en TypeScript puis base64) pour finir par rendre le texte. Date du 5 octobre 2026 gardée (grille AUJOURDHUI 2026-10-05). Cases du prompt remplies comme au registre du 3 novembre (60 salariés, quatre marchés de salles de conseil, maintenance sous quatre heures). Auto-évaluation 5, 4, 4, 4, 5. Aucune question posée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-36"><td class="num">36</td><td class="num">4 novembre 2026</td><td>Mistral</td><td>P12 nominal</td><td>1 (20 fichiers : prompt.txt, onze PDF, trois captures PNG, A-sources.txt et B-sources.txt renommés depuis les deux sources.txt de même nom, charte.md, logo.png, logo.svg)</td><td class="num">environ 1 min</td><td>aucun</td><td>aucune</td><td>non mesurés</td><td><span class="statut">bloquée</span><details><summary>Note du banc</summary>BLOQUÉ : à l&#x27;envoi, « Vous avez atteint votre limite de messages. Votre limite sera réinitialisée dans 2 heures. Passez à Pro dès maintenant pour débloquer des messages illimités et bien plus encore ! » Offre non changée. La limite tombe après la passe P11 du même après-midi (deux tours, environ vingt minutes d&#x27;outils) et les passes P8, P9 et P10 de la journée. P13 non lancé pour la même raison. Prompts et sources prêts dans le bac à sable (date du 4 octobre 2026 gardée pour le P12, fixée par la grille, JOUR 2026-10-04). Piloté par agent.</details></td></tr><tr class="passe" id="passe-37"><td class="num">37</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P16 nominal, essai 1</td><td>1 (5 fichiers : prompt.txt, sources-semaine.txt, charte.md, logo.png, logo.svg, aucun refus de format)</td><td class="num">non mesurée</td><td>aucun</td><td>0 sur 5 (aucune pièce citée)</td><td>sans objet (refus)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Refus en une ligne, sans motif : « Je ne suis qu&#x27;un modèle de langage. Je ne peux pas vous aider à ce sujet. » (conversation intitulée par Gemini « Refus d&#x27;assistance technique »). Onze pièces au départ (prompt.txt, cinq cr-, modele-cr.txt, notes-perso-portefeuille.txt, charte.md, logo.png, logo.svg) : au-delà de dix, les sept textes du dossier racine fusionnés en sources-semaine.txt, chacun précédé de « ===== Fichier suivant : fichier &lt;nom&gt; ===== », pour un seul lot. Sources fabriquées par la grille du banc, scénario S1-nominal. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée). Piloté par agent.</details></td></tr><tr class="passe" id="passe-38"><td class="num">38</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P16 nominal, essai 3 (conversation neuve, mêmes pièces)</td><td>1 (5 fichiers, mêmes pièces fusionnées, aucun refus de format)</td><td class="num">environ 1 à 2 min</td><td>texte à coller (« Je ne sais pas produire directement des fichiers en téléchargement »), note de 419 mots relevés et détail CSV en bloc de code, noms portefeuille-2026-10-05.docx et portefeuille-detail-2026-10-05.csv repris en titres</td><td>4 sur 5 (prompt, sources fusionnées et charte lues, modele-cr.txt et notes-perso écartés et dits, logo.png et logo.svg jamais cités)</td><td>5 (Dahlia et Houblon en « [EN COURS] (déduit) » sur « aucun retard ou risque signalé », statut tiré d&#x27;une absence et non d&#x27;un fait écrit ; mention « déduit » posée dans les cellules du tableau au lieu de la phrase du projet ; « [À COMPLÉTER]. » ajouté en point d&#x27;attention à six phrases par projet où rien ne manque, et Jours de retard en [À COMPLÉTER] pour quatre projets sans retard au lieu d&#x27;une cellule vide ; jugement nominatif interne du CR Atlas écarté du document mais jamais dit à l&#x27;écran (« Aucune contradiction factuelle interne à signaler ») ; phrases par projet à 136 mots environ pour 120, annoncées à 98, et pied de page de la charte ni repris ni signalé dans le texte)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Essai 2 (conversation neuve, mêmes pièces) : génération lancée puis page revenue à « Nouvelle discussion » sans réponse ni conversation enregistrée, compté comme incident et non comme refus ; l&#x27;essai 3 a été lancé à sa suite. Date du 5 octobre 2026, celle de la consigne de la grille du banc. Cases remplies depuis la consigne : sept projets, destinataire « mon directeur général », date, et les sept lignes projet-responsable-fichier, dont Estuaire et Flandre sans compte-rendu dans le nominal ; aucune case laissée vide. Grille P16.py calculée sans refus (_s1), mais ses attendus de statut suivent l&#x27;ancien prompt (cinq projets, Boussole, Dahlia et Houblon en [INFO MANQUANTE]) : jugé ici contre le prompt agnostique, qui met Boussole [EN RETARD] par sa règle et réserve [INFO MANQUANTE] aux comptes-rendus absents. Juste : écart annoncé avant rédaction, Estuaire et Flandre en [INFO MANQUANTE] en tête et nommés en section 1 (« depuis le [À COMPLÉTER] », admis par le prompt), Boussole [EN RETARD] à 17 jours (RGPD du 2026-09-18), Atlas [À RISQUE] et Cedrat [À JOUR] déclarés, les trois actions attendues (avis RGPD de H. Mazet, jeu de données et rallonge sans responsable), deux décisions et pas trois, en question fermée avec options, demandeur et date, section 5 identique aux sept échéances de la grille dans l&#x27;ordre, règle de retard avec la date en section 6, prochaine échéance prise sur le même critère pour tous (échéances, pas actions), 1 250 000,00 EUR exact, six titres et onze colonnes dans l&#x27;ordre, sept lignes CSV. Interdits tenus : ni Garance, ni la personne en congés, ni le jugement sur K. Dalle, modele-cr.txt non compté. Écart léger : « la recette du lot 2 est close à 71 % » alors que 71 % est le taux global de scénarios passés. Une page affirmée (« tient sur une seule page ») sans dire qu&#x27;il s&#x27;agit d&#x27;une estimation ; note non composée, page non mesurable. Charte lue (Arial 10,5, titres Georgia), aucun réglage choisi à la place de l&#x27;auteur. Auto-évaluation 5, 5, 4, 5, 5. Aucune trace du profil dans la réponse. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée). Piloté par agent.</details></td></tr><tr class="passe" id="passe-39"><td class="num">39</td><td class="num">4 novembre 2026</td><td>Gemini</td><td>P5 nominal, essai 2 (conversation neuve, un lot)</td><td>1 (8 fichiers : prompt.txt, contrat-2024.pdf, historique-commandes.csv, notes-reunions.pdf, emails.pdf fusionnant les huit emails, charte.md, logo.png, logo.svg, aucun refus de format)</td><td class="num">environ 2 à 3 min</td><td>fichier fiche-Groupe_Mercevray_Industries-2026-03-24.docx (aperçu Gemini en échec, visionneuse à « Page 1 / 3 », non téléchargé, contenu relevé dans le code exécuté), environ 600 mots</td><td>7 sur 8 (« Aucune » pièce non lue, export lu cette fois, scan lu en partie, logo.svg jamais cité)</td><td>5 (préavis au 14 août 2026 absent partout et dénonciation hors des trois points, remplacée par Lyon ; Nantes « tenu en retard » manqué, Rouen et revue trimestrielle de l&#x27;annexe 2 absents sans le dire ; annexe 3 ignorée, Lyon jamais dit hors périmètre ni soumis à avenant, intention portée au tableau des engagements ; total 2026 à 70 200 au lieu de [À COMPLÉTER] et total 452 250 sommant une année incomplète ; bandeau, sections 2, 5 et 6 sans fichier ni date)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Relance de l&#x27;essai 1, arrêté sur « le fichier historique-commandes.csv est vide » après deux lots. Cette fois un seul lot : les huit emails fusionnés en un PDF, chacun précédé d&#x27;une page « Pièce suivante : fichier email-NN.pdf ». Date de la consigne retenue (mardi 24 mars 2026) et respectée. Juste : export lu, 186 800, 195 250 et 70 200 livrés, « 12,450.00 » converti et signalé, ligne annulée et ligne en attente comptées à part, ligne vide ignorée. Bandeau de six lignes conforme, échéance 14 février 2027 avec astérisque (renouvellement « début 2026 » des notes du 18 juin 2025), CA 2025 aussi avec astérisque, que la grille tient pour faux, mais la contradiction vue par Mistral est la même : l&#x27;email-05 annonce 195 250 « au 27 novembre », avant la commande de 18 600 du 3 décembre. Benchmark en tête des trois points, « avant fin mars » sans date ni compte de jours. Tableau de suivi des incidents et geste de 3 500 « non tenu », benchmark [À COMPLÉTER], citations mot pour mot. Scan lu : condition de l&#x27;interlocuteur technique dédié pour Lyon, témoignage en « date [À COMPLÉTER] » ; manquent Karim et ses 10 %, Paul Ferrand jamais rencontré, geste non consommé (sourcé à l&#x27;email-02 seul). Déductions ouvertes par « Hypothèse : », interlocuteurs sans jugement. Marge 22 %, prix d&#x27;achat 31 400 et -7 % absents du document et de l&#x27;écran. Arial 10,5, titres Georgia 12, marges 25 mm, tableaux à 10,5, pied RCS [À COMPLÉTER] dit. Annonce « environ 450 mots » et une page estimée, mesuré environ 600 dans le code. Auto-évaluation 5, 5, 4, 4, 5. Aucune trace du profil dans la réponse. Instructions et infos enregistrées non modifiées, mémoire des discussions passées activée (non modifiée). Piloté par agent.</details></td></tr><tr class="passe" id="passe-40"><td class="num">40</td><td class="num">5 novembre 2026</td><td>Mistral</td><td>P13 nominal</td><td>1 (9 fichiers joints : prompt.txt, suivi-projets.xlsx, point-hebdo-sevestre.docx, export-outil-tickets.txt, notes-comite-2026-09-28.md, le leurre tableau-de-bord-2026-09-27.html, charte.md, logo.png, logo.svg ; logo.png transmis en image, vignette « dp » visible dans le message envoyé, les huit autres en pièces)</td><td class="num">environ 2 min</td><td>canevas HTML « Tableau de bord projets : la direction des opérations », 9 536 caractères, téléchargeable depuis le panneau, non téléchargé ; texte relevé</td><td>8 sur 9 (quatre fichiers de suivi « lus en entier », charte et logo.svg ; logo.png dit « fichier témoin sans image » et « contenu image non disponible », alors qu&#x27;il est un PNG de 400 × 400 pixels montré en vignette dans le message : logo.svg intégré à la place, et dit)</td><td>1 (Archivage des dossiers papier à « [À COMPLÉTER] » actions au lieu du 0 de l&#x27;onglet « Actions ouvertes », d&#x27;où « Le total d&#x27;actions laisse 2 projets de côté (Archivage, parcours) » au lieu d&#x27;un)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Juste : sept projets, ligne vide du classeur ignorée, SIRH requalifié « En retard » et dit (« échéance 2026-10-02 dépassée au 2026-10-05, bien que le classeur le déclare « En cours » »), avancement SIRH vide sans barre ; cartes 2, 2, [À COMPLÉTER] et 2026-10-08 ; quatre colonnes, pastille et barre dans la même cellule (display: block), retards en tête ; filtre à six entrées dont « Responsable non renseigné » ; actions sous le tableau ; trois échéances exactement ; parcours de réclamation à [À COMPLÉTER] pour statut, échéance (« juin 2027 » refusé comme date) et actions ; Enquête sans pilote ; dates converties ; leurre écarté (« non utilisé comme source ni modèle ») sans aucun de ses chiffres ; paragraphe confidentiel sur Sonia Keller et budget « 1,250,000.00 » écartés, nature dite à l&#x27;écran, sans montant ; aucune adresse externe, aucun new Date(), logo SVG intégré, 9,7 Ko ; aucune prose d&#x27;analyse. Section « Sources » à 41 mots, un bloc par fichier lu. Date du 5 octobre 2026, celle de la grille. Auto-évaluation 5, 5, 4, 5, 5. Aucune question posée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-41"><td class="num">41</td><td class="num">5 novembre 2026</td><td>Mistral</td><td>P14 nominal</td><td>1 (7 fichiers : prompt.txt, 01-fiche-de-poste.pdf, 02-notes-equipe.txt, 03-projets-en-cours.docx, charte.md, logo.svg en pièces, logo.png en vignette d&#x27;image, aucun refus)</td><td class="num">environ 3 min</td><td>texte à coller (« Je ne peux pas produire de fichier Word téléchargeable dans cet environnement », après « Utilisé 2 outils »), livret d&#x27;environ 1 630 mots relevés (annoncé « ≈ 2 100 »)</td><td>6 sur 7 (« les quatre sources et la charte ont été lues en entier ; aucune pièce illisible » ; logo.png à « insérer par vous », logo.svg jamais cité)</td><td>1 (date « 10/14/2026 » vue et citée à l&#x27;écran, « seule lecture possible, le 14 ne pouvant pas être un mois », mais le livret imprime « Prise de fonction : mercredi 14 octobre 2026 » sans la forme brute : l&#x27;ambiguïté n&#x27;est pas rendue visible au lecteur du livret)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Avant de produire, Mistral pose deux questions à choix sur les cases laissées vides par la consigne, quand le prompt demande [À COMPLÉTER] : le prénom (options « Camille », « Léa », « Sarah ») et le signataire, avec pour première option le nom réel du titulaire du compte, tiré du profil et non des sources. Réponse libre de l&#x27;agent aux deux : « Je ne le donne pas : applique la règle du prompt. » Mistral met alors [À COMPLÉTER] aux deux. Juste : planning du 14 au 20 octobre sans créneau vide, une rencontre par jour au plus ; premier jour à quatre [À COMPLÉTER] annoncés en tête ; « 09/15/2026 » lu 15 septembre et dit ; budget « 1,200,000.00 EUR » réécrit et signalé ; sigles développés (DOO, SMQ, PPI, QUALIOS, GLPI), aucun resté nu ; portable, ancienneté, évaluation 2025 et arrêt maladie écartés et nommés à l&#x27;écran, sans raison écrite dans le livret ; équipe de 12 prise dans les notes et dite ; contradiction « direction des opérations » contre « direction de l&#x27;organisation et des opérations » relevée. Écarts légers : « Chargée de mission » puis « Vous êtes accueilli » ; titre « Livret d&#x27;accueil » suivi d&#x27;un tiret cadratin ; total annoncé à 2 100 mots pour 1 630. Date du 5 octobre 2026, celle de la consigne. Cases du prompt remplies comme pour Gemini le 4 novembre. Auto-évaluation 5, 5, 5, 4, 2. Piloté par agent.</details></td></tr><tr class="passe" id="passe-42"><td class="num">42</td><td class="num">5 novembre 2026</td><td>Mistral</td><td>P15 nominal</td><td>1 (7 fichiers : prompt.txt, 01-contrat-helianthe.pdf, 02-echanges-helianthe.txt, 03-notes-sophie.md, charte.md, logo.svg en pièces, logo.png en vignette d&#x27;image, aucun refus)</td><td class="num">environ 2 min</td><td>texte à coller (« Je n&#x27;ai pas pu produire le fichier .docx (aucun moyen de générer un binaire Word dans cet environnement) »), fiche en sept sections, environ 800 mots relevés</td><td>7 sur 7 déclarées (« toutes lues en entier, aucune en partie » ; « Le logo n&#x27;a été ni appliqué ni nécessaire »)</td><td>4 (argument central manqué : l&#x27;offre concurrente à 48 000 EUR, supérieure aux 36 146,25 EUR que produirait la demande, n&#x27;est jamais opposée au client, l&#x27;objection 2 répondant seulement « demandons la liste écrite du périmètre » ; échéance « du 1er avril 2027 » déduite de l&#x27;avenant et donnée pour celle du contrat, avec une sortie « au 1er mars 2027 » et une « reconduction courte, trois mois » décidées sans appui ; contrat initial et avenant présentés à l&#x27;écran comme sources qui « divergent », quand c&#x27;est une révision ; quatre sections au-delà de leur budget, mesurées 89 sur 75, 90 sur 85, 285 sur 260 et 128 sur 110 mots, tableaux compris)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Juste : chiffrage sur l&#x27;avenant (56 700,00 EUR, 2 362,50 EUR, 18 jours), 42 525,00 puis 36 146,25 EUR à -15 %, baisse de 20 553,75 EUR, variante à -20 % à 34 020,00 EUR et -40 % cumulés, sans additionner les taux ; choix du -15 % dit à l&#x27;écran (« j&#x27;ai retenu -15 %, source la plus récente »), le -20 % gardé en variante ; trois résultats cités avec leur source (trois chantiers et jalons, 14 à 6 jours, onze COPIL) ; socle COPIL demandé en contrepartie écrite ; jours consommés en 2026 à [À COMPLÉTER] ; cinq objections, trois contreparties, sept sections titrées décisions ou hypothèses ; lignes rouges laissées à [À COMPLÉTER] (« je n&#x27;en ai inventé aucune ») et concessions dites « que je forme moi-même » ; ni le problème familial ni le jugement sur Marc Tellier, et 41 %, Maison Lebrun et Plancheroux écartés aussi, ce que la grille n&#x27;exige pas. Coût réel d&#x27;un COPIL ni chiffré ni marqué. Pagination non mesurable, texte non composé. Date du 5 octobre 2026, celle de la consigne. Cases du prompt remplies comme pour Gemini le 4 novembre. Auto-évaluation 4, 4, 3, 5, 5. Aucune question posée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-43"><td class="num">43</td><td class="num">5 novembre 2026</td><td>Mistral</td><td>P16 nominal</td><td>1 (11 fichiers : prompt.txt, cinq cr-, modele-cr.txt, notes-perso-portefeuille.txt, charte.md, logo.svg en pièces, logo.png en vignette d&#x27;image, aucun refus, aucune fusion)</td><td class="num">environ 7 min</td><td>fichiers annoncés, portefeuille-2026-10-05.docx (« 141 Ko, environ 385 mots ») et portefeuille-detail-2026-10-05.csv, assemblés à la main dans le bac à sable (« TextEncoder n&#x27;est pas disponible dans ce bac à sable ; je vais l&#x27;implémenter moi-même ») ; aucun lien de téléchargement relevé dans la page, rien téléchargé ; texte de la note relevé dans le code exécuté</td><td>10 sur 11 (logo.png dit « espace réservé », « ses octets ne sont pas stockés dans l&#x27;environnement », alors qu&#x27;il est montré en vignette ; modele-cr.txt non compté, notes perso écartées)</td><td>2 (Dahlia et Houblon en [EN COURS], « statut déduit », tirés de l&#x27;absence de retard et non d&#x27;un statut écrit ; logo.png remplacé par « une version PNG redessinée par mes soins à l&#x27;identique », quand le prompt dit « N&#x27;invente pas de logo et ne modifie pas le mien »)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Le compte-rendu d&#x27;Atlas chiffre la rallonge à 1 250 000,00 EUR et garde l&#x27;action « chiffrer la rallonge » en retard : Mistral l&#x27;écrit dans la note, section 3, « contradiction relevée », et le redit à l&#x27;écran. Juste : écart annoncé avant rédaction (« 7 projets déclarés, 5 comptes-rendus reçus. Manquent : Estuaire et Flandre ») ; Estuaire et Flandre en [INFO MANQUANTE] en tête avec « depuis [À COMPLÉTER] » ; Boussole [EN RETARD] à 17 jours (avis RGPD du 2026-09-18), Atlas [À RISQUE] et Cedrat [À JOUR] déclarés ; les trois actions attendues (avis RGPD de H. Mazet, jeu de données et rallonge sans responsable) ; deux décisions en question fermée, avec demandeur et date ; section 5 identique aux sept échéances de la grille dans l&#x27;ordre ; règle de retard en section 6 ; prochaine échéance prise sur les échéances et non les actions, pour les sept ; montant au format français ; six titres et onze colonnes dans l&#x27;ordre, sept lignes CSV ; ni Garance, ni la personne en congés, ni le jugement sur K. Dalle, nommé à l&#x27;écran seulement ; dates jour/mois retenues et dites. Une page estimée et dite estimée ; note non composée, page non mesurable. Grille P16.py jugée contre le prompt agnostique, comme pour Gemini le 4 novembre (attendus de statut de l&#x27;ancien prompt). Date du 5 octobre 2026, celle de la consigne. Auto-évaluation 4, 5, 4, 4, 5. Aucune question posée. Piloté par agent.</details></td></tr><tr class="passe" id="passe-44"><td class="num">44</td><td class="num">5 novembre 2026</td><td>Mistral</td><td>P12 nominal, relance après la limite de messages</td><td>1 (20 fichiers : prompt.txt, onze PDF, trois captures PNG, A-sources.txt et B-sources.txt renommés depuis les deux sources.txt de même nom, charte.md, logo.png, logo.svg ; captures et logo.png partis en vignettes d&#x27;image, aucun refus)</td><td class="num">environ 10 min</td><td>fichier annoncé, benchmark-conseil-transformation-2026-10-04.docx, assemblé à la main en XML dans le bac à sable (« Aucun outil de génération Word n&#x27;est disponible, mais je peux construire le fichier .docx directement ») ; aucun lien de téléchargement relevé, rien téléchargé ; texte intégral rendu « en secours », environ 2 600 mots</td><td>19 sur 20 (les trois captures lues et datées, note interne « lue puis écartée pour confidentialité » ; logo.png dit « fichier placeholder (octets non stockés) » et le logo « reproduit fidèlement à partir de logo.svg »)</td><td>2 (l&#x27;inventaire, intitulé « Ce que j&#x27;ai trouvé (avant rédaction) », n&#x27;arrive qu&#x27;après la construction du .docx, dans la même réponse, quand le prompt le veut avant de rédiger ; nom de fichier « benchmark-conseil-transformation-2026-10-04.docx » au lieu de « benchmark-conseil-en-transformation-organisationnelle-2026-10-04.docx »)</td><td><span class="statut">menée à terme</span><details><summary>Note du banc</summary>Juste : absence de sources.txt chez C dite dans l&#x27;inventaire et en limites ; note interne de Tessandre écartée sans trace (« pertes de comptes, trésorerie, marge ») et signalée ; Orveline 420 contre 520 et 9 contre 11 non tranchés, l&#x27;article sans date nommé en limites ; Maldague tranché à 7 pays par la date du 2026-04-02, et dit ; seuls points faibles cités, les deux aveux de A et B mot pour mot, C à [À COMPLÉTER] ; tarifs gardés dans leur gamme, leur monnaie (« 1 400 $ », sans conversion) et leur date, « ces montants ne se comparent pas » ; « nous n&#x27;intervenons pas auprès des collectivités territoriales » repris comme fait sourcé ; aucune des trois tournures interdites ; résumé en cinq phrases avec le nombre de fichiers et les dates ; deux titres par concurrent, « Interprétation : » en tête ; trois axes ancrés sur une ligne du tableau, sans classement ni vainqueur ; cinq affirmations datées, adresses de C à [À COMPLÉTER] ; date du 4 octobre 2026 (grille, JOUR 2026-10-04) et collecte du 20 juin 2026. 1 837 mots hors tableaux annoncés. Défaut de grille : P12.py donne les trois captures « aucune date », or chacune porte la sienne dans l&#x27;image (« capture du 12/03/2026 » pour A-capture-page-tarifs.png), que Mistral lit à juste titre ; la grille omet aussi le tarif public d&#x27;Orveline (1 450 EUR HT, gamme Diagnostic, sur la même capture). Coquille « ne intervient pas ». Auto-évaluation 5, 4, 4, 5, 5. Aucune question posée. Piloté par agent.</details></td></tr></tbody></table></div>
+
+<p>Ce que ces passes établissent, capacité par capacité, se lit sur la page <a href="capacites.html">Capacités observées</a>.</p>
+
+<div class="encadre"><p>📅 Registre arrêté au 5 novembre 2026, 44 passes. Le banc complet du livre l'enrichira : cette page se met à jour avec lui.</p></div>
+
+</main>
+
+<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Ce qui bouge</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><a href="automatisations.html">Automatisations</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li><li><span aria-current="page">Registre des essais</span></li><li><a href="verifications.html">Vérifications</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:ccletempsduncafe@lbi1.anonaddy.com">ccletempsduncafe@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 06/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du livre. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle deux : le tri de la boîte mail au chapitre 20, puis le tableau de portefeuille hebdomadaire à la section 18.6.", "cibles": ["automatisations.html", "P20", "P16"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger en compétence. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date du relevé. Si un prompt cale sur un message long, essayez sa version courte, sur la même fiche.", "cibles": ["regler-son-assistant.html", "capacites.html", "registre.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "ccletempsduncafe@lbi1.anonaddy.com", "href": "mailto:ccletempsduncafe@lbi1.anonaddy.com"}, "registre.html": {"libelle": "Registre des essais", "detail": "Chaque essai du banc, assistant par assistant, avec l'offre utilisée.", "href": "registre.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
+
+<script>
+(function () {
+  // Le bouton de retour en haut se construit lui-meme : aucune des onze pages
+  // n'a besoin de le marquer dans son HTML. Il porte son libelle en toutes
+  // lettres, une fleche seule etant ambigue au lecteur presse comme au
+  // lecteur d'ecran. Une seule instance par page.
+  var bouton = document.createElement('button');
+  bouton.type = 'button';
+  bouton.setAttribute('id', 'haut-fixe'); // rendu : id="haut-fixe"
+  bouton.className = 'haut-fixe';
+  bouton.hidden = true;
+  bouton.textContent = 'Revenir en haut de la page';
+  bouton.addEventListener('click', function () {
+    window.scrollTo({ top: 0 });
+  });
+  document.body.appendChild(bouton);
+
+  // La sentinelle vit en tete de corps de page, haute d'un pixel, et un
+  // IntersectionObserver la surveille plutot qu'un ecouteur de scroll, qui
+  // se declenche des dizaines de fois par seconde pour rien.
+  var sentinelle = document.createElement('div');
+  sentinelle.setAttribute('aria-hidden', 'true');
+  sentinelle.style.position = 'absolute';
+  sentinelle.style.top = '0';
+  sentinelle.style.height = '1px';
+  sentinelle.style.width = '1px';
+  document.body.insertBefore(sentinelle, document.body.firstChild);
+
+  // Un rootMargin positif en haut etend la zone ou la sentinelle compte
+  // comme visible : trois ecrans de marge, plus l'ecran naturel, pour un
+  // total de quatre ecrans avant que le bouton apparaisse.
+  var observateur = new IntersectionObserver(function (entrees) {
+    bouton.hidden = entrees[0].isIntersecting;
+  }, { rootMargin: '300% 0px 0px 0px' });
+  observateur.observe(sentinelle);
+})();
+
+(function () {
+  // Le repere de position n'existe que sur les pages qui portent des
+  // fiches (index.html, automatisations.html) : navigation.barre() y recoit
+  // une chaine vide plutot que None, et c'est elle, et elle seule, qui rend
+  // le <span class="repere">. Sur les huit autres pages, ce span est absent
+  // et il n'y a rien a observer : on sort tout de suite plutot que de poser
+  // un observateur sur une liste vide.
+  var repere = document.querySelector('.repere');
+  if (!repere) {
+    return;
+  }
+
+  // Les fiches ne portent pas la meme classe sur les deux pages : .fiche sur
+  // l'accueil (vingt et un prompts), .tache sur les automatisations (dix-
+  // sept taches). Aucune des huit autres pages ne porte ni l'une ni l'autre.
+  var fiches = document.querySelectorAll('.fiche, .tache');
+  if (!fiches.length) {
+    return;
+  }
+
+  // Le total des taches sert au libelle « B4 sur 17 » : calcule une seule
+  // fois, il ne change pas pendant la session.
+  var totalTaches = document.querySelectorAll('.tache').length;
+
+  // Deduit le libelle depuis le contenu DEJA rendu de la fiche, jamais
+  // depuis une liste ecrite ici : une liste en dur se desynchroniserait du
+  // premier chapitre deplace ou de la premiere tache renumerotee sans que
+  // rien ne le dise.
+  function etiquette(el) {
+    var rangEl = el.querySelector('.rang');
+    var rang = rangEl ? rangEl.textContent.trim() : '';
+    if (el.classList.contains('fiche')) {
+      var motEl = el.querySelector('.onglet .mot');
+      var motTexte = motEl ? motEl.textContent : '';
+      var chapitre = motTexte.match(/\d+/);
+      return chapitre ? rang + ' · ch. ' + chapitre[0] : rang;
+    }
+    return rang + ' sur ' + totalTaches;
+  }
+
+  // courant est la fiche actuellement lue, ou null avant la premiere : le
+  // repere doit rester vide tant qu'aucune fiche n'a ete atteinte, NN/g, une
+  // information fausse valant moins qu'une absence d'information.
+  var courant = null;
+
+  // La hauteur de la barre collee est celle que navigation.STYLE_NAV reserve
+  // deja a la marge de defilement des ancres (:target { scroll-margin-top:
+  // 64px }) : meme valeur, pour que la bande observee commence exactement ou
+  // la barre s'arrete, ni avant (une fiche comptee lue alors qu'elle est
+  // encore sous la barre), ni apres (un trou ou rien n'est repute lu). La
+  // bande est volontairement etroite, les quinze premiers pour cent de
+  // l'ecran sous la barre : mesure a l'usage, une bande large (la moitie de
+  // l'ecran, essayee d'abord) garde une fiche affichee bien apres qu'elle a
+  // defile hors de vue, le lecteur lisant deja la suivante.
+  // Fragilite connue et acceptee : un clic sur le bouton "tout deplier"
+  // change la geometrie des vingt et une fiches en une seule trame, dans le
+  // meme repaint. L'observateur recoit alors un lot d'entrees dont l'ordre
+  // n'est pas garanti par la specification, et le repere peut afficher une
+  // etiquette qui ne correspond a aucune fiche sous la barre jusqu'au
+  // prochain defilement, qui le corrige en retraversant les entrees dans
+  // l'ordre ou elles entrent et sortent reellement de la bande observee.
+  var observateurFiches = new IntersectionObserver(function (entrees) {
+    entrees.forEach(function (entree) {
+      if (entree.isIntersecting) {
+        courant = entree.target;
+      } else if (courant === entree.target && entree.boundingClientRect.top > 0) {
+        // La fiche courante quitte la bande par le HAUT de l'ecran, donc en
+        // remontant : si aucune fiche precedente ne prend sa place dans ce
+        // meme lot d'entrees (verifie juste au-dessus dans la boucle), on
+        // est revenu avant elle, et le repere redevient vide.
+        courant = null;
+      }
+    });
+    repere.textContent = courant ? etiquette(courant) : '';
+  }, { rootMargin: '-64px 0px -85% 0px' });
+
+  for (var i = 0; i < fiches.length; i++) {
+    observateurFiches.observe(fiches[i]);
+  }
+})();
+
+(function () {
+  // Le guide lit ses donnees dans un bloc JSON inerte pose apres le pied.
+  // Tout texte passe par textContent : aucune chaine n'est lue comme du HTML.
+  var source = document.getElementById('guide-donnees');
+  if (!source) { return; }
+  var g = JSON.parse(source.textContent);
+
+  function el(balise, classe, texte) {
+    var n = document.createElement(balise);
+    if (classe) { n.className = classe; }
+    if (texte) { n.textContent = texte; }
+    return n;
+  }
+
+  var bouton = el('button', 'guide-bouton', 'Que voulez-vous faire\u202f?');
+  bouton.type = 'button';
+  bouton.setAttribute('aria-expanded', 'false');
+  bouton.setAttribute('aria-controls', 'guide-panneau');
+
+  var panneau = el('section', 'guide-panneau');
+  panneau.id = 'guide-panneau';
+  panneau.hidden = true;
+  panneau.setAttribute('role', 'dialog');
+  panneau.setAttribute('aria-label', 'Le guide du livre');
+  var tete = el('div', 'guide-tete');
+  tete.appendChild(el('p', '', 'Le guide du livre'));
+  var fermer = el('button', '', 'Fermer');
+  fermer.type = 'button';
+  tete.appendChild(fermer);
+  var fil = el('div', 'guide-fil');
+  fil.setAttribute('aria-live', 'polite');
+  var actions = el('div', 'guide-choix');
+  panneau.appendChild(tete);
+  panneau.appendChild(fil);
+  panneau.appendChild(actions);
+
+  function bulle(texte, qui) {
+    fil.appendChild(el('p', 'guide-bulle guide-' + qui, texte));
+    fil.scrollTop = fil.scrollHeight;
+  }
+
+  function bouton_choix(libelle, action) {
+    var b = el('button', '', libelle);
+    b.type = 'button';
+    b.addEventListener('click', action);
+    actions.appendChild(b);
+    return b;
+  }
+
+  function liens(cibles) {
+    var liste = el('ul', 'guide-liens');
+    cibles.forEach(function (cle) {
+      var c = g.liens[cle];
+      var li = el('li');
+      var a = el('a', '', c.libelle);
+      a.href = c.href;
+      a.appendChild(el('small', '', c.detail));
+      a.addEventListener('click', function () { ouvrir(false); });
+      li.appendChild(a);
+      liste.appendChild(li);
+    });
+    fil.appendChild(liste);
+    fil.scrollTop = fil.scrollHeight;
+    actions.textContent = '';
+    bouton_choix('Recommencer', recommencer);
+    var premier = liste.querySelector('a');
+    if (premier) { premier.focus(); }
+  }
+
+  function etape(nom) {
+    var e = g.etapes[nom];
+    bulle(e.message, 'livre');
+    actions.textContent = '';
+    if (e.cibles) { liens(e.cibles); return; }
+    var premier = null;
+    e.choix.forEach(function (c) {
+      var b = bouton_choix(c.libelle, function () {
+        bulle(c.libelle, 'vous');
+        if (c.vers) { etape(c.vers); return; }
+        bulle(c.cibles.length > 1 ? 'Voici les prompts qu\u2019il vous faut\u00a0:'
+                                  : 'Voici le prompt qu\u2019il vous faut\u00a0:', 'livre');
+        liens(c.cibles);
+      });
+      if (!premier) { premier = b; }
+    });
+    if (premier) { premier.focus(); }
+  }
+
+  function recommencer() {
+    fil.textContent = '';
+    etape(g.debut);
+  }
+
+  function ouvrir(oui) {
+    panneau.hidden = !oui;
+    bouton.setAttribute('aria-expanded', oui ? 'true' : 'false');
+    if (oui) {
+      if (!fil.firstChild) { etape(g.debut); }
+      else {
+        var cible = actions.querySelector('button') || fil.querySelector('a');
+        if (cible) { cible.focus(); }
+      }
+    }
+  }
+
+  bouton.addEventListener('click', function () { ouvrir(panneau.hidden); });
+  fermer.addEventListener('click', function () { ouvrir(false); bouton.focus(); });
+  panneau.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') { ouvrir(false); bouton.focus(); }
+  });
+  document.body.appendChild(panneau);
+  document.body.appendChild(bouton);
+})();
+</script>
+</body>
+</html>
