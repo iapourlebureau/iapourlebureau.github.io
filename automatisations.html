@@ -475,6 +475,14 @@ td.chapitre { white-space: nowrap; font-weight: 600; }
 .tache dd { margin: 3px 0 0; }
 .prolonge { margin: 0 0 12px; font-size: 15px; font-style: italic; }
 
+/* Refonte du 22 novembre 2026 (« ameliore la page ») : texte aligne a
+   gauche, sans cesure forcee, comme la page des variantes ; la colonne
+   justifiee creusait des trous dans les titres du sommaire. */
+body #contenu p, body #contenu li { text-align: left; hyphens: manual; -webkit-hyphens: manual; }
+figure.capture { margin: 22px 0 28px; max-width: 68ch; }
+figure.capture img { display: block; width: 100%; height: auto;
+  border: 1px solid var(--trait); border-radius: 3px; background: #fff; }
+figure.capture figcaption { margin-top: 8px; font-size: 14.5px; color: var(--encre-douce); line-height: 1.5; }
 .sommaire { max-width: 68ch; }
 .sommaire .parcours { margin: 0 0 6px; }
 .sommaire .parcours strong { font-weight: 700; }
@@ -891,6 +899,16 @@ moment. Vous les posez dans cet ordre, au même endroit.</p>
 actions programmées. Cherchez la fonction, pas le mot. Si une étape ne
 correspond à rien sur votre écran, cherchez le réglage qui produit le même
 effet.</p>
+<figure class="capture">
+<img src="capture-taches-chatgpt.png" width="1568" height="386" loading="lazy"
+ alt="ChatGPT : dans la barre latérale, la rubrique Planifié ; à côté, le bouton Nouvelle tâche et des modèles de tâches récurrentes.">
+<figcaption>À quoi la fonction ressemble, chez ChatGPT en offre gratuite, en
+novembre 2026 : la rubrique « Planifié » de la barre latérale, puis
+« Nouvelle tâche ». Chez Claude, les tâches planifiées vivent dans
+l'application de bureau, et non sur le site. Chez les autres assistants,
+cherchez « tâches planifiées », « actions programmées » ou « tâches
+récurrentes » dans le menu ou les réglages.</figcaption>
+</figure>
 <ol class="etapes">
 <li>Trouvez la fonction. Elle vit en général dans les réglages de l&#x27;assistant, ou à côté de la liste de vos conversations et de vos projets. Si vous ne la trouvez pas, votre offre ne la porte peut-être pas, ou votre organisation l&#x27;a coupée. Le prompt de la fiche reste alors utilisable à la main.</li>
 <li>Créez une tâche nouvelle. Si l&#x27;assistant vous propose de la décrire en conversation plutôt que de la régler vous-même, préférez le réglage case par case pour cette première fois : vous verrez ce que chaque case décide et saurez la corriger ensuite.</li>
