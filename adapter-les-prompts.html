@@ -414,6 +414,28 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
   hyphens: manual;
   -webkit-hyphens: manual;
 }
+
+#contenu { max-width: 44rem; }
+#contenu p, #contenu li { text-align: left; hyphens: manual; -webkit-hyphens: manual; }
+.sommaire-variantes { margin: 8px 0 40px; border-top: 2px solid var(--encre); }
+.sommaire-variantes ol { list-style: none; margin: 0; padding: 0; }
+.sommaire-variantes li { display: flex; justify-content: space-between; gap: 16px;
+  padding: 12px 0; border-bottom: 1px solid var(--trait); }
+.sommaire-variantes a { color: var(--encre); font-weight: 600; text-decoration: none; }
+.sommaire-variantes a:hover, .sommaire-variantes a:focus-visible { color: var(--lien); text-decoration: underline; }
+.sommaire-variantes span { color: var(--encre-douce); white-space: nowrap; }
+#contenu h2 { margin-top: 64px; padding-top: 18px; border-top: 2px solid var(--encre); }
+#contenu h2 + p em { color: var(--encre-douce); }
+#contenu h3 { font-size: 19px; margin: 36px 0 8px; line-height: 1.3; }
+#contenu h3 + p { margin-top: 0; }
+.ajout { margin: 14px 0 22px; padding: 14px 16px 16px; background: var(--carte, #fff);
+  border: 1px solid var(--trait); border-left: 4px solid var(--lien); border-radius: 3px; }
+.ajout .ou { margin: 0 0 8px; font-size: 14.5px; font-weight: 600; color: var(--encre-douce); }
+.ajout pre { margin: 0 0 12px; background: transparent; border: 0; padding: 0; font-size: 15px; }
+.copier-ligne { font: inherit; font-size: 14.5px; font-weight: 600; color: var(--encre);
+  background: transparent; border: 1px solid var(--encre); border-radius: 3px; padding: 6px 14px; cursor: pointer; }
+.copier-ligne:hover { background: var(--encre); color: var(--papier); }
+.copier-ligne:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -426,172 +448,216 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
     <a class="retour" href="index.html">← Retour aux prompts du livre</a>
   </div>
 </header>
-<nav class="pages" aria-label="Les pages du site"><details class="pages-repli"><summary>Les onze autres pages</summary></details><ul class="pages-liste"><li><a href="index.html">Les prompts</a></li><li><span aria-current="page">Adapter les prompts</span></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li><li><a href="automatisations.html">Automatisations</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li></ul></nav>
+<nav class="pages" aria-label="Les pages du site"><details class="pages-repli"><summary>Les onze autres pages</summary></details><ul class="pages-liste"><li><a href="index.html">Les prompts</a></li><li><span aria-current="page">Adapter les prompts</span></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li><li><a href="automatisations.html">Automatisations</a></li><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></nav>
 
 <article id="contenu">
 <p>Les chapitres du livre qui renvoient ici le disent dans leur section
 « Adapter ce prompt à votre situation » : un prompt se modifie comme un
-texte ordinaire. Vous ajoutez une phrase à la section concernée, en
-nommant le fichier, le découpage ou le format que vous voulez
-obtenir.</p>
-<p>Cette page rassemble les variantes détaillées, celles qui reviennent
-le plus souvent. Elles valent pour tout assistant, puisqu’elles ne
-touchent qu’au texte du prompt. Elles sont écrites pour être recopiées
-puis adaptées, non pour être lues d’un bout à l’autre : allez
-directement au chapitre qui vous intéresse.</p>
-<p>Une précaution vaut pour toutes. Modifiez une seule chose à la fois,
-puis éprouvez le prompt dans une conversation neuve, avec des pièces que
-vous connaissez. Si le résultat ne convient pas, revenez à la boucle du
-chapitre 3, section 3.7 : exposez le problème dans une conversation de
-brouillon, puis faites reformuler le prompt au propre.</p>
+texte ordinaire. Cette page rassemble les variantes qui reviennent le
+plus souvent, pour six prompts. Elles valent pour tout assistant,
+puisqu’elles ne touchent qu’au texte du prompt.</p>
+<p>Chaque variante part d’une situation. Quand elle demande d’ajouter
+une phrase au prompt, la phrase est dans un cadre, avec la section du
+prompt où la coller et un bouton pour la copier. Allez directement au
+chapitre qui vous intéresse.</p>
+<p>Modifiez une seule chose à la fois, puis éprouvez le prompt dans une
+conversation neuve, avec des pièces que vous connaissez. Si le résultat
+ne convient pas, revenez à la boucle du chapitre 3, section 3.7 :
+exposez le problème dans une conversation de brouillon, puis faites
+reformuler le prompt au propre.</p>
+<nav class="sommaire-variantes" aria-label="Les six prompts"><ol><li><a href="#rapport-consolide">Le rapport consolidé</a> <span>6 situations</span></li><li><a href="#fiche-compte-client">La fiche de compte client</a> <span>5 situations</span></li><li><a href="#proposition-commerciale">La proposition commerciale</a> <span>7 situations</span></li><li><a href="#dossier-accueil">Le dossier d’accueil</a> <span>5 situations</span></li><li><a href="#negociation">La préparation de
+négociation</a> <span>3 situations</span></li><li><a href="#portefeuille-projets">Le tableau de bord de
+portefeuille</a> <span>5 situations</span></li></ol></nav>
 <h2 id="rapport-consolide">Le rapport consolidé</h2>
 <p><em>chapitre 7, section 7.6, prompt P4.</em></p>
-<p>Pour comparer avec le mois précédent, joignez aussi les exports de ce
-mois-là, nommés clairement, par exemple
-<code>ventes-septembre.csv</code>, et ajoutez-les à la liste de la
-section « Sources ». Le prompt compare déjà les deux mois quand vos
+<h3 id="comparer-avec-le-mois-précédent">Comparer avec le mois
+précédent</h3>
+<p>Joignez aussi les exports de ce mois-là, nommés clairement, par
+exemple <code>ventes-septembre.csv</code>, et ajoutez-les à la liste de
+la section « Sources ». Le prompt compare déjà les deux mois quand vos
 fichiers les contiennent, et il écarte toute ligne d’un autre mois en
 vous disant combien.</p>
-<p>Si votre directeur veut une vue par région ou par activité, précisez
-le découpage dans « Structure et ton » : « Dans la performance
-commerciale et les coûts, décompose chaque total par région : Nord, Sud,
-Est, Ouest, avec une phrase par région. » Augmentez alors le plafond de
-ces deux parties d’environ cent mots par région, faute de quoi le prompt
-coupera ailleurs pour tenir le compte.</p>
-<p>Si vous ajoutez une quatrième source, un export des effectifs par
-exemple, ajoutez une ligne dans « Sources » et complétez la règle des
-contradictions : dites de quel fichier relève chaque indicateur qu’elle
-porte. Sans cette précision, deux fichiers qui donnent deux valeurs
-n’ont plus d’arbitre.</p>
-<p>Vos exports changent parfois de forme d’un mois à l’autre : une
-colonne renommée, une autre ajoutée. Ajoutez alors : « Si une colonne
-attendue manque ou porte un autre nom que le mois dernier, liste-la et
-demande-moi comment la lire avant tout calcul. » Le prompt vérifie déjà
-les séparateurs et le format décimal, pas les noms de colonnes.</p>
-<p>Si votre organisation a un modèle de rapport, joignez-le. Le prompt
-le prend pour modèle de titres et de vocabulaire, jamais pour source :
-il n’en reprend aucun chiffre, pas même celui du mois précédent.</p>
-<p>Si votre charte interne interdit de joindre un des trois exports,
-comme celle de Gilles pour les documents du niveau le plus haut, ne le
-joignez pas. Écrivez dans le message les deux ou trois totaux dont le
-rapport a besoin, avec leur origine, et remplacez la ligne du fichier
-dans « Sources » par : « Les coûts par équipe sont donnés dans ce
-message ; ils comptent comme couts.csv. »</p>
+<h3 id="une-vue-par-région-ou-par-activité">Une vue par région ou par
+activité</h3>
+<p>Précisez le découpage voulu. Augmentez alors le plafond de ces deux
+parties d’environ cent mots par région, faute de quoi le prompt coupera
+ailleurs pour tenir le compte.</p>
+<div class="ajout"><p class="ou">À coller dans « Structure et ton »</p><pre><code>Dans la performance commerciale et les coûts, décompose
+chaque total par région : Nord, Sud, Est, Ouest, avec une
+phrase par région.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div></div>
+<h3 id="une-quatrième-source">Une quatrième source</h3>
+<p>Un export des effectifs, par exemple. Ajoutez une ligne dans «
+Sources » et complétez la règle des contradictions : dites de quel
+fichier relève chaque indicateur qu’elle porte. Sans cette précision,
+deux fichiers qui donnent deux valeurs n’ont plus d’arbitre.</p>
+<h3 id="des-exports-qui-changent-de-forme-dun-mois-à-lautre">Des exports
+qui changent de forme d’un mois à l’autre</h3>
+<p>Une colonne renommée, une autre ajoutée : le prompt vérifie déjà les
+séparateurs et le format décimal, pas les noms de colonnes.</p>
+<div class="ajout"><p class="ou">À coller dans « Sources »</p><pre><code>Si une colonne attendue manque ou porte un autre nom que
+le mois dernier, liste-la et demande-moi comment la lire
+avant tout calcul.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="un-modèle-de-rapport-maison">Un modèle de rapport maison</h3>
+<p>Joignez-le. Le prompt le prend pour modèle de titres et de
+vocabulaire, jamais pour source : il n’en reprend aucun chiffre, pas
+même celui du mois précédent.</p>
+<h3 id="une-charte-qui-interdit-de-joindre-un-des-exports">Une charte
+qui interdit de joindre un des exports</h3>
+<p>C’est le cas de Gilles pour les documents du niveau le plus haut. Ne
+joignez pas le fichier. Écrivez dans le message les deux ou trois totaux
+dont le rapport a besoin, avec leur origine, et remplacez la ligne du
+fichier dans « Sources » par celle-ci.</p>
+<div class="ajout"><p class="ou">À coller dans « Sources »</p><pre><code>Les coûts par équipe sont donnés dans ce message ; ils
+comptent comme couts.csv.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
 <h2 id="fiche-compte-client">La fiche de compte client</h2>
 <p><em>chapitre 8, section 8.6, prompt P5.</em></p>
-<p>Si votre revue réunit plusieurs interlocuteurs du client, ajoutez à
-la section 6 du prompt, « Interlocuteurs et rôles », cette consigne : «
-Pour chaque interlocuteur, indique les sujets qui le préoccupent d’après
-nos échanges et deux questions qu’il pourrait poser, avec le fichier
-d’où tu les tires. » Relevez le plafond de cette section d’une
-cinquantaine de mots par personne. Elle reste hors de la première page,
-que vous lisez debout.</p>
-<p>Si vous préparez plusieurs comptes en fin de trimestre, ouvrez un
-projet ou une conversation par client, avec le même prompt. Ne mélangez
-jamais les pièces de deux clients dans la même conversation : une phrase
-d’un email de l’un finirait dans la fiche de l’autre, sans que rien ne
-le signale.</p>
-<p>Si vous avez des informations publiques sur le client, son dernier
-rapport annuel ou un communiqué récent, joignez-les et ajoutez une ligne
-dans « Sources » : « rapport-annuel.pdf : publication du client, qui
-sert à situer ses priorités, jamais à contredire le contrat ni l’export
-de commandes. » La seconde moitié de la phrase compte autant que la
-première.</p>
-<p>Si votre outil de gestion commerciale n’exporte pas l’historique des
-commandes, joignez à la place le relevé de vos factures et renommez la
-ligne dans « Sources ». Le prompt s’arrête quand l’export manque : c’est
+<h3 id="plusieurs-interlocuteurs-du-client-à-la-revue">Plusieurs
+interlocuteurs du client à la revue</h3>
+<p>Relevez le plafond de cette section d’une cinquantaine de mots par
+personne. Elle reste hors de la première page, que vous lisez
+debout.</p>
+<div class="ajout"><p class="ou">À coller dans « 6. Interlocuteurs et rôles »</p><pre><code>Pour chaque interlocuteur, indique les sujets qui le
+préoccupent d&#39;après nos échanges et deux questions qu&#39;il
+pourrait poser, avec le fichier d&#39;où tu les tires.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="plusieurs-comptes-à-préparer-en-fin-de-trimestre">Plusieurs
+comptes à préparer en fin de trimestre</h3>
+<p>Ouvrez un projet ou une conversation par client, avec le même prompt.
+Ne mélangez jamais les pièces de deux clients dans la même conversation
+: une phrase d’un email de l’un finirait dans la fiche de l’autre, sans
+que rien ne le signale.</p>
+<h3 id="des-informations-publiques-sur-le-client">Des informations
+publiques sur le client</h3>
+<p>Son dernier rapport annuel ou un communiqué récent : joignez-les et
+ajoutez une ligne dans « Sources ». La seconde moitié de la phrase
+compte autant que la première.</p>
+<div class="ajout"><p class="ou">À coller dans « Sources »</p><pre><code>rapport-annuel.pdf : publication du client, qui sert à
+situer ses priorités, jamais à contredire le contrat ni
+l&#39;export de commandes.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="pas-dexport-de-lhistorique-des-commandes">Pas d’export de
+l’historique des commandes</h3>
+<p>Joignez à la place le relevé de vos factures et renommez la ligne
+dans « Sources ». Le prompt s’arrête quand l’export manque : c’est
 voulu, car c’est lui qui porte le chiffre d’affaires du bandeau.</p>
-<p>Si vous ne pouvez joindre que des extraits du contrat, comme Margaux
-dont l’accord avec son directeur interdit de joindre un contrat en
-entier, le prompt le prévoit déjà. Choisissez les conditions
-particulières et les annexes de service, qui portent les échéances et
-les engagements. Le prompt ne conclura jamais qu’une clause n’existe
-pas, seulement qu’il ne l’a pas trouvée dans vos extraits.</p>
+<h3 id="seulement-des-extraits-du-contrat">Seulement des extraits du
+contrat</h3>
+<p>C’est le cas de Margaux, dont l’accord avec son directeur interdit de
+joindre un contrat en entier. Le prompt le prévoit déjà. Choisissez les
+conditions particulières et les annexes de service, qui portent les
+échéances et les engagements. Le prompt ne conclura jamais qu’une clause
+n’existe pas, seulement qu’il ne l’a pas trouvée dans vos extraits.</p>
 <h2 id="proposition-commerciale">La proposition commerciale</h2>
 <p><em>chapitre 12, section 12.6, prompt P10.</em></p>
-<p>Si votre domaine a son vocabulaire, dites dans la ligne « Ton attendu
-» du brief les termes à employer et ceux à éviter : « professionnel ;
-emploie plan de maîtrise sanitaire et bonnes pratiques d’hygiène ; évite
-le jargon réglementaire, le lecteur est une directrice de la
-restauration, pas un inspecteur. »</p>
-<p>Si vous signez seul, comme Hervé, remplacez dans le contexte « au nom
-de mon organisation, à la première personne du pluriel » par « en mon
-nom, à la première personne du singulier ». Dans le brief, la ligne «
-Intervenants pressentis » ne porte alors que vous.</p>
-<p>Si vous vendez au forfait, la ligne « Taux journaliers » l’accepte
-déjà : écrivez « forfait » et son montant. Laissez la ligne « Charge
-estimée » remplie quand même : le client qui compare trois propositions
-regarde le nombre de jours autant que le prix.</p>
-<p>Si vous répondez à un appel d’offres, joignez les pages du cahier des
-charges qui décrivent le besoin et les critères, puis ajoutez : « La
-proposition répond explicitement à chaque critère du cahier des charges,
-cité avant sa réponse. » Le chapitre 13 traite ce cas en entier, en
-commençant par extraire les critères.</p>
-<p>Si vous travaillez sans modèle maison ni charte graphique, ne joignez
-rien de ce côté-là. Le prompt ne devine pas l’identité de votre
-organisation : il vous pose quatre questions (couleur principale,
+<h3 id="un-vocabulaire-propre-à-votre-domaine">Un vocabulaire propre à
+votre domaine</h3>
+<p>Dites les termes à employer et ceux à éviter dans la ligne « Ton
+attendu » du brief, par exemple :</p>
+<div class="ajout"><p class="ou">À coller dans « Brief, ligne Ton attendu »</p><pre><code>professionnel ; emploie plan de maîtrise sanitaire et
+bonnes pratiques d&#39;hygiène ; évite le jargon
+réglementaire, le lecteur est une directrice de la
+restauration, pas un inspecteur.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="vous-signez-seul">Vous signez seul</h3>
+<p>C’est le cas d’Hervé. Dans le contexte, remplacez « au nom de mon
+organisation, à la première personne du pluriel » par la phrase
+ci-dessous. Dans le brief, la ligne « Intervenants pressentis » ne porte
+alors que vous.</p>
+<div class="ajout"><p class="ou">À coller dans « Contexte »</p><pre><code>en mon nom, à la première personne du singulier</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="vous-vendez-au-forfait">Vous vendez au forfait</h3>
+<p>La ligne « Taux journaliers » l’accepte déjà : écrivez « forfait » et
+son montant. Laissez la ligne « Charge estimée » remplie quand même : le
+client qui compare trois propositions regarde le nombre de jours autant
+que le prix.</p>
+<h3 id="vous-répondez-à-un-appel-doffres">Vous répondez à un appel
+d’offres</h3>
+<p>Joignez les pages du cahier des charges qui décrivent le besoin et
+les critères. Le chapitre 13 traite ce cas en entier, en commençant par
+extraire les critères.</p>
+<div class="ajout"><p class="ou">À coller dans « Structure et ton »</p><pre><code>La proposition répond explicitement à chaque critère du
+cahier des charges, cité avant sa réponse.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="sans-modèle-maison-ni-charte-graphique">Sans modèle maison ni
+charte graphique</h3>
+<p>Ne joignez rien de ce côté-là. Le prompt ne devine pas l’identité de
+votre organisation : il vous pose quatre questions (couleur principale,
 police, logo, pied de page), puis produit la proposition avec vos
 réponses. Gardez ces réponses dans votre fichier d’instructions, vous ne
 les retaperez plus.</p>
-<p>Si votre version de l’assistant plafonne les pièces jointes, joignez
-la demande du client et vos notes, puis collez le reste dans le message,
-chaque morceau précédé de son nom. Le prompt lit de la même façon ce qui
-est joint et ce qui est collé.</p>
-<p>Si le client attend une proposition courte, divisez par deux chacun
-des six plafonds de « Structure et ton » et le total qui les suit. Le
-prompt coupera du contenu pour tenir la longueur, jamais la taille des
-caractères.</p>
+<h3 id="votre-assistant-plafonne-les-pièces-jointes">Votre assistant
+plafonne les pièces jointes</h3>
+<p>Joignez la demande du client et vos notes, puis collez le reste dans
+le message, chaque morceau précédé de son nom. Le prompt lit de la même
+façon ce qui est joint et ce qui est collé.</p>
+<h3 id="le-client-attend-une-proposition-courte">Le client attend une
+proposition courte</h3>
+<p>Divisez par deux chacun des six plafonds de « Structure et ton » et
+le total qui les suit. Le prompt coupera du contenu pour tenir la
+longueur, jamais la taille des caractères.</p>
 <h2 id="dossier-accueil">Le dossier d’accueil</h2>
 <p><em>chapitre 16, section 16.6, prompt P14.</em></p>
-<p>Si votre organisation a une culture très formelle ou très informelle,
-dites-le dans « Particularités de mon organisation » : le ton du livret
-suivra. Un cabinet d’avocats et une jeune entreprise n’accueillent pas
-de la même façon. Les règles non écrites ont leur place au même endroit
-: les emails internes ne partent pas après dix-neuf heures, on se
-tutoie, le café du vendredi matin n’est pas une réunion mais tout le
-monde y va. Ce sont ces détails qui font un guide de survie plutôt qu’un
-document administratif.</p>
-<p>Si la personne travaille à distance une partie de la semaine, ajoutez
-: « La personne sera en télétravail trois jours par semaine. Le planning
-de la première semaine prévoit les réunions à distance et les jours de
-présence obligatoire, avec le lieu de chacun. »</p>
-<p>Si le poste demande une documentation technique, ajoutez une ligne à
-la troisième partie : « Pour chaque projet, indique les documents que la
-personne devra lire dans ses deux premières semaines, par ordre de
-priorité, tels que mes fichiers les nomment. » La fin de la phrase
-empêche l’invention d’un document qui n’existe pas.</p>
-<p>Si vous recrutez régulièrement, déposez dans un projet ce qui ne
-change pas : l’organigramme, les descriptions de projets, les questions
-que posent les nouveaux arrivants. Gilles y a versé son carnet de
-questions, tapé une fois pour toutes. À chaque arrivée, il ne modifie
-que les « Informations sur la personne qui arrive ».</p>
-<p>Si votre charte limite les données personnelles d’un salarié à son
-nom et à sa fonction, comme celle de Gilles, écrivez « non communiquée »
-sur la ligne « expérience ». Le prompt ne personnalise alors rien sur le
-parcours de la personne, et il ne vous la redemande pas.</p>
+<h3 id="une-culture-très-formelle-ou-très-informelle">Une culture très
+formelle ou très informelle</h3>
+<p>Dites-le dans « Particularités de mon organisation » : le ton du
+livret suivra. Un cabinet d’avocats et une jeune entreprise
+n’accueillent pas de la même façon. Les règles non écrites ont leur
+place au même endroit : les emails internes ne partent pas après
+dix-neuf heures, on se tutoie, le café du vendredi matin n’est pas une
+réunion mais tout le monde y va. Ce sont ces détails qui font un guide
+de survie plutôt qu’un document administratif.</p>
+<h3 id="la-personne-travaille-à-distance-une-partie-de-la-semaine">La
+personne travaille à distance une partie de la semaine</h3>
+<pre class="ajout"
+data-section="Informations sur la personne qui arrive"><code>La personne sera en télétravail trois jours par semaine.
+Le planning de la première semaine prévoit les réunions à
+distance et les jours de présence obligatoire, avec le
+lieu de chacun.</code></pre>
+<h3 id="le-poste-demande-une-documentation-technique">Le poste demande
+une documentation technique</h3>
+<p>Ajoutez une ligne à la troisième partie. La fin de la phrase empêche
+l’invention d’un document qui n’existe pas.</p>
+<div class="ajout"><p class="ou">À coller dans « Structure, troisième partie »</p><pre><code>Pour chaque projet, indique les documents que la personne
+devra lire dans ses deux premières semaines, par ordre de
+priorité, tels que mes fichiers les nomment.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="vous-recrutez-régulièrement">Vous recrutez régulièrement</h3>
+<p>Déposez dans un projet ce qui ne change pas : l’organigramme, les
+descriptions de projets, les questions que posent les nouveaux
+arrivants. Gilles y a versé son carnet de questions, tapé une fois pour
+toutes. À chaque arrivée, il ne modifie que les « Informations sur la
+personne qui arrive ».</p>
+<h3 id="une-charte-qui-limite-les-données-à-nom-et-fonction">Une charte
+qui limite les données à nom et fonction</h3>
+<p>C’est le cas de Gilles. Écrivez « non communiquée » sur la ligne «
+expérience ». Le prompt ne personnalise alors rien sur le parcours de la
+personne, et il ne vous la redemande pas.</p>
 <h2 id="negociation">La préparation de
 négociation</h2>
 <p><em>chapitre 17, section 17.6, prompt P15.</em></p>
+<h3
+id="répéter-la-réunion-avec-lassistant-dans-le-rôle-de-lacheteur">Répéter
+la réunion avec l’assistant dans le rôle de l’acheteur</h3>
 <p>La fiche dit ce que vous direz. Une répétition vous apprend ce que
 vous répondrez. Une fois la fiche relue, restez dans la même
-conversation, où le contrat et vos notes sont déjà lus, et ajoutez : «
-Joue maintenant l’acheteur de mon client, tel que mes fichiers le
-décrivent. Pose-moi ses objections une par une, la plus dure en premier,
-et attends ma réponse avant la suivante. Après chacune, dis-moi en une
-phrase ce que l’acheteur retiendrait de ma réponse. Cinq objections au
-plus. N’invente aucun chiffre que mes fichiers ne donnent pas. » Une
-objection qui vous fait hésiter et que la fiche n’avait pas prévue
-rejoint sa partie « Les cinq objections probables du client », à la
-place de la moins probable.</p>
-<p>Si vous négociez de l’autre côté de la table, comme acheteur face à
-un fournisseur, dites-le dans « Contexte » : « Je suis l’acheteur. Le
-fournisseur demande une hausse de [montant]. » Les lignes « Ce que je
-peux accepter » et « Ce qui n’est pas négociable » gardent leur rôle, et
-la règle qui les tient hors du document aussi.</p>
-<p>Si la négociation se tient à plusieurs, ajoutez une ligne par
-interlocuteur présent, avec ce que vous savez de son rôle : « L’acheteur
-décide du prix, le directeur technique du périmètre. Pour chaque
-objection, indique qui la portera. »</p>
+conversation, où le contrat et vos notes sont déjà lus, et envoyez ce
+message. Une objection qui vous fait hésiter et que la fiche n’avait pas
+prévue rejoint sa partie « Les cinq objections probables du client », à
+la place de la moins probable.</p>
+<div class="ajout"><p class="ou">À coller dans « Nouveau message, après la fiche »</p><pre><code>Joue maintenant l&#39;acheteur de mon client, tel que mes
+fichiers le décrivent. Pose-moi ses objections une par
+une, la plus dure en premier, et attends ma réponse avant
+la suivante. Après chacune, dis-moi en une phrase ce que
+l&#39;acheteur retiendrait de ma réponse. Cinq objections au
+plus. N&#39;invente aucun chiffre que mes fichiers ne donnent
+pas.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="vous-négociez-de-lautre-côté-de-la-table">Vous négociez de
+l’autre côté de la table</h3>
+<p>Comme acheteur face à un fournisseur. Les lignes « Ce que je peux
+accepter » et « Ce qui n’est pas négociable » gardent leur rôle, et la
+règle qui les tient hors du document aussi.</p>
+<div class="ajout"><p class="ou">À coller dans « Contexte »</p><pre><code>Je suis l&#39;acheteur. Le fournisseur demande une hausse de
+[montant].</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="plusieurs-interlocuteurs-en-face">Plusieurs interlocuteurs en
+face</h3>
+<p>Ajoutez une ligne par interlocuteur présent, avec ce que vous savez
+de son rôle, par exemple :</p>
+<div class="ajout"><p class="ou">À coller dans « Contexte »</p><pre><code>L&#39;acheteur décide du prix, le directeur technique du
+périmètre. Pour chaque objection, indique qui la portera.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
 <h2 id="portefeuille-projets">Le tableau de bord de
 portefeuille</h2>
 <p><em>chapitre 18, section 18.6, prompt P16.</em></p>
@@ -600,35 +666,41 @@ variante doit en tenir compte. Modifiez-le une fois, au début d’un mois,
 puis gardez la version modifiée chaque semaine : deux notes construites
 différemment ne se comparent plus. Dites-le au destinataire le jour du
 changement.</p>
-<p>Si votre directeur veut suivre le budget de chaque projet, ne
-l’ajoutez pas au tableau de la note : il porte déjà quatre colonnes, le
-plafond au-delà duquel le texte devient illisible sur papier. Ajoutez au
-fichier de détail une douzième colonne, « Budget consommé », en fin de
-liste pour que vos tris des semaines passées restent valables. Ajoutez
-aussi une phrase à la section 1 : « Nomme tout projet dont le
-compte-rendu signale un dépassement de budget. »</p>
-<p>Si un de vos projets est mené par quelqu’un qui n’a pas accès à
-l’assistant, comme le chef de projet indépendant d’Aurélie, demandez-lui
+<h3 id="suivre-le-budget-de-chaque-projet">Suivre le budget de chaque
+projet</h3>
+<p>Ne l’ajoutez pas au tableau de la note : il porte déjà quatre
+colonnes, le plafond au-delà duquel le texte devient illisible sur
+papier. Ajoutez au fichier de détail une douzième colonne, « Budget
+consommé », en fin de liste pour que vos tris des semaines passées
+restent valables, et cette phrase.</p>
+<div class="ajout"><p class="ou">À coller dans « Section 1 de la note »</p><pre><code>Nomme tout projet dont le compte-rendu signale un
+dépassement de budget.</code></pre><button class="copier-ligne" type="button">Copier ces lignes</button></div>
+<h3 id="un-chef-de-projet-sans-accès-à-lassistant">Un chef de projet
+sans accès à l’assistant</h3>
+<p>C’est le cas du chef de projet indépendant d’Aurélie. Demandez-lui
 son compte-rendu par email et enregistrez-le sous le nom
 <code>cr-NomProjet-date</code> avant de le joindre. Le prompt ne prend
 pour compte-rendu que ce qui porte ce préfixe.</p>
-<p>Si votre assistant plafonne les pièces jointes, collez les
-comptes-rendus dans le message, chacun précédé de son nom. Le prompt le
-prévoit déjà, et il compte les comptes-rendus collés comme les
-comptes-rendus joints.</p>
-<p>Si vous travaillez dans un projet, retirez-en les comptes-rendus de
-la semaine précédente avant de relancer. Le prompt les écarte, mais il
-vous le dit à chaque fois : la liste des fichiers écartés finit par
-cacher le vrai écart, le projet qui n’a rien envoyé.</p>
-<p>Si un statut vous manque, ne l’ajoutez pas en cours de route. Les
-cinq statuts du prompt sont fixés pour que deux semaines se comparent.
-Si l’un d’eux ne correspond pas à votre organisation, renommez-le une
-fois, dans la règle de fond qui les énumère, et gardez le nouveau nom
-ensuite.</p>
+<h3 id="votre-assistant-plafonne-les-pièces-jointes-1">Votre assistant
+plafonne les pièces jointes</h3>
+<p>Collez les comptes-rendus dans le message, chacun précédé de son nom.
+Le prompt le prévoit déjà, et il compte les comptes-rendus collés comme
+les comptes-rendus joints.</p>
+<h3 id="vous-travaillez-dans-un-projet">Vous travaillez dans un
+projet</h3>
+<p>Retirez-en les comptes-rendus de la semaine précédente avant de
+relancer. Le prompt les écarte, mais il vous le dit à chaque fois : la
+liste des fichiers écartés finit par cacher le vrai écart, le projet qui
+n’a rien envoyé.</p>
+<h3 id="un-statut-vous-manque">Un statut vous manque</h3>
+<p>Ne l’ajoutez pas en cours de route. Les cinq statuts du prompt sont
+fixés pour que deux semaines se comparent. Si l’un d’eux ne correspond
+pas à votre organisation, renommez-le une fois, dans la règle de fond
+qui les énumère, et gardez le nouveau nom ensuite.</p>
 
 </article>
 
-<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><span aria-current="page">Adapter les prompts</span></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Ce qui bouge</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><a href="automatisations.html">Automatisations</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:ccletempsduncafe@lbi1.anonaddy.com">ccletempsduncafe@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 20/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du livre. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle deux : le tri de la boîte mail au chapitre 20, puis le tableau de portefeuille hebdomadaire à la section 18.6.", "cibles": ["automatisations.html", "P20", "P16"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger en compétence. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date du relevé. Si un prompt cale sur un message long, essayez sa version courte, sur la même fiche.", "cibles": ["regler-son-assistant.html", "capacites.html", "registre.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "ccletempsduncafe@lbi1.anonaddy.com", "href": "mailto:ccletempsduncafe@lbi1.anonaddy.com"}, "registre.html": {"libelle": "Registre des essais", "detail": "Chaque essai du banc, assistant par assistant, avec l'offre utilisée.", "href": "registre.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
+<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><span aria-current="page">Adapter les prompts</span></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Votre assistant</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><a href="automatisations.html">Automatisations</a></li></ul></div><div class="groupe"><p class="famille-nom">Comment le livre est vérifié</p><ul><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:ccletempsduncafe@lbi1.anonaddy.com">ccletempsduncafe@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 22/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du livre. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle deux : le tri de la boîte mail au chapitre 20, puis le tableau de portefeuille hebdomadaire à la section 18.6.", "cibles": ["automatisations.html", "P20", "P16"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger en compétence. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date du relevé. Si un prompt cale sur un message long, essayez sa version courte, sur la même fiche.", "cibles": ["regler-son-assistant.html", "capacites.html", "registre.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "ccletempsduncafe@lbi1.anonaddy.com", "href": "mailto:ccletempsduncafe@lbi1.anonaddy.com"}, "registre.html": {"libelle": "Registre des essais", "detail": "Chaque essai du banc, assistant par assistant, avec l'offre utilisée.", "href": "registre.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
 
 <script>
 document.querySelectorAll('.copier').forEach(function (bouton) {
@@ -884,6 +956,25 @@ document.querySelectorAll('.copier').forEach(function (bouton) {
   document.body.appendChild(panneau);
   document.body.appendChild(bouton);
 })();
+
+document.querySelectorAll('.copier-ligne').forEach(function (bouton) {
+  bouton.addEventListener('click', function () {
+    var bloc = bouton.parentNode.querySelector('pre');
+    var texte = bloc.innerText.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+    var fait = function (msg) {
+      bouton.textContent = msg;
+      window.setTimeout(function () { bouton.textContent = 'Copier ces lignes'; }, 3500);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(texte).then(function () { fait('Copié'); },
+        function () { fait('Sélectionnez le texte, puis Ctrl+C ou Cmd+C'); });
+    } else {
+      var plage = document.createRange(); plage.selectNodeContents(bloc);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(plage);
+      fait('Texte sélectionné, faites Ctrl+C ou Cmd+C');
+    }
+  });
+});
 </script>
 </body>
 </html>
