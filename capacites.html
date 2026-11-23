@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Capacités observées · L’IA pour le bureau</title>
-<meta name="description" content="Les cinq capacités du livre observées chez cinq assistants : chaque case datée, sourcée sur une passe du banc, un essai ou une page d&#x27;aide de l&#x27;éditeur.">
+<meta name="description" content="Les cinq capacités du livre observées chez cinq assistants : chaque case datée, sourcée sur une tentative du banc, un essai ou une page d&#x27;aide de l&#x27;éditeur.">
 <meta name="author" content="Laurent Benedetti">
 <link rel="canonical" href="https://iapourlebureau.github.io/capacites.html">
 <link rel="icon" type="image/png" href="icone.png">
@@ -16,7 +16,7 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="L’IA pour le bureau">
 <meta property="og:title" content="Capacités observées · L’IA pour le bureau">
-<meta property="og:description" content="Les cinq capacités du livre observées chez cinq assistants : chaque case datée, sourcée sur une passe du banc, un essai ou une page d&#x27;aide de l&#x27;éditeur.">
+<meta property="og:description" content="Les cinq capacités du livre observées chez cinq assistants : chaque case datée, sourcée sur une tentative du banc, un essai ou une page d&#x27;aide de l&#x27;éditeur.">
 <meta property="og:url" content="https://iapourlebureau.github.io/capacites.html">
 <meta property="og:image" content="https://iapourlebureau.github.io/partage.jpg">
 <meta property="og:image:width" content="1200">
@@ -38,6 +38,35 @@
   --orange: #e8834a;
   --surligneur: #f8d7b4;
   --lien: #a8521c;
+  /* Le bandeau, la barre et les boutons restent sombres dans les deux modes :
+     --encre ne peut pas les porter, puisqu'elle passe au clair en mode
+     sombre pour rester la couleur du texte. */
+  --nuit: #16161a;
+  --sur-nuit: #f4f1ec;
+  --entete: #faf6ef;
+  --sur-orange: #16161a;
+  color-scheme: light dark;
+}
+
+/* Mode sombre, demande de l'auteur du 23 novembre 2026 : la page suit le
+   reglage du telephone ou de l'ordinateur. Le papier devient un brun tres
+   sombre plutot qu'un noir, le texte un creme plutot qu'un blanc, et la brique
+   des liens remonte vers l'orange de la couverture, qui passe sur fond sombre.
+   Chaque couple texte et fond est verifie a 4,5:1 au moins par
+   verifier_lisibilite.py. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #ece6dc;
+    --encre-douce: #b9af9f;
+    --papier: #1b1a17;
+    --carte: #24221e;
+    --trait: #3e3931;
+    --surligneur: #5c3c1f;
+    --lien: #f0a070;
+    --nuit: #0c0b0a;
+    --sur-nuit: #f4f1ec;
+    --entete: #2c2924;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -53,8 +82,8 @@ body {
 
 .bandeau {
   position: relative;
-  background: var(--encre);
-  color: var(--papier);
+  background: var(--nuit);
+  color: var(--sur-nuit);
   padding: 44px 24px 40px;
   overflow: hidden;
 }
@@ -104,7 +133,7 @@ body {
   border-radius: 3px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 15px;
-  color: var(--papier);
+  color: var(--sur-nuit);
 }
 
 .bandeau .maj {
@@ -147,7 +176,7 @@ body {
   color: #cfc6ba;
 }
 
-.bandeau--jaquette .promesse strong { color: var(--papier); font-weight: 600; }
+.bandeau--jaquette .promesse strong { color: var(--sur-nuit); font-weight: 600; }
 
 .jaquette {
   display: block;
@@ -166,13 +195,19 @@ body {
   }
 }
 
+/* Sur telephone, le premier ecran montrait une couverture de 257 px, le
+   titre, l'adresse que le lecteur vient de scanner, puis la barre a y = 683 :
+   un livre, pas une action (architecte et Delphine, 23 novembre 2026). La
+   couverture passe en vignette a cote du titre et l'adresse disparait ; la
+   liste des prompts arrive au premier ecran. */
 @media (max-width: 760px) {
-  .bandeau--jaquette { padding: 40px 24px 42px; }
-  .bandeau--jaquette .dedans { grid-template-columns: 1fr; gap: 26px; }
-  .bandeau--jaquette .couv { order: -1; }
-  .bandeau--jaquette h1 { font-size: clamp(24px, 6.6vw, 34px); }
-  .bandeau--jaquette h1::after { margin-top: 14px; }
-  .jaquette { width: 166px; }
+  .bandeau--jaquette { padding: 24px 20px 24px; }
+  .bandeau--jaquette .dedans { grid-template-columns: 1fr 72px; gap: 16px; align-items: start; }
+  .bandeau--jaquette .couv { order: 0; }
+  .bandeau--jaquette h1 { font-size: clamp(22px, 6.2vw, 30px); }
+  .bandeau--jaquette h1::after { margin-top: 10px; }
+  .bandeau--jaquette .adresse, .bandeau--jaquette .maj { display: none; }
+  .jaquette { width: 72px; }
 }
 
 .mode-emploi {
@@ -183,30 +218,44 @@ body {
 
 .mode-emploi p { max-width: 68ch; margin: 0 0 14px; }
 
+/* La liste des prompts porte le titre de chaque tache : des pastilles
+   « P7 · ch. 10 » ne parlaient qu'a qui a le livre ouvert a la bonne page
+   (Delphine, 23 novembre 2026). Une colonne sur telephone, deux au-dela. */
+.titre-sommaire { margin: 4px 0 10px; font-size: 20px; }
 .raccourcis {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 20px 0 4px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin: 0 0 8px;
   padding: 0;
   list-style: none;
 }
+@media (min-width: 700px) { .raccourcis { grid-template-columns: 1fr 1fr; } }
 .raccourcis a {
-  display: block;
-  min-width: 46px;
-  padding: 8px 10px;
-  text-align: center;
+  display: grid;
+  grid-template-columns: 3.2em 1fr;
+  column-gap: 10px;
+  padding: 9px 12px;
   background: var(--carte);
   border: 1px solid var(--trait);
   border-radius: 3px;
-  color: var(--lien);
-  font-weight: 600;
+  color: var(--encre);
   text-decoration: none;
+  line-height: 1.35;
 }
 .raccourcis a:hover { border-color: var(--lien); }
 .raccourcis a:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
-.raccourcis .intitule { color: var(--encre-douce); font-weight: 400; align-self: center; margin-right: 4px; }
+.raccourcis .num { color: var(--lien); font-weight: 700; }
 .raccourcis .ch { display: block; font-size: 12px; font-weight: 400; color: var(--encre-douce); }
+.raccourcis .tache { font-size: 15.5px; }
+.lire-un-prompt { margin: 14px 0 6px; }
+.lire-un-prompt summary { cursor: pointer; color: var(--lien); font-weight: 600; }
+.lire-un-prompt[open] summary { margin-bottom: 12px; }
+.suite { margin: 16px 0 0; font-weight: 600; }
+.maj-prompt { margin: 0 0 14px; font-size: 14.5px; color: var(--encre-douce); }
+.maj-prompt summary { cursor: pointer; }
+.maj-prompt p { margin: 8px 0 0; max-width: 68ch; }
+.vers-liste { display: block; margin: 10px 0 14px; font-size: 15px; color: var(--lien); }
 
 main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
 
@@ -227,7 +276,7 @@ main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
    arrive. */
 .onglet {
   background: var(--orange);
-  color: var(--encre);
+  color: var(--sur-orange);
   padding: 16px 16px 18px;
   text-align: center;
   border-bottom-right-radius: 4px;
@@ -270,8 +319,8 @@ main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
   font: inherit;
   font-weight: 600;
   font-size: 16px;
-  color: var(--papier);
-  background: var(--encre);
+  color: var(--sur-nuit);
+  background: var(--nuit);
   border: 1px solid var(--encre);
   border-radius: 3px;
   padding: 10px 20px;
@@ -279,7 +328,7 @@ main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
 }
 .copier:hover { background: #2c2a26; }
 .copier:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
-.fiche.copiee .copier { background: var(--orange); border-color: var(--orange); color: var(--encre); }
+.fiche.copiee .copier { background: var(--orange); border-color: var(--orange); color: var(--sur-orange); }
 
 /* La ligne d'identite part avec le prompt copie, en tete : numero, version,
    date et empreinte. Elle reste hors du <pre>, que verifier_mecanique compare
@@ -295,7 +344,7 @@ main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
 pre {
   margin: 16px 0 0;
   padding: 16px 18px;
-  background: #faf6ef;
+  background: var(--entete);
   border: 1px solid var(--trait);
   border-radius: 3px;
   overflow-x: auto;
@@ -312,8 +361,8 @@ pre {
   display: block;
   margin-top: 34px;
   padding: 22px 24px;
-  background: var(--encre);
-  color: var(--papier);
+  background: var(--nuit);
+  color: var(--sur-nuit);
   border-radius: 4px;
   text-decoration: none;
 }
@@ -402,8 +451,6 @@ th, td { border: 1px solid var(--trait); padding: 8px 10px; text-align: left; ve
 th { background: var(--carte); font-weight: 600; }
 td.chapitre { white-space: nowrap; font-weight: 600; }
 
-.retour { display: inline-block; margin: 22px 0 0; color: var(--lien); font-weight: 600; text-decoration: none; }
-.retour:hover { text-decoration: underline; }
 
 .rien { background: var(--carte); border: 1px solid var(--trait); border-radius: 4px; padding: 22px 24px; margin-top: 24px; }
 
@@ -444,7 +491,7 @@ td.chapitre { white-space: nowrap; font-weight: 600; }
   display: flex;
   align-items: center;
   gap: 4px;
-  background: var(--encre);
+  background: var(--nuit);
   padding: 10px 24px;
   overflow-x: auto;
 }
@@ -468,7 +515,7 @@ td.chapitre { white-space: nowrap; font-weight: 600; }
 }
 .pages li { white-space: nowrap; }
 .pages a {
-  color: var(--papier);
+  color: var(--sur-nuit);
   text-decoration: none;
   font-size: 14px;
   display: inline-flex;
@@ -500,7 +547,7 @@ td.chapitre { white-space: nowrap; font-weight: 600; }
   min-height: 24px;
   padding: 2px 10px;
   margin: 0 14px 0 0;
-  color: var(--papier);
+  color: var(--sur-nuit);
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
@@ -572,7 +619,7 @@ td.chapitre { white-space: nowrap; font-weight: 600; }
 .repere {
   margin-left: auto;
   padding-left: 16px;
-  color: var(--papier);
+  color: var(--sur-nuit);
   opacity: 0.8;
   font-size: 13px;
   white-space: nowrap;
@@ -630,7 +677,7 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
   top: 0;
   z-index: 100;
   background: var(--orange);
-  color: var(--encre);
+  color: var(--sur-orange);
   padding: 8px 16px;
   text-decoration: none;
   font-weight: 600;
@@ -649,8 +696,8 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
   bottom: 20px;
   z-index: 60;
   min-height: 24px;
-  background: var(--encre);
-  color: var(--papier);
+  background: var(--nuit);
+  color: var(--sur-nuit);
   border: 1px solid var(--trait);
   border-radius: 8px;
   padding: 10px 16px;
@@ -669,15 +716,18 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
 }
 
 /* Une cible d'ancrage ne doit pas se retrouver masquee sous la barre
-   collee : la marge de defilement vaut la hauteur de .pages, prise large. */
-:target { scroll-margin-top: 64px; }
+   collee : la marge de defilement vaut la hauteur de .pages, prise large.
+   Elle valait 64 px pour une barre mesuree a 73-80 px a 390 px de large
+   (architecte, 23 novembre 2026) : 9 a 16 px de chaque cible etaient caches.
+   Elle vaut pour tout element qui porte un id, cible d'un sommaire comprise. */
+:target, [id] { scroll-margin-top: 96px; }
 
 /* Le guide : un bouton en bas a gauche (le retour en haut tient la droite),
    et un panneau de conversation au-dessus. Construit par SCRIPT_NAV ; sans
    JavaScript, rien ne s'affiche. */
 .guide-bouton {
   position: fixed; left: 20px; bottom: 20px; z-index: 61;
-  background: var(--orange); color: var(--encre);
+  background: var(--orange); color: var(--sur-orange);
   border: 0; border-radius: 999px; padding: 11px 18px;
   font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
   box-shadow: 0 6px 18px rgba(22, 22, 26, 0.25);
@@ -695,10 +745,10 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
 }
 .guide-panneau[hidden] { display: none; }
 .guide-tete { display: flex; align-items: center; justify-content: space-between;
-  gap: 8px; padding: 12px 14px; background: var(--encre); color: var(--papier);
+  gap: 8px; padding: 12px 14px; background: var(--nuit); color: var(--sur-nuit);
   border-radius: 13px 13px 0 0; }
 .guide-tete p { margin: 0; font-weight: 600; }
-.guide-tete button { background: transparent; color: var(--papier);
+.guide-tete button { background: transparent; color: var(--sur-nuit);
   border: 1px solid #5f574e; border-radius: 8px; padding: 4px 10px;
   font: inherit; font-size: 13px; cursor: pointer; }
 .guide-fil { overflow-y: auto; padding: 14px; display: flex;
@@ -711,11 +761,11 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
 .guide-liens { list-style: none; margin: 0; padding: 0; display: flex;
   flex-direction: column; gap: 6px; }
 .guide-liens a { display: block; padding: 9px 12px; border: 1px solid var(--trait);
-  border-radius: 10px; color: var(--lien); text-decoration: none; background: #fff; }
+  border-radius: 10px; color: var(--lien); text-decoration: none; background: var(--carte); }
 .guide-liens a:hover { border-color: var(--orange); }
 .guide-liens small { display: block; color: var(--encre-douce); font-size: 13px; }
 .guide-choix { padding: 0 14px 14px; display: flex; flex-wrap: wrap; gap: 6px; }
-.guide-choix button { background: #fff; color: var(--encre);
+.guide-choix button { background: var(--carte); color: var(--encre);
   border: 1px solid var(--orange); border-radius: 999px; padding: 7px 12px;
   font: inherit; font-size: 14px; cursor: pointer; text-align: left; }
 .guide-choix button:hover { background: var(--surligneur); }
@@ -742,6 +792,118 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
   hyphens: manual;
   -webkit-hyphens: manual;
 }
+
+figure.capture { margin: 18px 0 24px; max-width: 68ch; }
+/* La capture garde son fond clair en mode sombre : c'est l'ecran de
+   l'assistant tel que le lecteur le verra, cadre d'un trait. */
+figure.capture img { display: block; width: 100%; height: auto;
+  border: 1px solid var(--trait); border-radius: 3px; background: #fff; }
+figure.capture figcaption { margin-top: 8px; font-size: 14.5px;
+  color: var(--encre-douce); line-height: 1.5; text-align: left; }
+#contenu img { max-width: 100%; height: auto; }
+
+.defile, .tableau { overflow-x: auto; margin: 18px 0 6px;
+  -webkit-overflow-scrolling: touch; }
+.defile table, .tableau table { margin: 0; }
+
+/* Le tableau de synthese des capacites : la colonne des assistants reste a
+   l'ecran quand on fait glisser le tableau (Delphine, 23 novembre 2026 :
+   « les noms des assistants disparaissent »). */
+.synthese th:first-child, .synthese td:first-child {
+  position: sticky; left: 0; z-index: 1; background: var(--papier); }
+.synthese thead th:first-child { background: var(--entete); }
+
+/* Repliee sur telephone, la barre tient sur une rangee : l'intitule de la
+   page courante, s'il est trop long (« Assistants personnalisés »), se coupe
+   d'une ellipse au lieu de faire passer la barre a deux rangees. */
+@supports selector(:has(a)) {
+  @media (max-width: 767.98px) {
+    nav.pages:not(:has(.pages-repli[open])) { flex-wrap: nowrap; }
+    nav.pages:not(:has(.pages-repli[open])) .pages-liste { flex: 1 1 0; min-width: 0; }
+    nav.pages:not(:has(.pages-repli[open])) .pages-liste li { min-width: 0; max-width: 100%; }
+    nav.pages:not(:has(.pages-repli[open])) [aria-current] {
+      display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+}
+
+/* Le sommaire « Sur cette page », pose par finaliser() (feuille structure,
+   N4). Statique : ni colle, ni surligne au defilement (refus maintenus). */
+.sommaire-page { margin: 18px 0 26px; padding: 14px 18px; max-width: 68ch;
+  background: var(--carte); border: 1px solid var(--trait); border-radius: 3px; }
+.sommaire-page-titre { margin: 0 0 8px; font-weight: 700; }
+.sommaire-page ol { margin: 0; padding-left: 22px; }
+#contenu .sommaire-page li { margin: 4px 0; text-align: left; hyphens: manual; -webkit-hyphens: manual; }
+.sommaire-page a { color: var(--lien); }
+.sommaire-page--grille ol { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; list-style: none; }
+.sommaire-page--grille li { margin: 0; }
+.sommaire-page--grille a { display: inline-block; padding: 4px 9px; border: 1px solid var(--trait);
+  border-radius: 3px; text-decoration: none; font-size: 15px; }
+
+#contenu .retour { display: inline-block; margin: 18px 0 4px; color: var(--lien);
+  font-weight: 600; text-decoration: none; }
+#contenu .retour:hover { text-decoration: underline; }
+
+/* A 390 px, la pastille « Que voulez-vous faire ? » (a gauche) et le bouton
+   « Revenir en haut de la page » (a droite) se chevauchaient sur les douze
+   pages : le second monte au-dessus de la premiere sur ecran etroit. */
+@media (max-width: 560px) {
+  .haut-fixe { bottom: 76px; right: 16px; }
+}
+
+/* Sous 768 px : le repere de position (« P7 · ch. 10 ») faisait passer la
+   barre a deux rangees, il ne s'affiche plus qu'en grand ecran ; et la
+   pastille du guide, fixee en bas, ne doit jamais couvrir la derniere ligne
+   de la page (WCAG 2.4.11) : le bas de page recoit sa hauteur en marge. */
+@media (max-width: 767px) {
+  .repere { display: none; }
+  body { padding-bottom: 84px; }
+}
+
+/* figure.capture et .defile : composants communs, navigation.STYLE_COMPOSANTS.
+   Le min-width de 760 px imposait deux largeurs d'ecran au tableau de
+   synthese de capacites ; seul le registre, a neuf colonnes, le garde. */
+.defile table.large { min-width: 760px; }
+td.num, th.num { white-space: nowrap; }
+td details { margin-top: 6px; font-size: 14px; }
+td details summary { cursor: pointer; color: var(--lien); }
+.statut { font-weight: 600; }
+.source { display: block; margin-top: 6px; font-size: 13.5px; color: var(--encre-douce); }
+dl.par-assistant, div.par-assistant { margin: 14px 0 22px; max-width: 68ch; }
+.un-assistant h4 { margin: 14px 0 4px; padding-top: 12px; border-top: 1px solid var(--trait); font-size: 17px; }
+.un-assistant p { margin: 0; }
+h4.passe-tete { margin: 0 0 4px; font-size: 16px; }
+dl.par-assistant dt { font-weight: 700; margin: 14px 0 4px; padding-top: 12px; border-top: 1px solid var(--trait); }
+dl.par-assistant dt small { font-weight: 400; color: var(--encre-douce); }
+dl.par-assistant dd { margin: 0; }
+article.passe { border-top: 1px solid var(--trait); padding: 12px 0; max-width: 68ch; }
+article.passe p, article.passe h4 { margin: 4px 0; text-align: left; hyphens: manual; -webkit-hyphens: manual; }
+.un-assistant p, dl.par-assistant dd { text-align: left; hyphens: manual; -webkit-hyphens: manual; }
+.passe-tete .statut { font-weight: 700; }
+.passe-tache, article.passe .defauts { color: var(--encre-douce); font-size: 15px; }
+.passe-tache .source { display: inline; margin: 0; font-size: inherit; }
+.passe-tache .source::before { content: " ("; }
+.passe-tache .source::after { content: ")"; }
+article.passe details { margin-top: 6px; font-size: 15px; }
+article.passe details summary { cursor: pointer; color: var(--lien); }
+
+.synthese { width: 100%; border-collapse: collapse; margin: 18px 0 8px; font-size: 15px; }
+.synthese th, .synthese td { border: 1px solid var(--trait); padding: 8px 10px; text-align: left; vertical-align: middle; }
+.synthese thead th { background: var(--entete); font-weight: 600; }
+.synthese td a { text-decoration: none; display: inline-block; }
+.verdict { display: inline-block; padding: 2px 8px; border-radius: 3px; font-weight: 600; font-size: 14px; white-space: nowrap; }
+.verdict--oui { background: #e3efe3; color: #1d4d24; }
+.verdict--condition { background: #f6ecd6; color: #6b4a07; }
+.verdict--non { background: #f4dcd8; color: #7a1f14; }
+.verdict--mesurer { background: transparent; color: var(--encre-douce); border: 1px dashed var(--trait); }
+.verdict--aide, .verdict--voir { background: #ece9e3; color: #2c2a26; }
+.detail-capacite { margin: 0 0 8px; }
+.detail-capacite .ligne { border-top: 1px solid var(--trait); padding: 14px 0; }
+.detail-capacite .qui { font-weight: 700; margin: 0 0 4px; font-size: 17px; }
+.detail-capacite .qui .verdict { margin-left: 8px; }
+.detail-capacite .qui small { font-weight: 400; color: var(--encre-douce); margin-left: 6px; }
+.detail-capacite p { margin: 4px 0; text-align: left; }
+.essai pre { white-space: pre-wrap; }
+body #contenu p, body #contenu li { text-align: left; hyphens: manual; -webkit-hyphens: manual; }
 </style>
 </head>
 <body>
@@ -753,68 +915,39 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
     <span class="adresse">iapourlebureau.github.io</span>
   </div>
 </header>
-<nav class="pages" aria-label="Les pages du site"><details class="pages-repli"><summary>Les onze autres pages</summary></details><ul class="pages-liste"><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><span aria-current="page">Capacités observées</span></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li><li><a href="automatisations.html">Automatisations</a></li><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></nav>
+<nav class="pages" aria-label="Les pages du site"><details class="pages-repli"><summary>Toutes les pages</summary></details><ul class="pages-liste"><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><span aria-current="page">Capacités observées</span></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li><li><a href="automatisations.html">Automatisations</a></li><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></nav>
 
 <main class="texte" id="contenu">
-<a class="retour" href="index.html">← Retour aux prompts du livre</a>
-<style>
-figure.capture { margin: 14px 0 18px; max-width: 68ch; }
-figure.capture img { display: block; width: 100%; height: auto; border: 1px solid var(--trait); border-radius: 3px; background: #fff; }
-figure.capture figcaption { margin-top: 6px; font-size: 14.5px; color: var(--encre-douce); line-height: 1.5; text-align: left; }
-.defile { overflow-x: auto; margin: 18px 0 6px; }
-.defile table { margin: 0; min-width: 760px; }
-td.num, th.num { white-space: nowrap; }
-td details { margin-top: 6px; font-size: 14px; }
-td details summary { cursor: pointer; color: var(--lien); }
-.statut { font-weight: 600; }
-.source { display: block; margin-top: 6px; font-size: 13.5px; color: var(--encre-douce); }
-</style><style>
-.synthese { width: 100%; border-collapse: collapse; margin: 18px 0 8px; font-size: 15px; }
-.synthese th, .synthese td { border: 1px solid var(--trait); padding: 8px 10px; text-align: left; vertical-align: middle; }
-.synthese thead th { background: #faf6ef; font-weight: 600; }
-.synthese td a { text-decoration: none; display: inline-block; }
-.verdict { display: inline-block; padding: 2px 8px; border-radius: 3px; font-weight: 600; font-size: 14px; white-space: nowrap; }
-.verdict--oui { background: #e3efe3; color: #1d4d24; }
-.verdict--condition { background: #f6ecd6; color: #6b4a07; }
-.verdict--non { background: #f4dcd8; color: #7a1f14; }
-.verdict--mesurer { background: transparent; color: var(--encre-douce); border: 1px dashed var(--trait); }
-.verdict--aide, .verdict--voir { background: #ece9e3; color: var(--encre); }
-.detail-capacite { margin: 0 0 8px; }
-.detail-capacite .ligne { border-top: 1px solid var(--trait); padding: 14px 0; }
-.detail-capacite .qui { font-weight: 700; margin: 0 0 4px; }
-.detail-capacite .qui .verdict { margin-left: 8px; }
-.detail-capacite .qui small { font-weight: 400; color: var(--encre-douce); margin-left: 6px; }
-.detail-capacite p { margin: 4px 0; text-align: left; }
-.essai pre { white-space: pre-wrap; }
-body #contenu p, body #contenu li { text-align: left; hyphens: manual; -webkit-hyphens: manual; }
-</style>
-<p>Ce que les cinq assistants ont fait des cinq capacités du livre, chez l'auteur, sur l'offre écrite sous le nom de chacun : une différence d'offre ne doit pas passer pour une différence d'outil. Le tableau donne la réponse en un mot ; chaque case mène au détail, qui renvoie à la passe du <a href="registre.html">registre</a>, à l'essai ou à la page d'aide de l'éditeur qui l'établit.</p>
-<p>Lisez chaque case comme un fait daté. Une capacité constatée un jour peut manquer le lendemain, une autre offre peut l'ouvrir ou la fermer, votre service informatique peut l'avoir coupée. « À mesurer » veut dire qu'aucun essai ne l'a encore établie : rien ne s'y estime, rien ne s'y recopie d'un assistant à l'autre.</p>
+<a class="retour" href="index.html#sommaire">← Retour aux prompts du livre</a>
+
+<p>Ce que les cinq assistants ont fait des cinq capacités du livre, chez l'auteur, sur l'offre écrite sous le nom de chacun : une différence d'offre ne doit pas passer pour une différence d'outil. Le tableau donne la réponse en un mot ; chaque case mène au détail, qui renvoie à la tentative du <a href="registre.html">registre</a>, à l'essai ou à la page d'aide de l'éditeur qui l'établit.</p>
+<p>Lisez chaque case comme un fait daté. Une capacité constatée un jour peut manquer le lendemain, une autre offre peut l'ouvrir ou la fermer, votre service informatique peut l'avoir coupée. « À mesurer » veut dire qu'aucun essai ne l'a encore établie : rien ne s'y estime, rien ne s'y recopie d'un assistant à l'autre. « Selon l'aide » veut dire que la page d'aide de l'éditeur l'annonce sans qu'un essai l'ait vérifié.</p>
 
 <div class="defile"><table class="synthese"><thead><tr><th scope="col">Assistant</th><th scope="col"><a href="#pieces">Lire des pièces jointes</a></th><th scope="col"><a href="#tableur">Analyser un tableur</a></th><th scope="col"><a href="#fichier">Produire un fichier</a></th><th scope="col"><a href="#web">Chercher sur le web</a></th><th scope="col"><a href="#projet">Garder un projet</a></th></tr></thead>
-<tbody><tr id="chatgpt"><th scope="row">ChatGPT<span class="source">offre gratuite</span></th><td><a href="#pieces-chatgpt" aria-label="Lire des pièces jointes, ChatGPT : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#tableur-chatgpt" aria-label="Analyser un tableur, ChatGPT : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#fichier-chatgpt" aria-label="Produire un fichier, ChatGPT : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#web-chatgpt" aria-label="Chercher sur le web, ChatGPT : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#projet-chatgpt" aria-label="Garder un projet, ChatGPT : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr><tr id="claude"><th scope="row">Claude<span class="source">offre [À MESURER]</span></th><td><a href="#pieces-claude" aria-label="Lire des pièces jointes, Claude : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#tableur-claude" aria-label="Analyser un tableur, Claude : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#fichier-claude" aria-label="Produire un fichier, Claude : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#web-claude" aria-label="Chercher sur le web, Claude : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#projet-claude" aria-label="Garder un projet, Claude : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr><tr id="copilot"><th scope="row">Copilot<span class="source">offre grand public, compte Microsoft personnel</span></th><td><a href="#pieces-copilot" aria-label="Lire des pièces jointes, Copilot : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#tableur-copilot" aria-label="Analyser un tableur, Copilot : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#fichier-copilot" aria-label="Produire un fichier, Copilot : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#web-copilot" aria-label="Chercher sur le web, Copilot : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#projet-copilot" aria-label="Garder un projet, Copilot : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr><tr id="gemini"><th scope="row">Gemini<span class="source">offre payante individuelle</span></th><td><a href="#pieces-gemini" aria-label="Lire des pièces jointes, Gemini : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#tableur-gemini" aria-label="Analyser un tableur, Gemini : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#fichier-gemini" aria-label="Produire un fichier, Gemini : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#web-gemini" aria-label="Chercher sur le web, Gemini : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#projet-gemini" aria-label="Garder un projet, Gemini : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr><tr id="mistral"><th scope="row">Mistral<span class="source">offre gratuite</span></th><td><a href="#pieces-mistral" aria-label="Lire des pièces jointes, Mistral : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#tableur-mistral" aria-label="Analyser un tableur, Mistral : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#fichier-mistral" aria-label="Produire un fichier, Mistral : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#web-mistral" aria-label="Chercher sur le web, Mistral : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#projet-mistral" aria-label="Garder un projet, Mistral : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr></tbody></table></div>
+<tbody><tr id="chatgpt"><th scope="row">ChatGPT<span class="source">offre gratuite</span></th><td><a href="#pieces-chatgpt" aria-label="Lire des pièces jointes, ChatGPT : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#tableur-chatgpt" aria-label="Analyser un tableur, ChatGPT : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#fichier-chatgpt" aria-label="Produire un fichier, ChatGPT : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#web-chatgpt" aria-label="Chercher sur le web, ChatGPT : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#projet-chatgpt" aria-label="Garder un projet, ChatGPT : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr><tr id="claude"><th scope="row">Claude<span class="source">offre pas encore relevée</span></th><td><a href="#pieces-claude" aria-label="Lire des pièces jointes, Claude : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#tableur-claude" aria-label="Analyser un tableur, Claude : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#fichier-claude" aria-label="Produire un fichier, Claude : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#web-claude" aria-label="Chercher sur le web, Claude : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#projet-claude" aria-label="Garder un projet, Claude : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr><tr id="copilot"><th scope="row">Copilot<span class="source">offre grand public, compte Microsoft personnel</span></th><td><a href="#pieces-copilot" aria-label="Lire des pièces jointes, Copilot : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#tableur-copilot" aria-label="Analyser un tableur, Copilot : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#fichier-copilot" aria-label="Produire un fichier, Copilot : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#web-copilot" aria-label="Chercher sur le web, Copilot : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#projet-copilot" aria-label="Garder un projet, Copilot : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr><tr id="gemini"><th scope="row">Gemini<span class="source">offre payante individuelle</span></th><td><a href="#pieces-gemini" aria-label="Lire des pièces jointes, Gemini : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#tableur-gemini" aria-label="Analyser un tableur, Gemini : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#fichier-gemini" aria-label="Produire un fichier, Gemini : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#web-gemini" aria-label="Chercher sur le web, Gemini : À mesurer"><span class="verdict verdict--mesurer">À mesurer</span></a></td><td><a href="#projet-gemini" aria-label="Garder un projet, Gemini : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr><tr id="mistral"><th scope="row">Mistral<span class="source">offre gratuite</span></th><td><a href="#pieces-mistral" aria-label="Lire des pièces jointes, Mistral : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#tableur-mistral" aria-label="Analyser un tableur, Mistral : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#fichier-mistral" aria-label="Produire un fichier, Mistral : À condition"><span class="verdict verdict--condition">À condition</span></a></td><td><a href="#web-mistral" aria-label="Chercher sur le web, Mistral : Oui"><span class="verdict verdict--oui">Oui</span></a></td><td><a href="#projet-mistral" aria-label="Garder un projet, Mistral : Selon l'aide"><span class="verdict verdict--aide">Selon l'aide</span></a></td></tr></tbody></table></div>
 
+<nav class="sommaire-page" aria-label="Sur cette page"><p class="sommaire-page-titre">Sur cette page</p><ol><li><a href="#pieces">Lire des pièces jointes</a></li><li><a href="#tableur">Analyser un tableur</a></li><li><a href="#fichier">Produire un fichier</a></li><li><a href="#web">Chercher sur le web</a></li><li><a href="#projet">Garder un projet</a></li><li><a href="#essai-web">Comment la recherche web a été mesurée</a></li></ol></nav>
 <h2 id="pieces">Lire des pièces jointes</h2>
-<div class="detail-capacite"><div class="ligne" id="pieces-chatgpt"><p class="qui">ChatGPT<span class="verdict verdict--condition">À condition</span><small>offre gratuite</small></p><p>À condition. Sur l&#x27;offre gratuite, les pièces jointes ont été refusées après deux fichiers, avec une attente annoncée de seize heures sur une période glissante ; le logo n&#x27;a pas pu être joint. Remède appliqué le jour même : le contenu des quatre autres pièces collé dans le message, toutes lues.<span class="source">Source : <a href="registre.html#passe-1">passe n<sup>o</sup>&nbsp;1 du 3 novembre 2026</a> ; <a href="registre.html#passe-11">passe n<sup>o</sup>&nbsp;11 du 3 novembre 2026</a>.</span></p></div><div class="ligne" id="pieces-claude"><p class="qui">Claude<span class="verdict verdict--mesurer">À mesurer</span><small>offre [À MESURER]</small></p><p>Ses passes au banc n&#x27;ont pas été retenues, car elles ont tourné sur le compte personnel de l&#x27;auteur, avec ses propres réglages : [À MESURER].</p></div><div class="ligne" id="pieces-copilot"><p class="qui">Copilot<span class="verdict verdict--condition">À condition</span><small>offre grand public, compte Microsoft personnel</small></p><p>À condition. Sur un compte personnel, un fichier par envoi ; la quatrième pièce n&#x27;a pas été retenue, sans message ; répondre non à la question sur l&#x27;analyse des images a retiré toutes les pièces déjà jointes. Chaque pièce chargée depuis l&#x27;ordinateur est copiée vers l&#x27;espace en ligne du compte, ce que l&#x27;assistant annonce. Remède : une pièce par message, la charte collée dans le message, qui a été lue.<span class="source">Source : <a href="registre.html#passe-10">passe n<sup>o</sup>&nbsp;10 du 3 novembre 2026</a> ; <a href="registre.html#passe-17">passe n<sup>o</sup>&nbsp;17 du 3 novembre 2026</a>.</span></p></div><div class="ligne" id="pieces-gemini"><p class="qui">Gemini<span class="verdict verdict--oui">Oui</span><small>offre payante individuelle</small></p><p>Oui, avec deux conditions. Cinq pièces sur cinq sur la proposition, le logo passant dans un second envoi par le champ réservé aux images ; neuf sur neuf sur l&#x27;appel d&#x27;offres ; cinq sur cinq, logo compris, sur le reporting du 4 novembre. Le même jour, sur la fiche de compte, dix fichiers au plus par envoi : le dossier est parti en deux lots ; un export .csv du premier lot a été déclaré vide alors qu&#x27;il portait seize commandes. Remède : faire dresser l&#x27;inventaire après chaque lot.<span class="source">Source : <a href="registre.html#passe-4">passe n<sup>o</sup>&nbsp;4 du 3 novembre 2026</a> ; <a href="registre.html#passe-7">passe n<sup>o</sup>&nbsp;7 du 3 novembre 2026</a> ; <a href="registre.html#passe-18">passe n<sup>o</sup>&nbsp;18 du 4 novembre 2026</a> ; <a href="registre.html#passe-20">passe n<sup>o</sup>&nbsp;20 du 4 novembre 2026</a>.</span></p></div><div class="ligne" id="pieces-mistral"><p class="qui">Mistral<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></p><p>Oui, avec une condition sur l&#x27;image. Cinq pièces sur cinq sur la proposition ; huit sur neuf sur l&#x27;appel d&#x27;offres, le logo étant déclaré inexploitable comme image ; sur le reporting, le logo en .png déclaré illisible, sa version .svg lue à la place. Un prompt long collé devient une pièce jointe. Le 4 novembre, quinze fichiers sont passés en un seul envoi, la note scannée comprise. Le 5 novembre, sur trois dossiers, le logo en .png, pourtant montré en vignette, a été déclaré illisible ; la version .svg a servi à sa place deux fois.<span class="source">Source : <a href="registre.html#passe-8">passe n<sup>o</sup>&nbsp;8 du 3 novembre 2026</a> ; <a href="registre.html#passe-9">passe n<sup>o</sup>&nbsp;9 du 3 novembre 2026</a> ; <a href="registre.html#passe-19">passe n<sup>o</sup>&nbsp;19 du 4 novembre 2026</a> ; <a href="registre.html#passe-21">passe n<sup>o</sup>&nbsp;21 du 4 novembre 2026</a> ; <a href="registre.html#passe-42">passe n<sup>o</sup>&nbsp;42 du 5 novembre 2026</a> ; <a href="registre.html#passe-45">passe n<sup>o</sup>&nbsp;45 du 5 novembre 2026</a> ; <a href="registre.html#passe-46">passe n<sup>o</sup>&nbsp;46 du 5 novembre 2026</a>.</span></p></div></div><h2 id="tableur">Analyser un tableur</h2>
-<div class="detail-capacite"><div class="ligne" id="tableur-chatgpt"><p class="qui">ChatGPT<span class="verdict verdict--mesurer">À mesurer</span><small>offre gratuite</small></p><p>Aucun tableur ne lui a été confié : [À MESURER]. Fait voisin du 3 novembre : sur l&#x27;offre gratuite, l&#x27;analyse de données s&#x27;est interrompue en cours de contrôle jusqu&#x27;au lendemain, faute de quota.<span class="source">Source : <a href="registre.html#passe-11">passe n<sup>o</sup>&nbsp;11 du 3 novembre 2026</a>.</span></p></div><div class="ligne" id="tableur-claude"><p class="qui">Claude<span class="verdict verdict--mesurer">À mesurer</span><small>offre [À MESURER]</small></p><p>Aucun tableur ne lui a été confié au banc : [À MESURER].</p></div><div class="ligne" id="tableur-copilot"><p class="qui">Copilot<span class="verdict verdict--mesurer">À mesurer</span><small>offre grand public, compte Microsoft personnel</small></p><p>Aucun tableur ne lui a été confié au banc : [À MESURER].</p></div><div class="ligne" id="tableur-gemini"><p class="qui">Gemini<span class="verdict verdict--condition">À condition</span><small>offre payante individuelle</small></p><p>À condition. Le 4 novembre, sur des exports .csv aux encodages et séparateurs différents, tous les totaux étaient justes ; le code exécuté pour les calculer se laisse afficher et relire. Le même jour, sur un autre dossier, un export .csv a été déclaré vide à tort. Remède : faire calculer un total que vous connaissez.<span class="source">Source : <a href="registre.html#passe-18">passe n<sup>o</sup>&nbsp;18 du 4 novembre 2026</a> ; <a href="registre.html#passe-20">passe n<sup>o</sup>&nbsp;20 du 4 novembre 2026</a>.</span></p></div><div class="ligne" id="tableur-mistral"><p class="qui">Mistral<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></p><p>Oui. Le 4 novembre, sur l&#x27;offre gratuite, tous les totaux justes à partir d&#x27;exports .csv, encodage Latin-1 compris, après deux questions posées avant de calculer ; sur la fiche de compte, un montant au format anglais lu juste et signalé.<span class="source">Source : <a href="registre.html#passe-19">passe n<sup>o</sup>&nbsp;19 du 4 novembre 2026</a> ; <a href="registre.html#passe-21">passe n<sup>o</sup>&nbsp;21 du 4 novembre 2026</a>.</span></p></div></div><h2 id="fichier">Produire un fichier</h2>
-<div class="detail-capacite"><div class="ligne" id="fichier-chatgpt"><p class="qui">ChatGPT<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></p><p>Oui. Un fichier Word de six pages, rendu en quatre minutes environ et contrôlé par l&#x27;assistant lui-même, puis téléchargé et mesuré par l&#x27;auteur.<span class="source">Source : <a href="registre.html#passe-11">passe n<sup>o</sup>&nbsp;11 du 3 novembre 2026</a>.</span></p></div><div class="ligne" id="fichier-claude"><p class="qui">Claude<span class="verdict verdict--mesurer">À mesurer</span><small>offre [À MESURER]</small></p><p>Ses passes au banc n&#x27;ont pas été retenues, car elles ont tourné sur le compte personnel de l&#x27;auteur, avec ses propres réglages : [À MESURER].</p></div><div class="ligne" id="fichier-copilot"><p class="qui">Copilot<span class="verdict verdict--mesurer">À mesurer</span><small>offre grand public, compte Microsoft personnel</small></p><p>Fichier : [À MESURER]. Observé le 3 novembre : le document entier refusé trois fois, jugé trop long pour une seule réponse, puis la page de garde et la première partie rendues aussitôt en texte à coller, dès qu&#x27;elles ont été demandées seules.<span class="source">Source : <a href="registre.html#passe-17">passe n<sup>o</sup>&nbsp;17 du 3 novembre 2026</a>.</span></p></div><div class="ligne" id="fichier-gemini"><p class="qui">Gemini<span class="verdict verdict--condition">À condition</span><small>offre payante individuelle</small></p><p>À condition. Un fichier Word annoncé sur la proposition puis sur le reporting, dont l&#x27;aperçu a échoué chez l&#x27;assistant lui-même, le téléchargement aussi le 4 novembre. Un quart d&#x27;heure après le premier, le même compte a rendu l&#x27;appel d&#x27;offres en texte à copier. Remède : relancer une fois, puis coller le texte dans Word.<span class="source">Source : <a href="registre.html#passe-4">passe n<sup>o</sup>&nbsp;4 du 3 novembre 2026</a> ; <a href="registre.html#passe-7">passe n<sup>o</sup>&nbsp;7 du 3 novembre 2026</a> ; <a href="registre.html#passe-18">passe n<sup>o</sup>&nbsp;18 du 4 novembre 2026</a>.</span></p></div><div class="ligne" id="fichier-mistral"><p class="qui">Mistral<span class="verdict verdict--condition">À condition</span><small>offre gratuite</small></p><p>À condition. Sur l&#x27;offre gratuite, les documents Word sont venus en texte à coller, le repli étant annoncé en une phrase ; la grille de l&#x27;appel d&#x27;offres, en canevas exportable. Le 5 novembre, un tableau de bord HTML est venu en canevas téléchargeable depuis le panneau ; deux fois, des fichiers Word ont été annoncés puis assemblés à la main dans l&#x27;espace d&#x27;exécution de l&#x27;assistant, sans lien de téléchargement visible. Remède : coller le texte dans Word.<span class="source">Source : <a href="registre.html#passe-8">passe n<sup>o</sup>&nbsp;8 du 3 novembre 2026</a> ; <a href="registre.html#passe-9">passe n<sup>o</sup>&nbsp;9 du 3 novembre 2026</a> ; <a href="registre.html#passe-19">passe n<sup>o</sup>&nbsp;19 du 4 novembre 2026</a> ; <a href="registre.html#passe-42">passe n<sup>o</sup>&nbsp;42 du 5 novembre 2026</a> ; <a href="registre.html#passe-45">passe n<sup>o</sup>&nbsp;45 du 5 novembre 2026</a> ; <a href="registre.html#passe-46">passe n<sup>o</sup>&nbsp;46 du 5 novembre 2026</a>.</span></p></div></div><h2 id="web">Chercher sur le web</h2>
-<div class="detail-capacite"><div class="ligne" id="web-chatgpt"><p class="qui">ChatGPT<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></p><p>Oui. Le 22 novembre, sur l&#x27;offre gratuite, en conversation éphémère, la recherche s&#x27;est lancée seule, sans mode à activer : l&#x27;adresse donnée s&#x27;ouvre et porte le titre et la date annoncés. L&#x27;assistant affirmait pourtant l&#x27;article « en tête de la liste » : il était le troisième des trois publiés ce jour-là. Vérifiez l&#x27;adresse, pas le commentaire.<span class="source">Source : <a href="capacites.html#essai-web">essai de recherche web du 22 novembre 2026</a>.</span></p></div><div class="ligne" id="web-claude"><p class="qui">Claude<span class="verdict verdict--oui">Oui</span><small>offre [À MESURER]</small></p><p>Oui. Le 22 novembre, sur l&#x27;offre gratuite d&#x27;un compte de test, en conversation neuve, la recherche s&#x27;est lancée seule, sans mode à activer : l&#x27;adresse donnée s&#x27;ouvre et porte le titre et la date annoncés, et l&#x27;article était le premier de la liste du site. L&#x27;assistant a précisé qu&#x27;il tenait la date de la liste, sans avoir ouvert la page elle-même.<span class="source">Source : <a href="capacites.html#essai-web">essai de recherche web du 22 novembre 2026</a>.</span></p></div><div class="ligne" id="web-copilot"><p class="qui">Copilot<span class="verdict verdict--mesurer">À mesurer</span><small>offre grand public, compte Microsoft personnel</small></p><p>[À MESURER] : aucun de ses essais au banc ne demandait de recherche en ligne.</p></div><div class="ligne" id="web-gemini"><p class="qui">Gemini<span class="verdict verdict--mesurer">À mesurer</span><small>offre payante individuelle</small></p><p>Non sollicitée sur la veille du 4 novembre, dont le prompt l&#x27;appelait : aucune page ouverte, la note tirée des seules pièces jointes. Un essai qui l&#x27;exige reste à faire : [À MESURER].<span class="source">Source : <a href="registre.html#passe-23">passe n<sup>o</sup>&nbsp;23 du 4 novembre 2026</a>.</span></p></div><div class="ligne" id="web-mistral"><p class="qui">Mistral<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></p><p>Oui. Le 23 novembre, sur l&#x27;offre gratuite, en conversation neuve, la recherche s&#x27;est lancée seule, sans mode à activer : l&#x27;adresse donnée s&#x27;ouvre et porte le titre et la date annoncés, et l&#x27;article était le premier de la liste du site. L&#x27;assistant comptait pourtant « trois autres actualités » parues le même jour, quand il n&#x27;y en avait que deux. Le 4 novembre déjà, la veille avait lancé trois recherches : une actualité réelle ajoutée à la note, trois pages réelles écartées, et une page payante dite lue en partie seulement.<span class="source">Source : <a href="registre.html#passe-25">passe n<sup>o</sup>&nbsp;25 du 4 novembre 2026</a> ; <a href="capacites.html#essai-web">essai de recherche web du 22 novembre 2026</a>.</span></p></div></div><h2 id="projet">Garder un projet</h2>
-<div class="detail-capacite"><div class="ligne" id="projet-chatgpt"><p class="qui">ChatGPT<span class="verdict verdict--aide">Selon l'aide</span><small>offre gratuite</small></p><p>La page d&#x27;aide décrit des projets qui gardent des instructions et des fichiers, leurs instructions primant sur celles du compte, ouverts à l&#x27;offre gratuite avec cinq fichiers par projet. Les GPT personnalisés doivent cesser de fonctionner le 11 décembre 2026 : le projet est la voie qui tient. Toutes les passes ont eu lieu en conversation : [À MESURER].<span class="source">Source : <a href="https://help.openai.com/en/articles/10169521-projects-in-chatgpt">page d&#x27;aide d&#x27;OpenAI sur les projets</a>, lue par un moteur de recherche les 4 et 6 novembre 2026, l&#x27;accès direct étant refusé ; <a href="https://help.openai.com/en/articles/20001519">page d&#x27;aide d&#x27;OpenAI sur le retrait des GPT personnalisés</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé.</span></p></div><div class="ligne" id="projet-claude"><p class="qui">Claude<span class="verdict verdict--aide">Selon l'aide</span><small>offre [À MESURER]</small></p><p>La page d&#x27;aide décrit des projets sur toutes les offres, cinq au plus sur l&#x27;offre gratuite, leurs instructions propres étant réservées aux offres payantes ; à côté, des préférences du profil valables pour toutes les conversations. Toutes les passes ont eu lieu en conversation : [À MESURER].<span class="source">Source : <a href="https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features">page d&#x27;aide d&#x27;Anthropic sur la personnalisation</a>, lue le 6 novembre 2026.</span></p></div><div class="ligne" id="projet-copilot"><p class="qui">Copilot<span class="verdict verdict--aide">Selon l'aide</span><small>offre grand public, compte Microsoft personnel</small></p><p>Des carnets qui rassemblent fichiers, notes et conversations avec des instructions propres, ouverts aux abonnés Microsoft 365 Personnel, Famille et Premium ; en organisation, avec une licence Copilot ou Copilot Chat. La mémoire que la documentation dit en préversion est celle de Microsoft 365 en organisation. Non essayé au banc : [À MESURER].<span class="source">Source : <a href="https://support.microsoft.com/en-us/microsoft-365-copilot/frequently-asked-questions-about-microsoft-365-copilot-notebooks">page de questions fréquentes de Microsoft sur les carnets de Copilot</a>, lue le 6 novembre 2026 ; <a href="https://learn.microsoft.com/en-us/copilot/manage/copilot-personalization-memory">documentation d&#x27;administration de Microsoft 365 Copilot sur la personnalisation et la mémoire</a>, en organisation, lue le 6 novembre 2026.</span></p></div><div class="ligne" id="projet-gemini"><p class="qui">Gemini<span class="verdict verdict--aide">Selon l'aide</span><small>offre payante individuelle</small></p><p>Les pages d&#x27;aide décrivent des instructions enregistrées, valables pour toutes les conversations mais indisponibles sur un compte professionnel, et des carnets qui gardent sources, instructions et conversations. Les Gems, assistants personnalisés de l&#x27;éditeur, passent aux <em>skills</em> sur les comptes personnels : lecture seule le 17 novembre 2026, retrait le 17 décembre. Non essayé au banc : [À MESURER].<span class="source">Source : <a href="https://support.google.com/gemini/answer/16598623">page d&#x27;aide de Google sur les instructions enregistrées</a> ; <a href="https://support.google.com/gemini/answer/16972047">page d&#x27;aide de Google sur les carnets</a>, lue le 6 novembre 2026 ; <a href="https://support.google.com/gemini/answer/18560919">page d&#x27;aide de Google sur le passage des Gems aux skills</a>, lue le 6 novembre 2026.</span></p></div><div class="ligne" id="projet-mistral"><p class="qui">Mistral<span class="verdict verdict--aide">Selon l'aide</span><small>offre gratuite</small></p><p>La documentation décrit des projets qui portent des instructions et des fichiers, sur toutes les offres, le ton choisi pour le compte s&#x27;y héritant par défaut. Toutes les passes ont eu lieu en conversation : [À MESURER].<span class="source">Source : <a href="https://docs.mistral.ai/vibe/work/projects">documentation de Mistral AI sur les projets</a>, lue le 6 novembre 2026.</span></p></div></div>
+<div class="detail-capacite"><div class="ligne"><h3 class="qui" id="pieces-chatgpt">ChatGPT<span class="verdict verdict--condition">À condition</span><small>offre gratuite</small></h3><p>À condition. Sur l&#x27;offre gratuite, les pièces jointes ont été refusées après deux fichiers, avec une attente annoncée de seize heures sur une période glissante ; le logo n&#x27;a pas pu être joint. Remède appliqué le jour même : le contenu des quatre autres pièces collé dans le message, toutes lues.<span class="source">Source : <a href="registre.html#passe-1">tentative n<sup>o</sup>&nbsp;1 du 3 novembre 2026</a> ; <a href="registre.html#passe-11">tentative n<sup>o</sup>&nbsp;11 du 3 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="pieces-claude">Claude<span class="verdict verdict--mesurer">À mesurer</span><small>offre pas encore relevée</small></h3><p>Ses tentatives au banc n&#x27;ont pas été retenues, car elles ont tourné sur le compte personnel de l&#x27;auteur, avec ses propres réglages : pas encore mesuré.</p></div><div class="ligne"><h3 class="qui" id="pieces-copilot">Copilot<span class="verdict verdict--condition">À condition</span><small>offre grand public, compte Microsoft personnel</small></h3><p>À condition. Sur un compte personnel, un fichier par envoi ; la quatrième pièce n&#x27;a pas été retenue, sans message ; répondre non à la question sur l&#x27;analyse des images a retiré toutes les pièces déjà jointes. Chaque pièce chargée depuis l&#x27;ordinateur est copiée vers l&#x27;espace en ligne du compte, ce que l&#x27;assistant annonce. Remède : une pièce par message, la charte collée dans le message ; elle y a été lue.<span class="source">Source : <a href="registre.html#passe-10">tentative n<sup>o</sup>&nbsp;10 du 3 novembre 2026</a> ; <a href="registre.html#passe-17">tentative n<sup>o</sup>&nbsp;17 du 3 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="pieces-gemini">Gemini<span class="verdict verdict--oui">Oui</span><small>offre payante individuelle</small></h3><p>Oui, avec deux conditions. Cinq pièces sur cinq sur la proposition, le logo passant dans un second envoi par le champ réservé aux images ; neuf sur neuf sur l&#x27;appel d&#x27;offres ; cinq sur cinq, logo compris, sur le reporting du 4 novembre. Le même jour, sur la fiche de compte, dix fichiers au plus par envoi : le dossier est parti en deux lots ; un export .csv du premier lot a été déclaré vide alors qu&#x27;il portait seize commandes. Remède : faire dresser l&#x27;inventaire après chaque lot.<span class="source">Source : <a href="registre.html#passe-4">tentative n<sup>o</sup>&nbsp;4 du 3 novembre 2026</a> ; <a href="registre.html#passe-7">tentative n<sup>o</sup>&nbsp;7 du 3 novembre 2026</a> ; <a href="registre.html#passe-18">tentative n<sup>o</sup>&nbsp;18 du 4 novembre 2026</a> ; <a href="registre.html#passe-20">tentative n<sup>o</sup>&nbsp;20 du 4 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="pieces-mistral">Mistral<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></h3><p>Oui, avec une condition sur l&#x27;image. Cinq pièces sur cinq sur la proposition ; huit sur neuf sur l&#x27;appel d&#x27;offres, le logo étant déclaré inexploitable comme image. Le logo en .png a été déclaré illisible sur le reporting, puis le 5 novembre sur trois dossiers alors qu&#x27;il était montré en vignette : sa version .svg a été lue à sa place sur le reporting, puis deux fois le 5 novembre. Le 4 novembre, quinze fichiers sont passés en un seul envoi, la note scannée comprise. Un prompt long collé devient une pièce jointe.<span class="source">Source : <a href="registre.html#passe-8">tentative n<sup>o</sup>&nbsp;8 du 3 novembre 2026</a> ; <a href="registre.html#passe-9">tentative n<sup>o</sup>&nbsp;9 du 3 novembre 2026</a> ; <a href="registre.html#passe-19">tentative n<sup>o</sup>&nbsp;19 du 4 novembre 2026</a> ; <a href="registre.html#passe-21">tentative n<sup>o</sup>&nbsp;21 du 4 novembre 2026</a> ; <a href="registre.html#passe-42">tentative n<sup>o</sup>&nbsp;42 du 5 novembre 2026</a> ; <a href="registre.html#passe-45">tentative n<sup>o</sup>&nbsp;45 du 5 novembre 2026</a> ; <a href="registre.html#passe-46">tentative n<sup>o</sup>&nbsp;46 du 5 novembre 2026</a>.</span></p></div></div><h2 id="tableur">Analyser un tableur</h2>
+<div class="detail-capacite"><div class="ligne"><h3 class="qui" id="tableur-chatgpt">ChatGPT<span class="verdict verdict--mesurer">À mesurer</span><small>offre gratuite</small></h3><p>Aucun tableur ne lui a été confié : pas encore mesuré. Fait voisin du 3 novembre : sur l&#x27;offre gratuite, l&#x27;analyse de données s&#x27;est interrompue en cours de contrôle jusqu&#x27;au lendemain, faute de quota.<span class="source">Source : <a href="registre.html#passe-11">tentative n<sup>o</sup>&nbsp;11 du 3 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="tableur-claude">Claude<span class="verdict verdict--mesurer">À mesurer</span><small>offre pas encore relevée</small></h3><p>Aucun tableur ne lui a été confié au banc : pas encore mesuré.</p></div><div class="ligne"><h3 class="qui" id="tableur-copilot">Copilot<span class="verdict verdict--mesurer">À mesurer</span><small>offre grand public, compte Microsoft personnel</small></h3><p>Aucun tableur ne lui a été confié au banc : pas encore mesuré.</p></div><div class="ligne"><h3 class="qui" id="tableur-gemini">Gemini<span class="verdict verdict--condition">À condition</span><small>offre payante individuelle</small></h3><p>À condition. Le 4 novembre, sur des exports .csv aux encodages et séparateurs différents, tous les totaux étaient justes ; le code exécuté pour les calculer se laisse afficher et relire. Le même jour, sur un autre dossier, un export .csv a été déclaré vide à tort. Remède : faire calculer un total que vous connaissez.<span class="source">Source : <a href="registre.html#passe-18">tentative n<sup>o</sup>&nbsp;18 du 4 novembre 2026</a> ; <a href="registre.html#passe-20">tentative n<sup>o</sup>&nbsp;20 du 4 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="tableur-mistral">Mistral<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></h3><p>Oui. Le 4 novembre, sur l&#x27;offre gratuite, tous les totaux justes à partir d&#x27;exports .csv, encodage Latin-1 compris, après deux questions posées avant de calculer ; sur la fiche de compte, un montant au format anglais lu juste et signalé.<span class="source">Source : <a href="registre.html#passe-19">tentative n<sup>o</sup>&nbsp;19 du 4 novembre 2026</a> ; <a href="registre.html#passe-21">tentative n<sup>o</sup>&nbsp;21 du 4 novembre 2026</a>.</span></p></div></div><h2 id="fichier">Produire un fichier</h2>
+<div class="detail-capacite"><div class="ligne"><h3 class="qui" id="fichier-chatgpt">ChatGPT<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></h3><p>Oui. Un fichier Word de six pages, rendu en quatre minutes environ et contrôlé par l&#x27;assistant lui-même, puis téléchargé et mesuré par l&#x27;auteur.<span class="source">Source : <a href="registre.html#passe-11">tentative n<sup>o</sup>&nbsp;11 du 3 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="fichier-claude">Claude<span class="verdict verdict--mesurer">À mesurer</span><small>offre pas encore relevée</small></h3><p>Ses tentatives au banc n&#x27;ont pas été retenues, car elles ont tourné sur le compte personnel de l&#x27;auteur, avec ses propres réglages : pas encore mesuré.</p></div><div class="ligne"><h3 class="qui" id="fichier-copilot">Copilot<span class="verdict verdict--mesurer">À mesurer</span><small>offre grand public, compte Microsoft personnel</small></h3><p>Fichier : pas encore mesuré. Observé le 3 novembre : le document entier refusé trois fois, jugé trop long pour une seule réponse, puis la page de garde et la première partie rendues aussitôt en texte à coller, dès qu&#x27;elles ont été demandées seules.<span class="source">Source : <a href="registre.html#passe-17">tentative n<sup>o</sup>&nbsp;17 du 3 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="fichier-gemini">Gemini<span class="verdict verdict--condition">À condition</span><small>offre payante individuelle</small></h3><p>À condition. Un fichier Word a été annoncé sur la proposition, puis un second sur le reporting ; l&#x27;aperçu du premier a échoué chez l&#x27;assistant lui-même, et le second n&#x27;a pu être ni prévisualisé ni téléchargé le 4 novembre. Un quart d&#x27;heure après le premier fichier, le même compte a rendu l&#x27;appel d&#x27;offres en texte à copier. Remède : relancer une fois, puis coller le texte dans Word.<span class="source">Source : <a href="registre.html#passe-4">tentative n<sup>o</sup>&nbsp;4 du 3 novembre 2026</a> ; <a href="registre.html#passe-7">tentative n<sup>o</sup>&nbsp;7 du 3 novembre 2026</a> ; <a href="registre.html#passe-18">tentative n<sup>o</sup>&nbsp;18 du 4 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="fichier-mistral">Mistral<span class="verdict verdict--condition">À condition</span><small>offre gratuite</small></h3><p>À condition. Sur l&#x27;offre gratuite, les documents Word sont venus en texte à coller, le repli étant annoncé en une phrase ; la grille de l&#x27;appel d&#x27;offres, en canevas exportable. Le 5 novembre, un tableau de bord HTML est venu en canevas téléchargeable depuis le panneau ; deux fois, des fichiers Word ont été annoncés, puis assemblés par l&#x27;assistant en code dans son espace d&#x27;exécution, sans lien de téléchargement visible. Remède : coller le texte dans Word.<span class="source">Source : <a href="registre.html#passe-8">tentative n<sup>o</sup>&nbsp;8 du 3 novembre 2026</a> ; <a href="registre.html#passe-9">tentative n<sup>o</sup>&nbsp;9 du 3 novembre 2026</a> ; <a href="registre.html#passe-19">tentative n<sup>o</sup>&nbsp;19 du 4 novembre 2026</a> ; <a href="registre.html#passe-42">tentative n<sup>o</sup>&nbsp;42 du 5 novembre 2026</a> ; <a href="registre.html#passe-45">tentative n<sup>o</sup>&nbsp;45 du 5 novembre 2026</a> ; <a href="registre.html#passe-46">tentative n<sup>o</sup>&nbsp;46 du 5 novembre 2026</a>.</span></p></div></div><h2 id="web">Chercher sur le web</h2>
+<div class="detail-capacite"><div class="ligne"><h3 class="qui" id="web-chatgpt">ChatGPT<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></h3><p>Oui. Le 22 novembre, sur l&#x27;offre gratuite, en conversation éphémère, la recherche s&#x27;est lancée seule, sans mode à activer : l&#x27;adresse donnée s&#x27;ouvre et porte le titre et la date annoncés. L&#x27;assistant affirmait pourtant que l&#x27;article était « en tête de la liste » : il était le troisième des trois publiés ce jour-là. Vérifiez l&#x27;adresse, pas le commentaire.<span class="source">Source : <a href="capacites.html#essai-web">essai de recherche web du 22 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="web-claude">Claude<span class="verdict verdict--oui">Oui</span><small>offre pas encore relevée</small></h3><p>Oui. Le 22 novembre, sur l&#x27;offre gratuite d&#x27;un compte de test, en conversation neuve, la recherche s&#x27;est lancée seule, sans mode à activer : l&#x27;adresse donnée s&#x27;ouvre et porte le titre et la date annoncés, et l&#x27;article était le premier de la liste du site. L&#x27;assistant a précisé qu&#x27;il tenait la date de la liste, sans avoir ouvert la page elle-même.<span class="source">Source : <a href="capacites.html#essai-web">essai de recherche web du 22 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="web-copilot">Copilot<span class="verdict verdict--mesurer">À mesurer</span><small>offre grand public, compte Microsoft personnel</small></h3><p>Pas encore mesuré : aucun de ses essais au banc ne demandait de recherche en ligne.</p></div><div class="ligne"><h3 class="qui" id="web-gemini">Gemini<span class="verdict verdict--mesurer">À mesurer</span><small>offre payante individuelle</small></h3><p>La recherche n&#x27;a pas été lancée sur la veille du 4 novembre, que le prompt demandait pourtant : aucune page ouverte, la note tirée des seules pièces jointes. Un essai qui l&#x27;exige reste à faire : pas encore mesuré.<span class="source">Source : <a href="registre.html#passe-23">tentative n<sup>o</sup>&nbsp;23 du 4 novembre 2026</a>.</span></p></div><div class="ligne"><h3 class="qui" id="web-mistral">Mistral<span class="verdict verdict--oui">Oui</span><small>offre gratuite</small></h3><p>Oui. Le 23 novembre, sur l&#x27;offre gratuite, en conversation neuve, la recherche s&#x27;est lancée seule, sans mode à activer : l&#x27;adresse donnée s&#x27;ouvre et porte le titre et la date annoncés, et l&#x27;article était le premier de la liste du site. L&#x27;assistant comptait pourtant « trois autres actualités » parues le même jour, quand il n&#x27;y en avait que deux. Le 4 novembre déjà, la veille avait lancé trois recherches : une actualité réelle ajoutée à la note, trois pages réelles écartées, et une page payante dite lue en partie seulement.<span class="source">Source : <a href="registre.html#passe-25">tentative n<sup>o</sup>&nbsp;25 du 4 novembre 2026</a> ; <a href="capacites.html#essai-web">essai de recherche web du 22 novembre 2026</a>.</span></p></div></div><h2 id="projet">Garder un projet</h2>
+<div class="detail-capacite"><div class="ligne"><h3 class="qui" id="projet-chatgpt">ChatGPT<span class="verdict verdict--aide">Selon l'aide</span><small>offre gratuite</small></h3><p>La page d&#x27;aide décrit des projets ouverts à l&#x27;offre gratuite, avec cinq fichiers par projet, qui gardent des instructions et des fichiers ; leurs instructions priment sur celles du compte. Les GPT personnalisés doivent cesser de fonctionner le 11 décembre 2026 : le projet est la voie qui tient. Toutes les tentatives ont eu lieu en conversation : pas encore mesuré.<span class="source">Source : <a href="https://help.openai.com/en/articles/10169521-projects-in-chatgpt">page d&#x27;aide d&#x27;OpenAI sur les projets</a>, lue par un moteur de recherche les 4 et 6 novembre 2026, l&#x27;accès direct étant refusé ; <a href="https://help.openai.com/en/articles/20001519">page d&#x27;aide d&#x27;OpenAI sur le retrait des GPT personnalisés</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé.</span></p></div><div class="ligne"><h3 class="qui" id="projet-claude">Claude<span class="verdict verdict--aide">Selon l'aide</span><small>offre pas encore relevée</small></h3><p>La page d&#x27;aide décrit des projets sur toutes les offres, cinq au plus sur l&#x27;offre gratuite, leurs instructions propres étant réservées aux offres payantes ; à côté, des préférences du profil valables pour toutes les conversations. Toutes les tentatives ont eu lieu en conversation : pas encore mesuré.<span class="source">Source : <a href="https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features">page d&#x27;aide d&#x27;Anthropic sur la personnalisation</a>, lue le 6 novembre 2026.</span></p></div><div class="ligne"><h3 class="qui" id="projet-copilot">Copilot<span class="verdict verdict--aide">Selon l'aide</span><small>offre grand public, compte Microsoft personnel</small></h3><p>Des carnets qui rassemblent fichiers, notes et conversations avec des instructions propres, ouverts aux abonnés Microsoft 365 Personnel, Famille et Premium ; en organisation, avec une licence Copilot ou Copilot Chat. La mémoire que la documentation dit en préversion est celle de Microsoft 365 en organisation. Non essayé au banc : pas encore mesuré.<span class="source">Source : <a href="https://support.microsoft.com/en-us/microsoft-365-copilot/frequently-asked-questions-about-microsoft-365-copilot-notebooks">page de questions fréquentes de Microsoft sur les carnets de Copilot</a>, lue le 6 novembre 2026 ; <a href="https://learn.microsoft.com/en-us/copilot/manage/copilot-personalization-memory">documentation d&#x27;administration de Microsoft 365 Copilot sur la personnalisation et la mémoire</a>, en organisation, lue le 6 novembre 2026.</span></p></div><div class="ligne"><h3 class="qui" id="projet-gemini">Gemini<span class="verdict verdict--aide">Selon l'aide</span><small>offre payante individuelle</small></h3><p>Les pages d&#x27;aide décrivent des instructions enregistrées, valables pour toutes les conversations mais indisponibles sur un compte professionnel, et des carnets qui gardent sources, instructions et conversations. Les Gems, assistants personnalisés de l&#x27;éditeur, deviennent des <em>skills</em> sur les comptes personnels : lecture seule le 17 novembre 2026, retrait le 17 décembre, en 2027 pour les comptes professionnels. Non essayé au banc : pas encore mesuré.<span class="source">Source : <a href="https://support.google.com/gemini/answer/16598623">page d&#x27;aide de Google sur les instructions enregistrées</a> ; <a href="https://support.google.com/gemini/answer/16972047">page d&#x27;aide de Google sur les carnets</a>, lue le 6 novembre 2026 ; <a href="https://support.google.com/gemini/answer/18560919">page d&#x27;aide de Google sur le passage des Gems aux skills</a>, lue le 6 novembre 2026.</span></p></div><div class="ligne"><h3 class="qui" id="projet-mistral">Mistral<span class="verdict verdict--aide">Selon l'aide</span><small>offre gratuite</small></h3><p>La documentation décrit des projets qui portent des instructions et des fichiers, sur toutes les offres, le ton choisi pour le compte s&#x27;y appliquant par défaut. Toutes les tentatives ont eu lieu en conversation : pas encore mesuré.<span class="source">Source : <a href="https://docs.mistral.ai/vibe/work/projects">documentation de Mistral AI sur les projets</a>, lue le 6 novembre 2026.</span></p></div></div>
 
 <h2 id="essai-web">Comment la recherche web a été mesurée</h2>
 <div class="essai">
-<p>L'essai est celui que le livre donne au lecteur en section 4.10 : demander une information de la semaine avec l'adresse de sa source. La capacité est là si l'adresse s'ouvre et porte l'information. Le même message, mot pour mot, part dans une conversation neuve, sans pièce jointe et sans mode activé :</p>
+<p>L'essai est celui que le livre donne au lecteur dans la section qui fait cocher les cinq capacités (section 4.10) : demander une information de la semaine avec l'adresse de sa source. La capacité est là si l'adresse s'ouvre et porte l'information. Le même message, mot pour mot, part dans une conversation neuve, sans pièce jointe et sans mode activé :</p>
 <pre><code>Cherche sur le web : quelle est la dernière actualité publiée sur le site de la CNIL (cnil.fr) ? Donne son titre exact, sa date de publication et l'adresse exacte de la page. Si tu ne peux pas consulter le web, dis-le-moi au lieu de répondre de mémoire.</code></pre>
 <p>L'adresse rendue est ensuite ouverte par un script, qui vérifie qu'elle répond, qu'elle porte le titre annoncé et la date, et qui relève les cinq actualités les plus récentes du site à la même heure. Oui : adresse juste, titre et date justes. À condition : juste après activation d'un mode, ou adresse approximative. Non : pas de recherche, adresse inventée, ou fait faux présenté comme vérifié.</p>
 </div>
 
 <p>Pour faire les mêmes essais chez vous, la grille est sur la page <a href="regler-son-assistant.html#capacites">Régler son assistant</a>.</p>
 
-<div class="encadre"><p>📅 Mesuré au banc du 3 au 15 novembre 2026, recherche web mesurée le 22 novembre 2026, pages d'aide relevées le 4 novembre 2026. Le détail de l'offre employée pour chaque assistant est dans le <a href="registre.html#offres">registre</a>.</p></div>
+<div class="encadre"><p>📅 Mesuré au banc du 3 au 15 novembre 2026, recherche web mesurée le 22 novembre 2026, pages d'aide relevées le 4 novembre 2026. Le détail de l'offre utilisée pour chaque assistant est dans le <a href="registre.html#offres">registre</a>.</p></div>
 
 </main>
 
-<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Votre assistant</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><span aria-current="page">Capacités observées</span></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><a href="automatisations.html">Automatisations</a></li></ul></div><div class="groupe"><p class="famille-nom">Comment le livre est vérifié</p><ul><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:ccletempsduncafe@lbi1.anonaddy.com">ccletempsduncafe@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 23/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du livre. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle deux : le tri de la boîte mail au chapitre 20, puis le tableau de portefeuille hebdomadaire à la section 18.6.", "cibles": ["automatisations.html", "P20", "P16"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger en compétence. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date du relevé. Si un prompt cale sur un message long, essayez sa version courte, sur la même fiche.", "cibles": ["regler-son-assistant.html", "capacites.html", "registre.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "ccletempsduncafe@lbi1.anonaddy.com", "href": "mailto:ccletempsduncafe@lbi1.anonaddy.com"}, "registre.html": {"libelle": "Registre des essais", "detail": "Chaque essai du banc, assistant par assistant, avec l'offre utilisée.", "href": "registre.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
+<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Votre assistant</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><span aria-current="page">Capacités observées</span></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><a href="automatisations.html">Automatisations</a></li></ul></div><div class="groupe"><p class="famille-nom">Comment le livre est vérifié</p><ul><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:ccletempsduncafe@lbi1.anonaddy.com">ccletempsduncafe@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 23/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du site. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle une : le tri de la boîte mail au chapitre 20.", "cibles": ["automatisations.html", "P20"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger dans un projet ou un assistant personnalisé. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date indiquée, tentative par tentative sur la page Registre des essais. Si votre assistant cale sur un prompt long, essayez sa version courte, sur la même fiche. Si le livre lui-même se trompe, la page Corrections le dit.", "cibles": ["regler-son-assistant.html", "capacites.html", "registre.html", "errata.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "ccletempsduncafe@lbi1.anonaddy.com", "href": "mailto:ccletempsduncafe@lbi1.anonaddy.com"}, "errata.html": {"libelle": "Corrections", "detail": "Les corrections apportées au livre depuis sa parution.", "href": "errata.html"}, "registre.html": {"libelle": "Registre des essais", "detail": "Chaque essai du banc d'essai, assistant par assistant, avec l'offre utilisée.", "href": "registre.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, entraînement, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
 
 <script>
 (function () {
@@ -931,6 +1064,55 @@ body #contenu p, body #contenu li { text-align: left; hyphens: manual; -webkit-h
 
   for (var i = 0; i < fiches.length; i++) {
     observateurFiches.observe(fiches[i]);
+  }
+})();
+
+(function () {
+  // La fiche « lue » est celle ou le lecteur est arrive par son adresse
+  // (#prompt-p7), dont il a copie le prompt ou ouvert le texte. Elle etait la
+  // derniere fiche traversee au defilement : remontee du P7 vers la liste,
+  // Delphine se voyait proposer « Revenir au prompt P6 » (test a l'aveugle du
+  // 23 novembre 2026). Un stockage refuse ne casse rien.
+  function retenir(fiche) {
+    if (!fiche || !/^prompt-[a-z0-9-]+$/.test(fiche.id)) { return; }
+    var rang = fiche.querySelector('.rang');
+    try {
+      sessionStorage.setItem('fiche-lue', JSON.stringify({
+        id: fiche.id, rang: rang ? rang.textContent.trim() : ''
+      }));
+    } catch (e) {}
+  }
+  function depuisAncre() {
+    var cible = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+    if (cible && cible.classList && cible.classList.contains('fiche')) { retenir(cible); }
+  }
+  depuisAncre();
+  window.addEventListener('hashchange', depuisAncre);
+  document.addEventListener('click', function (ev) {
+    var el = ev.target.closest ? ev.target.closest('.copier, .bloc-prompt summary') : null;
+    if (el) { retenir(el.closest('.fiche')); }
+  });
+})();
+
+(function () {
+  // Le lien de retour mene a la liste des prompts (index.html#sommaire). Si
+  // le lecteur vient d'une fiche, il le ramene a cette fiche : Delphine,
+  // partie du P7 vers les capacites, retrouvait sinon la liste et devait
+  // rechercher son prompt. Sans JavaScript ou sans stockage, le lien statique
+  // reste, et aucune des adresses imprimees ne change.
+  var lien = document.querySelector('a.retour');
+  if (!lien) {
+    return;
+  }
+  var lue = null;
+  try {
+    lue = JSON.parse(sessionStorage.getItem('fiche-lue') || 'null');
+  } catch (e) {
+    return;
+  }
+  if (lue && /^prompt-[a-z0-9-]+$/.test(lue.id) && lue.rang) {
+    lien.setAttribute('href', 'index.html#' + lue.id);
+    lien.textContent = '← Revenir au prompt ' + lue.rang;
   }
 })();
 

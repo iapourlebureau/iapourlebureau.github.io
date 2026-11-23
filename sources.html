@@ -38,6 +38,35 @@
   --orange: #e8834a;
   --surligneur: #f8d7b4;
   --lien: #a8521c;
+  /* Le bandeau, la barre et les boutons restent sombres dans les deux modes :
+     --encre ne peut pas les porter, puisqu'elle passe au clair en mode
+     sombre pour rester la couleur du texte. */
+  --nuit: #16161a;
+  --sur-nuit: #f4f1ec;
+  --entete: #faf6ef;
+  --sur-orange: #16161a;
+  color-scheme: light dark;
+}
+
+/* Mode sombre, demande de l'auteur du 23 novembre 2026 : la page suit le
+   reglage du telephone ou de l'ordinateur. Le papier devient un brun tres
+   sombre plutot qu'un noir, le texte un creme plutot qu'un blanc, et la brique
+   des liens remonte vers l'orange de la couverture, qui passe sur fond sombre.
+   Chaque couple texte et fond est verifie a 4,5:1 au moins par
+   verifier_lisibilite.py. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #ece6dc;
+    --encre-douce: #b9af9f;
+    --papier: #1b1a17;
+    --carte: #24221e;
+    --trait: #3e3931;
+    --surligneur: #5c3c1f;
+    --lien: #f0a070;
+    --nuit: #0c0b0a;
+    --sur-nuit: #f4f1ec;
+    --entete: #2c2924;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -53,8 +82,8 @@ body {
 
 .bandeau {
   position: relative;
-  background: var(--encre);
-  color: var(--papier);
+  background: var(--nuit);
+  color: var(--sur-nuit);
   padding: 44px 24px 40px;
   overflow: hidden;
 }
@@ -104,7 +133,7 @@ body {
   border-radius: 3px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 15px;
-  color: var(--papier);
+  color: var(--sur-nuit);
 }
 
 .bandeau .maj {
@@ -147,7 +176,7 @@ body {
   color: #cfc6ba;
 }
 
-.bandeau--jaquette .promesse strong { color: var(--papier); font-weight: 600; }
+.bandeau--jaquette .promesse strong { color: var(--sur-nuit); font-weight: 600; }
 
 .jaquette {
   display: block;
@@ -166,13 +195,19 @@ body {
   }
 }
 
+/* Sur telephone, le premier ecran montrait une couverture de 257 px, le
+   titre, l'adresse que le lecteur vient de scanner, puis la barre a y = 683 :
+   un livre, pas une action (architecte et Delphine, 23 novembre 2026). La
+   couverture passe en vignette a cote du titre et l'adresse disparait ; la
+   liste des prompts arrive au premier ecran. */
 @media (max-width: 760px) {
-  .bandeau--jaquette { padding: 40px 24px 42px; }
-  .bandeau--jaquette .dedans { grid-template-columns: 1fr; gap: 26px; }
-  .bandeau--jaquette .couv { order: -1; }
-  .bandeau--jaquette h1 { font-size: clamp(24px, 6.6vw, 34px); }
-  .bandeau--jaquette h1::after { margin-top: 14px; }
-  .jaquette { width: 166px; }
+  .bandeau--jaquette { padding: 24px 20px 24px; }
+  .bandeau--jaquette .dedans { grid-template-columns: 1fr 72px; gap: 16px; align-items: start; }
+  .bandeau--jaquette .couv { order: 0; }
+  .bandeau--jaquette h1 { font-size: clamp(22px, 6.2vw, 30px); }
+  .bandeau--jaquette h1::after { margin-top: 10px; }
+  .bandeau--jaquette .adresse, .bandeau--jaquette .maj { display: none; }
+  .jaquette { width: 72px; }
 }
 
 .mode-emploi {
@@ -183,30 +218,44 @@ body {
 
 .mode-emploi p { max-width: 68ch; margin: 0 0 14px; }
 
+/* La liste des prompts porte le titre de chaque tache : des pastilles
+   « P7 · ch. 10 » ne parlaient qu'a qui a le livre ouvert a la bonne page
+   (Delphine, 23 novembre 2026). Une colonne sur telephone, deux au-dela. */
+.titre-sommaire { margin: 4px 0 10px; font-size: 20px; }
 .raccourcis {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 20px 0 4px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin: 0 0 8px;
   padding: 0;
   list-style: none;
 }
+@media (min-width: 700px) { .raccourcis { grid-template-columns: 1fr 1fr; } }
 .raccourcis a {
-  display: block;
-  min-width: 46px;
-  padding: 8px 10px;
-  text-align: center;
+  display: grid;
+  grid-template-columns: 3.2em 1fr;
+  column-gap: 10px;
+  padding: 9px 12px;
   background: var(--carte);
   border: 1px solid var(--trait);
   border-radius: 3px;
-  color: var(--lien);
-  font-weight: 600;
+  color: var(--encre);
   text-decoration: none;
+  line-height: 1.35;
 }
 .raccourcis a:hover { border-color: var(--lien); }
 .raccourcis a:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
-.raccourcis .intitule { color: var(--encre-douce); font-weight: 400; align-self: center; margin-right: 4px; }
+.raccourcis .num { color: var(--lien); font-weight: 700; }
 .raccourcis .ch { display: block; font-size: 12px; font-weight: 400; color: var(--encre-douce); }
+.raccourcis .tache { font-size: 15.5px; }
+.lire-un-prompt { margin: 14px 0 6px; }
+.lire-un-prompt summary { cursor: pointer; color: var(--lien); font-weight: 600; }
+.lire-un-prompt[open] summary { margin-bottom: 12px; }
+.suite { margin: 16px 0 0; font-weight: 600; }
+.maj-prompt { margin: 0 0 14px; font-size: 14.5px; color: var(--encre-douce); }
+.maj-prompt summary { cursor: pointer; }
+.maj-prompt p { margin: 8px 0 0; max-width: 68ch; }
+.vers-liste { display: block; margin: 10px 0 14px; font-size: 15px; color: var(--lien); }
 
 main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
 
@@ -227,7 +276,7 @@ main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
    arrive. */
 .onglet {
   background: var(--orange);
-  color: var(--encre);
+  color: var(--sur-orange);
   padding: 16px 16px 18px;
   text-align: center;
   border-bottom-right-radius: 4px;
@@ -270,8 +319,8 @@ main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
   font: inherit;
   font-weight: 600;
   font-size: 16px;
-  color: var(--papier);
-  background: var(--encre);
+  color: var(--sur-nuit);
+  background: var(--nuit);
   border: 1px solid var(--encre);
   border-radius: 3px;
   padding: 10px 20px;
@@ -279,7 +328,7 @@ main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
 }
 .copier:hover { background: #2c2a26; }
 .copier:focus-visible { outline: 3px solid var(--lien); outline-offset: 2px; }
-.fiche.copiee .copier { background: var(--orange); border-color: var(--orange); color: var(--encre); }
+.fiche.copiee .copier { background: var(--orange); border-color: var(--orange); color: var(--sur-orange); }
 
 /* La ligne d'identite part avec le prompt copie, en tete : numero, version,
    date et empreinte. Elle reste hors du <pre>, que verifier_mecanique compare
@@ -295,7 +344,7 @@ main { max-width: 940px; margin: 10px auto 60px; padding: 0 24px; }
 pre {
   margin: 16px 0 0;
   padding: 16px 18px;
-  background: #faf6ef;
+  background: var(--entete);
   border: 1px solid var(--trait);
   border-radius: 3px;
   overflow-x: auto;
@@ -312,8 +361,8 @@ pre {
   display: block;
   margin-top: 34px;
   padding: 22px 24px;
-  background: var(--encre);
-  color: var(--papier);
+  background: var(--nuit);
+  color: var(--sur-nuit);
   border-radius: 4px;
   text-decoration: none;
 }
@@ -402,8 +451,6 @@ th, td { border: 1px solid var(--trait); padding: 8px 10px; text-align: left; ve
 th { background: var(--carte); font-weight: 600; }
 td.chapitre { white-space: nowrap; font-weight: 600; }
 
-.retour { display: inline-block; margin: 22px 0 0; color: var(--lien); font-weight: 600; text-decoration: none; }
-.retour:hover { text-decoration: underline; }
 
 .rien { background: var(--carte); border: 1px solid var(--trait); border-radius: 4px; padding: 22px 24px; margin-top: 24px; }
 
@@ -444,7 +491,7 @@ td.chapitre { white-space: nowrap; font-weight: 600; }
   display: flex;
   align-items: center;
   gap: 4px;
-  background: var(--encre);
+  background: var(--nuit);
   padding: 10px 24px;
   overflow-x: auto;
 }
@@ -468,7 +515,7 @@ td.chapitre { white-space: nowrap; font-weight: 600; }
 }
 .pages li { white-space: nowrap; }
 .pages a {
-  color: var(--papier);
+  color: var(--sur-nuit);
   text-decoration: none;
   font-size: 14px;
   display: inline-flex;
@@ -500,7 +547,7 @@ td.chapitre { white-space: nowrap; font-weight: 600; }
   min-height: 24px;
   padding: 2px 10px;
   margin: 0 14px 0 0;
-  color: var(--papier);
+  color: var(--sur-nuit);
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
@@ -572,7 +619,7 @@ td.chapitre { white-space: nowrap; font-weight: 600; }
 .repere {
   margin-left: auto;
   padding-left: 16px;
-  color: var(--papier);
+  color: var(--sur-nuit);
   opacity: 0.8;
   font-size: 13px;
   white-space: nowrap;
@@ -630,7 +677,7 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
   top: 0;
   z-index: 100;
   background: var(--orange);
-  color: var(--encre);
+  color: var(--sur-orange);
   padding: 8px 16px;
   text-decoration: none;
   font-weight: 600;
@@ -649,8 +696,8 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
   bottom: 20px;
   z-index: 60;
   min-height: 24px;
-  background: var(--encre);
-  color: var(--papier);
+  background: var(--nuit);
+  color: var(--sur-nuit);
   border: 1px solid var(--trait);
   border-radius: 8px;
   padding: 10px 16px;
@@ -669,15 +716,18 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
 }
 
 /* Une cible d'ancrage ne doit pas se retrouver masquee sous la barre
-   collee : la marge de defilement vaut la hauteur de .pages, prise large. */
-:target { scroll-margin-top: 64px; }
+   collee : la marge de defilement vaut la hauteur de .pages, prise large.
+   Elle valait 64 px pour une barre mesuree a 73-80 px a 390 px de large
+   (architecte, 23 novembre 2026) : 9 a 16 px de chaque cible etaient caches.
+   Elle vaut pour tout element qui porte un id, cible d'un sommaire comprise. */
+:target, [id] { scroll-margin-top: 96px; }
 
 /* Le guide : un bouton en bas a gauche (le retour en haut tient la droite),
    et un panneau de conversation au-dessus. Construit par SCRIPT_NAV ; sans
    JavaScript, rien ne s'affiche. */
 .guide-bouton {
   position: fixed; left: 20px; bottom: 20px; z-index: 61;
-  background: var(--orange); color: var(--encre);
+  background: var(--orange); color: var(--sur-orange);
   border: 0; border-radius: 999px; padding: 11px 18px;
   font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
   box-shadow: 0 6px 18px rgba(22, 22, 26, 0.25);
@@ -695,10 +745,10 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
 }
 .guide-panneau[hidden] { display: none; }
 .guide-tete { display: flex; align-items: center; justify-content: space-between;
-  gap: 8px; padding: 12px 14px; background: var(--encre); color: var(--papier);
+  gap: 8px; padding: 12px 14px; background: var(--nuit); color: var(--sur-nuit);
   border-radius: 13px 13px 0 0; }
 .guide-tete p { margin: 0; font-weight: 600; }
-.guide-tete button { background: transparent; color: var(--papier);
+.guide-tete button { background: transparent; color: var(--sur-nuit);
   border: 1px solid #5f574e; border-radius: 8px; padding: 4px 10px;
   font: inherit; font-size: 13px; cursor: pointer; }
 .guide-fil { overflow-y: auto; padding: 14px; display: flex;
@@ -711,11 +761,11 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
 .guide-liens { list-style: none; margin: 0; padding: 0; display: flex;
   flex-direction: column; gap: 6px; }
 .guide-liens a { display: block; padding: 9px 12px; border: 1px solid var(--trait);
-  border-radius: 10px; color: var(--lien); text-decoration: none; background: #fff; }
+  border-radius: 10px; color: var(--lien); text-decoration: none; background: var(--carte); }
 .guide-liens a:hover { border-color: var(--orange); }
 .guide-liens small { display: block; color: var(--encre-douce); font-size: 13px; }
 .guide-choix { padding: 0 14px 14px; display: flex; flex-wrap: wrap; gap: 6px; }
-.guide-choix button { background: #fff; color: var(--encre);
+.guide-choix button { background: var(--carte); color: var(--encre);
   border: 1px solid var(--orange); border-radius: 999px; padding: 7px 12px;
   font: inherit; font-size: 14px; cursor: pointer; text-align: left; }
 .guide-choix button:hover { background: var(--surligneur); }
@@ -742,6 +792,72 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
   hyphens: manual;
   -webkit-hyphens: manual;
 }
+
+figure.capture { margin: 18px 0 24px; max-width: 68ch; }
+/* La capture garde son fond clair en mode sombre : c'est l'ecran de
+   l'assistant tel que le lecteur le verra, cadre d'un trait. */
+figure.capture img { display: block; width: 100%; height: auto;
+  border: 1px solid var(--trait); border-radius: 3px; background: #fff; }
+figure.capture figcaption { margin-top: 8px; font-size: 14.5px;
+  color: var(--encre-douce); line-height: 1.5; text-align: left; }
+#contenu img { max-width: 100%; height: auto; }
+
+.defile, .tableau { overflow-x: auto; margin: 18px 0 6px;
+  -webkit-overflow-scrolling: touch; }
+.defile table, .tableau table { margin: 0; }
+
+/* Le tableau de synthese des capacites : la colonne des assistants reste a
+   l'ecran quand on fait glisser le tableau (Delphine, 23 novembre 2026 :
+   « les noms des assistants disparaissent »). */
+.synthese th:first-child, .synthese td:first-child {
+  position: sticky; left: 0; z-index: 1; background: var(--papier); }
+.synthese thead th:first-child { background: var(--entete); }
+
+/* Repliee sur telephone, la barre tient sur une rangee : l'intitule de la
+   page courante, s'il est trop long (« Assistants personnalisés »), se coupe
+   d'une ellipse au lieu de faire passer la barre a deux rangees. */
+@supports selector(:has(a)) {
+  @media (max-width: 767.98px) {
+    nav.pages:not(:has(.pages-repli[open])) { flex-wrap: nowrap; }
+    nav.pages:not(:has(.pages-repli[open])) .pages-liste { flex: 1 1 0; min-width: 0; }
+    nav.pages:not(:has(.pages-repli[open])) .pages-liste li { min-width: 0; max-width: 100%; }
+    nav.pages:not(:has(.pages-repli[open])) [aria-current] {
+      display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+}
+
+/* Le sommaire « Sur cette page », pose par finaliser() (feuille structure,
+   N4). Statique : ni colle, ni surligne au defilement (refus maintenus). */
+.sommaire-page { margin: 18px 0 26px; padding: 14px 18px; max-width: 68ch;
+  background: var(--carte); border: 1px solid var(--trait); border-radius: 3px; }
+.sommaire-page-titre { margin: 0 0 8px; font-weight: 700; }
+.sommaire-page ol { margin: 0; padding-left: 22px; }
+#contenu .sommaire-page li { margin: 4px 0; text-align: left; hyphens: manual; -webkit-hyphens: manual; }
+.sommaire-page a { color: var(--lien); }
+.sommaire-page--grille ol { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; list-style: none; }
+.sommaire-page--grille li { margin: 0; }
+.sommaire-page--grille a { display: inline-block; padding: 4px 9px; border: 1px solid var(--trait);
+  border-radius: 3px; text-decoration: none; font-size: 15px; }
+
+#contenu .retour { display: inline-block; margin: 18px 0 4px; color: var(--lien);
+  font-weight: 600; text-decoration: none; }
+#contenu .retour:hover { text-decoration: underline; }
+
+/* A 390 px, la pastille « Que voulez-vous faire ? » (a gauche) et le bouton
+   « Revenir en haut de la page » (a droite) se chevauchaient sur les douze
+   pages : le second monte au-dessus de la premiere sur ecran etroit. */
+@media (max-width: 560px) {
+  .haut-fixe { bottom: 76px; right: 16px; }
+}
+
+/* Sous 768 px : le repere de position (« P7 · ch. 10 ») faisait passer la
+   barre a deux rangees, il ne s'affiche plus qu'en grand ecran ; et la
+   pastille du guide, fixee en bas, ne doit jamais couvrir la derniere ligne
+   de la page (WCAG 2.4.11) : le bas de page recoit sa hauteur en marge. */
+@media (max-width: 767px) {
+  .repere { display: none; }
+  body { padding-bottom: 84px; }
+}
 </style>
 </head>
 <body>
@@ -753,25 +869,25 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
     <span class="adresse">iapourlebureau.github.io</span>
   </div>
 </header>
-<nav class="pages" aria-label="Les pages du site"><details class="pages-repli"><summary>Les onze autres pages</summary></details><ul class="pages-liste"><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li><li><a href="automatisations.html">Automatisations</a></li><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><span aria-current="page">Sources officielles</span></li><li><a href="errata.html">Corrections</a></li></ul></nav>
+<nav class="pages" aria-label="Les pages du site"><details class="pages-repli"><summary>Toutes les pages</summary></details><ul class="pages-liste"><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li><li><a href="automatisations.html">Automatisations</a></li><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><span aria-current="page">Sources officielles</span></li><li><a href="errata.html">Corrections</a></li></ul></nav>
 
 <main class="texte" id="contenu">
-<a class="retour" href="index.html">← Retour aux prompts du livre</a>
-<p>L'annexe du livre, tenue à jour. Les adresses changent, les pages officielles déménagent : c'est cette version qui fait foi, pas celle imprimée.</p>
-<h2>Sources et références officielles</h2>
+<a class="retour" href="index.html#sommaire">← Retour aux prompts du livre</a>
+<p>L'annexe du livre, tenue à jour. Les adresses changent, les pages officielles déménagent : c'est cette version qui fait foi, pas celle du livre imprimé.</p>
 <p>Cette annexe liste les sources officielles consultées pour ce livre. Les informations datées y ont été vérifiées entre le 3 et le 5 novembre 2026, chacune à la date indiquée.</p>
 <p>Une adresse web est ce qu&#x27;un livre imprimé contient de plus fragile. Ce livre donne le titre de chaque page et le site qui la publie : cherchez ce titre dans le moteur de recherche du site. Sur cette page, l&#x27;adresse exacte suit chaque titre ; elle a été vérifiée le 6 novembre 2026.</p>
 <p><strong>Page en ligne du livre</strong></p>
 <p>📅 Cette annexe a été constituée le 4 novembre 2026.</p>
-<h3>Protection des données et sécurité</h3>
+<nav class="sommaire-page" aria-label="Sur cette page"><p class="sommaire-page-titre">Sur cette page</p><ol><li><a href="#protection-donnees-securite">Protection des données et sécurité</a></li><li><a href="#pages-aide-cinq-editeurs">Pages d&#x27;aide des cinq éditeurs</a></li><li><a href="#microsoft-word">Microsoft Word</a></li><li><a href="#outils-fabrication-livre">Outils de fabrication du livre</a></li><li><a href="#pages-d-aide">Les pages d'aide citées sur ce site</a></li></ol></nav>
+<h3 id="protection-donnees-securite">Protection des données et sécurité</h3>
 <p><strong>CNIL, « Donnée personnelle » et « Donnée sensible »</strong> <a href="https://www.cnil.fr/fr/definition/donnee-personnelle">https://www.cnil.fr/fr/definition/donnee-personnelle</a> et <a href="https://www.cnil.fr/fr/definition/donnee-sensible">https://www.cnil.fr/fr/definition/donnee-sensible</a> Pages de définition, sans date affichée, consultées le 4 novembre 2026. Elles fondent la définition des données personnelles du chapitre 6, avec l&#x27;article 5 du RGPD dans le texte publié par la CNIL.</p>
 <p><strong>CNIL, « L&#x27;anonymisation de données personnelles »</strong> <a href="https://www.cnil.fr/fr/technologies/lanonymisation-de-donnees-personnelles">https://www.cnil.fr/fr/technologies/lanonymisation-de-donnees-personnelles</a> Page datée du 19 mai 2020, consultée le 4 novembre 2026. Elle distingue l&#x27;anonymisation de la pseudonymisation, distinction reprise en section 6.4.</p>
 <p><strong>CNIL, questions-réponses sur l&#x27;intelligence artificielle générative</strong> <a href="https://www.cnil.fr/fr/les-questions-reponses-de-la-cnil-sur-lutilisation-dun-systeme-dia-generative">https://www.cnil.fr/fr/les-questions-reponses-de-la-cnil-sur-lutilisation-dun-systeme-dia-generative</a> Questions-réponses du 18 juillet 2024, consultées le 4 novembre 2026. Les questions 2 et 7 nourrissent les sections 6.5 et 6.7.</p>
 <p><strong>CNIL, page sur l&#x27;opposition à l&#x27;entraînement des modèles</strong> <a href="https://www.cnil.fr/fr/ia-comment-sopposer-la-reutilisation-de-ses-donnees-personnelles-entrainement-agent-conversationnel">https://www.cnil.fr/fr/ia-comment-sopposer-la-reutilisation-de-ses-donnees-personnelles-entrainement-agent-conversationnel</a> Page du 16 octobre 2025, consultée le 4 novembre 2026. Elle explique, plateforme par plateforme, comment s&#x27;opposer à l&#x27;entraînement sur ses données. Nommée en section 6.5.</p>
 <p><strong>CNIL, « Le registre des activités de traitement »</strong> <a href="https://www.cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement">https://www.cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement</a> Page consultée le 15 novembre 2026. Elle porte le modèle de registre simplifié destiné aux petites structures, cité en section 11.7.</p>
 <p><strong>ANSSI, « Recommandations de sécurité pour un système d&#x27;IA générative »</strong> <a href="https://cyber.gouv.fr/publications/recommandations-de-securite-pour-un-systeme-dia-generative">https://cyber.gouv.fr/publications/recommandations-de-securite-pour-un-systeme-dia-generative</a> Guide ANSSI-PA-102 du 29 avril 2024, pages 8 et 26, consulté le 4 novembre 2026. Source de la section 6.6 sur l&#x27;injection d&#x27;instruction.</p>
-<p><strong>Code pénal, article 226-13</strong> legifrance.gouv.fr, adresse exacte [À VÉRIFIER] : le site refuse la lecture automatique, et l&#x27;identifiant de l&#x27;article n&#x27;a pas pu être confirmé En vigueur depuis 2002, consulté le 5 novembre 2026. Il punit la violation du secret professionnel décrit en section 6.1.</p>
-<h3>Pages d&#x27;aide des cinq éditeurs</h3>
+<p><strong>Code pénal, article 226-13</strong> legifrance.gouv.fr, adresse exacte à vérifier : le site refuse la lecture automatique, et l&#x27;identifiant de l&#x27;article n&#x27;a pas pu être confirmé En vigueur depuis 2002, consulté le 5 novembre 2026. Il punit la violation du secret professionnel décrit en section 6.1.</p>
+<h3 id="pages-aide-cinq-editeurs">Pages d&#x27;aide des cinq éditeurs</h3>
 <p>Le chapitre 1 décrit le territoire de chaque assistant à partir de leurs pages d&#x27;aide, vérifiées le 4 novembre 2026. Leur état du jour, assistant par assistant, est sur la page Régler son assistant ; les pages d&#x27;aide qu&#x27;elle cite sont listées en fin de page.</p>
 <p><strong>Centre d&#x27;aide de ChatGPT</strong> <a href="https://help.openai.com">https://help.openai.com</a> Projets, instructions, mémoire, fichiers joints et limites par offre. Consulté le 4 novembre 2026.</p>
 <p><strong>Centre d&#x27;aide de Claude</strong> <a href="https://support.claude.com">https://support.claude.com</a> Projets, préférences du profil, mémoire et fichiers joints. Consulté le 4 novembre 2026.</p>
@@ -779,21 +895,21 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
 <p><strong>Microsoft Copilot overview</strong> <a href="https://learn.microsoft.com/en-us/copilot/plan/copilot-overview">https://learn.microsoft.com/en-us/copilot/plan/copilot-overview</a> Copilot dans l&#x27;environnement Microsoft 365 d&#x27;une organisation : selon la licence souscrite, réponses fondées sur la messagerie, les fichiers et les réunions de l&#x27;utilisateur, ou sur les seuls fichiers qu&#x27;il joint. Consulté le 5 novembre 2026.</p>
 <p><strong>Outils d&#x27;IA pour les entreprises, Gemini pour Google Workspace</strong> <a href="https://support.google.com/a/users/answer/15146419">https://support.google.com/a/users/answer/15146419</a> Gemini à côté de la messagerie, des documents et des fichiers partagés, et instructions enregistrées sur un compte personnel. Consulté le 4 novembre 2026.</p>
 <p><strong>Centre d&#x27;aide de Mistral AI</strong> <a href="https://help.mistral.ai">https://help.mistral.ai</a> Projets, instructions et fichiers de l&#x27;assistant de Mistral AI. Consulté le 4 novembre 2026.</p>
-<h3>Microsoft Word</h3>
+<h3 id="microsoft-word">Microsoft Word</h3>
 <p><strong>Pages d&#x27;aide de Word</strong> <a href="https://support.microsoft.com/en-us/accessibility/word/keyboard-shortcuts-in-word">https://support.microsoft.com/en-us/accessibility/word/keyboard-shortcuts-in-word</a> Raccourcis clavier et code des espaces insécables cités en section 4.7, relevés le 4 novembre 2026.</p>
-<h3>Outils de fabrication du livre</h3>
+<h3 id="outils-fabrication-livre">Outils de fabrication du livre</h3>
 <p>Cités pour la transparence, ces outils ne servent ni à la lecture ni à la pratique des chapitres.</p>
 <p><strong>Pandoc</strong> <a href="https://pandoc.org">https://pandoc.org</a> Convertit le manuscrit, écrit en Markdown, vers la page HTML dont le fichier d&#x27;impression est tiré.</p>
 <p><strong>Google Chrome</strong> <a href="https://www.google.com/chrome">https://www.google.com/chrome</a> Compose le fichier d&#x27;impression à partir de cette page, au format exigé par Amazon.</p>
 <p><strong>Excalidraw</strong> <a href="https://excalidraw.com">https://excalidraw.com</a> Dessine les schémas explicatifs, rendus en image par un script du projet.</p>
 <h3 id="pages-d-aide">Les pages d'aide citées sur ce site</h3>
 <p>Celles qui fondent les pages Régler son assistant et Capacités observées, dans l'ordre alphabétique des assistants. Une page sans date de lecture a été relevée le 4 novembre 2026.</p>
-<p><strong>ChatGPT</strong> (OpenAI)</p><ul><li><a href="https://help.openai.com/en/articles/10169521-projects-in-chatgpt">page d&#x27;aide d&#x27;OpenAI sur les projets</a>, lue par un moteur de recherche les 4 et 6 novembre 2026, l&#x27;accès direct étant refusé</li><li><a href="https://help.openai.com/en/articles/7730893-data-controls-in-chatgpt">page d&#x27;aide d&#x27;OpenAI sur le contrôle des données</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé</li><li><a href="https://help.openai.com/en/articles/8590148-memory-faq">page d&#x27;aide d&#x27;OpenAI sur la mémoire</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé</li><li><a href="https://help.openai.com/en/articles/8096356-chatgpt-custom-instructions">page d&#x27;aide d&#x27;OpenAI sur les instructions personnalisées</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé</li><li><a href="https://help.openai.com/en/articles/20001519">page d&#x27;aide d&#x27;OpenAI sur le retrait des GPT personnalisés</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé</li></ul><p><strong>Claude</strong> (Anthropic)</p><ul><li><a href="https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features">page d&#x27;aide d&#x27;Anthropic sur la personnalisation</a>, lue le 6 novembre 2026</li><li><a href="https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training">page d&#x27;Anthropic sur l&#x27;entraînement, offres personnelles</a>, lue le 6 novembre 2026</li><li><a href="https://privacy.claude.com/en/articles/7996868">page d&#x27;Anthropic sur l&#x27;entraînement, offres d&#x27;organisation</a>, lue le 6 novembre 2026</li><li><a href="https://privacy.claude.com/en/articles/10023548">page d&#x27;Anthropic sur la durée de conservation</a>, lue le 6 novembre 2026</li><li><a href="https://support.claude.com/en/articles/12260368">page d&#x27;aide d&#x27;Anthropic sur les conversations privées</a>, lue le 6 novembre 2026</li></ul><p><strong>Copilot</strong> (Microsoft)</p><ul><li><a href="https://learn.microsoft.com/en-us/copilot/manage/copilot-personalization-memory">documentation d&#x27;administration de Microsoft 365 Copilot sur la personnalisation et la mémoire</a>, en organisation, lue le 6 novembre 2026</li><li><a href="https://learn.microsoft.com/en-us/copilot/plan/copilot-overview">documentation de Microsoft sur le périmètre de Copilot</a></li><li><a href="https://support.microsoft.com/en-us/microsoft-copilot/microsoft-copilot-privacy-controls">page d&#x27;aide de Microsoft sur les réglages de confidentialité de Copilot</a>, compte personnel, lue le 6 novembre 2026</li><li><a href="https://support.microsoft.com/en-us/topic/privacy-faq-for-microsoft-copilot-27b3a435-8dc9-4b55-9a4b-58eeb9647a7f">page de questions fréquentes de Microsoft sur la confidentialité de Copilot</a>, compte personnel, lue le 6 novembre 2026</li><li><a href="https://support.microsoft.com/topic/b3231eae-9e60-4b3c-ac58-81fddbe56279">page d&#x27;aide de Microsoft sur la mémoire de Microsoft 365 Copilot</a>, en organisation, lue le 6 novembre 2026</li><li><a href="https://support.microsoft.com/en-us/microsoft-365-copilot/frequently-asked-questions-about-microsoft-365-copilot-notebooks">page de questions fréquentes de Microsoft sur les carnets de Copilot</a>, lue le 6 novembre 2026</li></ul><p><strong>Gemini</strong> (Google)</p><ul><li><a href="https://support.google.com/a/users/answer/15146419">page d&#x27;aide de Google sur Gemini dans Google Workspace</a></li><li><a href="https://support.google.com/gemini/answer/16598623">page d&#x27;aide de Google sur les instructions enregistrées</a></li><li><a href="https://support.google.com/gemini/answer/15146780">page d&#x27;aide de Google sur les assistants personnalisés</a>, lue le 6 novembre 2026</li><li><a href="https://support.google.com/gemini/answer/13594961">page de confidentialité de Google pour Gemini</a>, lue le 6 novembre 2026</li><li><a href="https://support.google.com/gemini/answer/16598469">page d&#x27;aide de Google sur la mémoire des discussions passées</a>, lue le 6 novembre 2026</li><li><a href="https://support.google.com/gemini/answer/16972047">page d&#x27;aide de Google sur les carnets</a>, lue le 6 novembre 2026</li><li><a href="https://support.google.com/gemini/answer/18560919">page d&#x27;aide de Google sur le passage des Gems aux skills</a>, lue le 6 novembre 2026</li></ul><p><strong>Mistral</strong> (Mistral AI)</p><ul><li><a href="https://docs.mistral.ai/vibe/work/projects">documentation de Mistral AI sur les projets</a>, lue le 6 novembre 2026</li><li><a href="https://docs.mistral.ai/vibe/work/custom-instructions">documentation de Mistral AI sur les instructions du compte</a></li><li><a href="https://mistral.ai/news/memory/">annonce de Mistral AI sur la mémoire</a></li><li><a href="https://help.mistral.ai/en/articles/455207">page d&#x27;aide de Mistral AI sur l&#x27;entraînement</a>, lue le 6 novembre 2026</li></ul>
+<h4>ChatGPT <small>(OpenAI)</small></h4><ul><li><a href="https://help.openai.com/en/articles/10169521-projects-in-chatgpt">page d&#x27;aide d&#x27;OpenAI sur les projets</a>, lue par un moteur de recherche les 4 et 6 novembre 2026, l&#x27;accès direct étant refusé</li><li><a href="https://help.openai.com/en/articles/7730893-data-controls-in-chatgpt">page d&#x27;aide d&#x27;OpenAI sur le contrôle des données</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé</li><li><a href="https://help.openai.com/en/articles/8590148-memory-faq">page d&#x27;aide d&#x27;OpenAI sur la mémoire</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé</li><li><a href="https://help.openai.com/en/articles/8096356-chatgpt-custom-instructions">page d&#x27;aide d&#x27;OpenAI sur les instructions personnalisées</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé</li><li><a href="https://help.openai.com/en/articles/20001519">page d&#x27;aide d&#x27;OpenAI sur le retrait des GPT personnalisés</a>, lue par un moteur de recherche le 6 novembre 2026, l&#x27;accès direct étant refusé</li></ul><h4>Claude <small>(Anthropic)</small></h4><ul><li><a href="https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features">page d&#x27;aide d&#x27;Anthropic sur la personnalisation</a>, lue le 6 novembre 2026</li><li><a href="https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training">page d&#x27;Anthropic sur l&#x27;entraînement, offres personnelles</a>, lue le 6 novembre 2026</li><li><a href="https://privacy.claude.com/en/articles/7996868">page d&#x27;Anthropic sur l&#x27;entraînement, offres d&#x27;organisation</a>, lue le 6 novembre 2026</li><li><a href="https://privacy.claude.com/en/articles/10023548">page d&#x27;Anthropic sur la durée de conservation</a>, lue le 6 novembre 2026</li><li><a href="https://support.claude.com/en/articles/12260368">page d&#x27;aide d&#x27;Anthropic sur les conversations privées</a>, lue le 6 novembre 2026</li></ul><h4>Copilot <small>(Microsoft)</small></h4><ul><li><a href="https://learn.microsoft.com/en-us/copilot/manage/copilot-personalization-memory">documentation d&#x27;administration de Microsoft 365 Copilot sur la personnalisation et la mémoire</a>, en organisation, lue le 6 novembre 2026</li><li><a href="https://learn.microsoft.com/en-us/copilot/plan/copilot-overview">documentation de Microsoft sur le périmètre de Copilot</a></li><li><a href="https://support.microsoft.com/en-us/microsoft-copilot/microsoft-copilot-privacy-controls">page d&#x27;aide de Microsoft sur les réglages de confidentialité de Copilot</a>, compte personnel, lue le 6 novembre 2026</li><li><a href="https://support.microsoft.com/en-us/topic/privacy-faq-for-microsoft-copilot-27b3a435-8dc9-4b55-9a4b-58eeb9647a7f">page de questions fréquentes de Microsoft sur la confidentialité de Copilot</a>, compte personnel, lue le 6 novembre 2026</li><li><a href="https://support.microsoft.com/topic/b3231eae-9e60-4b3c-ac58-81fddbe56279">page d&#x27;aide de Microsoft sur la mémoire de Microsoft 365 Copilot</a>, en organisation, lue le 6 novembre 2026</li><li><a href="https://support.microsoft.com/en-us/microsoft-365-copilot/frequently-asked-questions-about-microsoft-365-copilot-notebooks">page de questions fréquentes de Microsoft sur les carnets de Copilot</a>, lue le 6 novembre 2026</li></ul><h4>Gemini <small>(Google)</small></h4><ul><li><a href="https://support.google.com/a/users/answer/15146419">page d&#x27;aide de Google sur Gemini dans Google Workspace</a></li><li><a href="https://support.google.com/gemini/answer/16598623">page d&#x27;aide de Google sur les instructions enregistrées</a></li><li><a href="https://support.google.com/gemini/answer/15146780">page d&#x27;aide de Google sur les assistants personnalisés</a>, lue le 6 novembre 2026</li><li><a href="https://support.google.com/gemini/answer/13594961">page de confidentialité de Google pour Gemini</a>, lue le 6 novembre 2026</li><li><a href="https://support.google.com/gemini/answer/16598469">page d&#x27;aide de Google sur la mémoire des discussions passées</a>, lue le 6 novembre 2026</li><li><a href="https://support.google.com/gemini/answer/16972047">page d&#x27;aide de Google sur les carnets</a>, lue le 6 novembre 2026</li><li><a href="https://support.google.com/gemini/answer/18560919">page d&#x27;aide de Google sur le passage des Gems aux skills</a>, lue le 6 novembre 2026</li></ul><h4>Mistral <small>(Mistral AI)</small></h4><ul><li><a href="https://docs.mistral.ai/vibe/work/projects">documentation de Mistral AI sur les projets</a>, lue le 6 novembre 2026</li><li><a href="https://docs.mistral.ai/vibe/work/custom-instructions">documentation de Mistral AI sur les instructions du compte</a></li><li><a href="https://mistral.ai/news/memory/">annonce de Mistral AI sur la mémoire</a></li><li><a href="https://help.mistral.ai/en/articles/455207">page d&#x27;aide de Mistral AI sur l&#x27;entraînement</a>, lue le 6 novembre 2026</li></ul>
 <p>Comment ces sources ont servi à vérifier le livre, chapitre par chapitre : voir la page <a href="verifications.html">Vérifications</a>.</p>
 
 </main>
 
-<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Votre assistant</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><a href="automatisations.html">Automatisations</a></li></ul></div><div class="groupe"><p class="famille-nom">Comment le livre est vérifié</p><ul><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><span aria-current="page">Sources officielles</span></li><li><a href="errata.html">Corrections</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:ccletempsduncafe@lbi1.anonaddy.com">ccletempsduncafe@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 23/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du livre. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle deux : le tri de la boîte mail au chapitre 20, puis le tableau de portefeuille hebdomadaire à la section 18.6.", "cibles": ["automatisations.html", "P20", "P16"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger en compétence. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date du relevé. Si un prompt cale sur un message long, essayez sa version courte, sur la même fiche.", "cibles": ["regler-son-assistant.html", "capacites.html", "registre.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "ccletempsduncafe@lbi1.anonaddy.com", "href": "mailto:ccletempsduncafe@lbi1.anonaddy.com"}, "registre.html": {"libelle": "Registre des essais", "detail": "Chaque essai du banc, assistant par assistant, avec l'offre utilisée.", "href": "registre.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
+<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Votre assistant</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><a href="automatisations.html">Automatisations</a></li></ul></div><div class="groupe"><p class="famille-nom">Comment le livre est vérifié</p><ul><li><a href="registre.html">Registre des essais</a></li><li><a href="verifications.html">Vérifications</a></li><li><span aria-current="page">Sources officielles</span></li><li><a href="errata.html">Corrections</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:ccletempsduncafe@lbi1.anonaddy.com">ccletempsduncafe@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 23/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du site. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle une : le tri de la boîte mail au chapitre 20.", "cibles": ["automatisations.html", "P20"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger dans un projet ou un assistant personnalisé. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date indiquée, tentative par tentative sur la page Registre des essais. Si votre assistant cale sur un prompt long, essayez sa version courte, sur la même fiche. Si le livre lui-même se trompe, la page Corrections le dit.", "cibles": ["regler-son-assistant.html", "capacites.html", "registre.html", "errata.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "ccletempsduncafe@lbi1.anonaddy.com", "href": "mailto:ccletempsduncafe@lbi1.anonaddy.com"}, "errata.html": {"libelle": "Corrections", "detail": "Les corrections apportées au livre depuis sa parution.", "href": "errata.html"}, "registre.html": {"libelle": "Registre des essais", "detail": "Chaque essai du banc d'essai, assistant par assistant, avec l'offre utilisée.", "href": "registre.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, entraînement, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
 
 <script>
 (function () {
@@ -910,6 +1026,55 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
 
   for (var i = 0; i < fiches.length; i++) {
     observateurFiches.observe(fiches[i]);
+  }
+})();
+
+(function () {
+  // La fiche « lue » est celle ou le lecteur est arrive par son adresse
+  // (#prompt-p7), dont il a copie le prompt ou ouvert le texte. Elle etait la
+  // derniere fiche traversee au defilement : remontee du P7 vers la liste,
+  // Delphine se voyait proposer « Revenir au prompt P6 » (test a l'aveugle du
+  // 23 novembre 2026). Un stockage refuse ne casse rien.
+  function retenir(fiche) {
+    if (!fiche || !/^prompt-[a-z0-9-]+$/.test(fiche.id)) { return; }
+    var rang = fiche.querySelector('.rang');
+    try {
+      sessionStorage.setItem('fiche-lue', JSON.stringify({
+        id: fiche.id, rang: rang ? rang.textContent.trim() : ''
+      }));
+    } catch (e) {}
+  }
+  function depuisAncre() {
+    var cible = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+    if (cible && cible.classList && cible.classList.contains('fiche')) { retenir(cible); }
+  }
+  depuisAncre();
+  window.addEventListener('hashchange', depuisAncre);
+  document.addEventListener('click', function (ev) {
+    var el = ev.target.closest ? ev.target.closest('.copier, .bloc-prompt summary') : null;
+    if (el) { retenir(el.closest('.fiche')); }
+  });
+})();
+
+(function () {
+  // Le lien de retour mene a la liste des prompts (index.html#sommaire). Si
+  // le lecteur vient d'une fiche, il le ramene a cette fiche : Delphine,
+  // partie du P7 vers les capacites, retrouvait sinon la liste et devait
+  // rechercher son prompt. Sans JavaScript ou sans stockage, le lien statique
+  // reste, et aucune des adresses imprimees ne change.
+  var lien = document.querySelector('a.retour');
+  if (!lien) {
+    return;
+  }
+  var lue = null;
+  try {
+    lue = JSON.parse(sessionStorage.getItem('fiche-lue') || 'null');
+  } catch (e) {
+    return;
+  }
+  if (lue && /^prompt-[a-z0-9-]+$/.test(lue.id) && lue.rang) {
+    lien.setAttribute('href', 'index.html#' + lue.id);
+    lien.textContent = '← Revenir au prompt ' + lue.rang;
   }
 })();
 
