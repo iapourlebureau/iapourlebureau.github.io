@@ -869,6 +869,14 @@ footer .carte [aria-current] { color: var(--encre); font-weight: 600; }
   font: inherit; font-size: 14px; cursor: pointer; text-align: left; }
 .guide-choix button:hover { background: var(--surligneur); }
 @media print { .guide-bouton, .guide-panneau { display: none !important; } }
+/* Sur telephone, la pastille couvrait le texte pendant la lecture (bilan du
+   23 novembre 2026) : elle s'efface quand on descend, revient des qu'on
+   remonte ou qu'on arrive en bas de la page. */
+.guide-bouton { transition: transform 0.2s ease, opacity 0.2s ease; }
+@media (max-width: 767px) {
+  .guide-bouton.guide-efface { transform: translateY(90px); opacity: 0; pointer-events: none; }
+}
+@media (prefers-reduced-motion: reduce) { .guide-bouton { transition: none; } }
 
 #contenu p,
 #contenu li,
@@ -949,6 +957,13 @@ figure.capture figcaption { margin-top: 8px; font-size: 14.5px;
   .haut-fixe { bottom: 76px; right: 16px; }
 }
 
+/* Sur telephone, la justification ouvrait de grands blancs entre les mots
+   (Claire, test a l'aveugle du 23 novembre 2026) : la colonne est trop
+   etroite pour la repartir. Le texte y est aligne a gauche. */
+@media (max-width: 560px) {
+  #contenu p, #contenu li, #contenu dd { text-align: left; }
+}
+
 /* Sous 768 px : le repere de position (« P7 · ch. 10 ») faisait passer la
    barre a deux rangees, il ne s'affiche plus qu'en grand ecran ; et la
    pastille du guide, fixee en bas, ne doit jamais couvrir la derniere ligne
@@ -998,7 +1013,7 @@ votre tri préalable. Si vous tenez à ce tri, lancez le P7 à la main.</p>
 <nav class="sommaire-court" id="sommaire" aria-label="Les dix-sept fiches">
 <h2 id="dix-sept-fiches-coup-il">Les dix-sept fiches, d'un coup d'œil</h2>
 <ol class="liens-fiches">
-<li><a href="#b1"><span class="rang">B1</span>Le tri du matin, classé par dossier</a></li><li><a href="#b2"><span class="rang">B2</span>Le chiffre de la veille, déposé chaque matin</a></li><li><a href="#b3"><span class="rang">B3</span>La veille du lundi, qui part toute seule</a></li><li><a href="#b4"><span class="rang">B4</span>Le brief avant chaque rendez-vous</a></li><li><a href="#b5"><span class="rang">B5</span>Une idée de la semaine, déclinée en publications</a></li><li><a href="#b6"><span class="rang">B6</span>Les justificatifs du mois, relevés pour le comptable</a></li><li><a href="#b7"><span class="rang">B7</span>Le rangement du vendredi, qui propose et ne supprime rien</a></li><li><a href="#b8"><span class="rang">B8</span>Les devis sans réponse, et la relance prête à envoyer</a></li><li><a href="#b9"><span class="rang">B9</span>Les appels d&#x27;offres publiés qui correspondent à vos critères</a></li><li><a href="#b10"><span class="rang">B10</span>L&#x27;ordre du jour du point hebdomadaire, bâti sur les actions en retard</a></li><li><a href="#b11"><span class="rang">B11</span>Le récapitulatif du vendredi pour votre direction</a></li><li><a href="#b12"><span class="rang">B12</span>Les échéances contractuelles à soixante jours</a></li><li><a href="#b13"><span class="rang">B13</span>Le journal de bord d&#x27;un projet, tenu sans vous</a></li><li><a href="#b14"><span class="rang">B14</span>Le résumé des canaux de discussion que vous ne lisez plus</a></li><li><a href="#b15"><span class="rang">B15</span>Le contrôle de cohérence d&#x27;un export avant qu&#x27;il parte</a></li><li><a href="#b16"><span class="rang">B16</span>La veille sur vos clients, pas sur vos concurrents</a></li><li><a href="#b17"><span class="rang">B17</span>Les pièces jointes reçues, et un nom proposé pour chacune</a></li>
+<li><a href="#b1"><span class="rang">B1</span>Le tri du matin, classé par dossier</a></li><li><a href="#b2"><span class="rang">B2</span>Le chiffre de la veille, déposé chaque matin</a></li><li><a href="#b3"><span class="rang">B3</span>La veille du lundi, qui part toute seule</a></li><li><a href="#b4"><span class="rang">B4</span>Le brief avant chaque rendez-vous</a></li><li><a href="#b5"><span class="rang">B5</span>La note du mois, déclinée en publications</a></li><li><a href="#b6"><span class="rang">B6</span>Les justificatifs du mois, relevés pour le comptable</a></li><li><a href="#b7"><span class="rang">B7</span>Le rangement du vendredi, qui propose et ne supprime rien</a></li><li><a href="#b8"><span class="rang">B8</span>Les devis sans réponse, et la relance prête à envoyer</a></li><li><a href="#b9"><span class="rang">B9</span>Les appels d&#x27;offres publiés qui correspondent à vos critères</a></li><li><a href="#b10"><span class="rang">B10</span>L&#x27;ordre du jour du point hebdomadaire, bâti sur les actions en retard</a></li><li><a href="#b11"><span class="rang">B11</span>Le récapitulatif du vendredi pour votre direction</a></li><li><a href="#b12"><span class="rang">B12</span>Les échéances contractuelles à soixante jours</a></li><li><a href="#b13"><span class="rang">B13</span>Le journal de bord d&#x27;un projet, tenu sans vous</a></li><li><a href="#b14"><span class="rang">B14</span>Le résumé des canaux de discussion que vous ne lisez plus</a></li><li><a href="#b15"><span class="rang">B15</span>Le contrôle de cohérence d&#x27;un export avant qu&#x27;il parte</a></li><li><a href="#b16"><span class="rang">B16</span>La veille sur vos clients, pas sur vos concurrents</a></li><li><a href="#b17"><span class="rang">B17</span>Les pièces jointes reçues, et un nom proposé pour chacune</a></li>
 </ol>
 </nav>
 
@@ -1118,7 +1133,7 @@ recherche sur le web est ouverte.</p>
 <tr><td><a href="#b2">B2</a></td><td>Le chiffre de la veille, déposé chaque matin</td><td>Gilles</td><td>Tourne sur votre poste</td></tr>
 <tr><td><a href="#b3">B3</a></td><td>La veille du lundi, qui part toute seule</td><td>Hervé</td><td>Tourne sans votre ordinateur</td></tr>
 <tr><td><a href="#b4">B4</a></td><td>Le brief avant chaque rendez-vous</td><td>Margaux</td><td>Tourne sans votre ordinateur</td></tr>
-<tr><td><a href="#b5">B5</a></td><td>Une idée de la semaine, déclinée en publications</td><td>Hervé</td><td>Tourne sur votre poste</td></tr>
+<tr><td><a href="#b5">B5</a></td><td>La note du mois, déclinée en publications</td><td>Hervé</td><td>Tourne sur votre poste</td></tr>
 <tr><td><a href="#b6">B6</a></td><td>Les justificatifs du mois, relevés pour le comptable</td><td>Hervé</td><td>Tourne sur votre poste</td></tr>
 <tr><td><a href="#b7">B7</a></td><td>Le rangement du vendredi, qui propose et ne supprime rien</td><td>tous</td><td>Tourne sur votre poste, uniquement</td></tr>
 <tr><td><a href="#b8">B8</a></td><td>Les devis sans réponse, et la relance prête à envoyer</td><td>Hervé</td><td>Tourne sur votre poste</td></tr>
@@ -1318,14 +1333,14 @@ agenda. Tu déposes le brouillon, c&#x27;est tout.</pre>
 <p class="haut"><a href="#sommaire">↑ Revenir au sommaire</a></p>
 </section>
 <section class="tache tache--locale" id="b5">
-<h3><span class="rang">B5</span>Une idée de la semaine, déclinée en publications</h3>
+<h3><span class="rang">B5</span>La note du mois, déclinée en publications</h3>
 <p class="etiquettes"><span class="forme">Tourne sur votre poste</span><span class="forme">pas sur une offre gratuite</span><span class="pour">Pour Hervé, consultant-formateur indépendant</span></p>
 <p>Hervé écrit une note de fond chaque mois sur un point d&#x27;hygiène qui revient chez ses clients. Il n&#x27;en tire rien. Le découpage en publications prend une heure, une heure qu&#x27;il n&#x27;a pas. Hervé travaille sur une offre gratuite, où la forme sur le poste n&#x27;existe chez aucun des cinq assistants du livre au 6 novembre 2026 : il garde le prompt et le lance à la main, à la cadence notée dans son agenda.</p>
 <dl>
 <dt>La forme, et pourquoi</dt>
 <dd>Votre note vit dans un fichier ; les textes produits doivent y revenir pour que vous les relisiez avant de publier. Sans forme sur le poste, un espace de stockage partagé fait l&#x27;affaire.</dd>
 <dt>La cadence</dt>
-<dd>Une fois par semaine. Rien ne presse : vous devez de toute façon relire avant de publier.</dd>
+<dd>Une fois par mois, le lendemain du jour où vous rangez la note. Rien ne presse : vous devez de toute façon relire avant de publier.</dd>
 <dt>Les connecteurs à garder</dt>
 <dd>Aucun sur votre poste. Sans votre ordinateur, le seul connecteur de l&#x27;espace de stockage où vit le dossier.</dd>
 </dl>
@@ -1553,7 +1568,7 @@ N&#x27;élargis pas les critères pour remplir.</pre>
 <dt>La cadence</dt>
 <dd>Une fois par semaine, la veille au soir de votre point. Vous le lisez le matin, vous le corrigez en cinq minutes.</dd>
 <dt>Les connecteurs à garder</dt>
-<dd>Aucun sur votre poste. Sans votre ordinateur, le seul connecteur de l&#x27;espace de stockage où vivent les comptes-rendus.</dd>
+<dd>Aucun : le service informatique les a coupés. La tâche tourne sur votre poste, ou vous la lancez à la main en joignant les quatre derniers comptes-rendus.</dd>
 </dl>
 <details class="bloc-prompt">
 <summary>Voir le prompt de B10</summary>
@@ -1924,7 +1939,7 @@ témoin finit un jour par emporter ce qu'il ne fallait pas. Si vous adaptez l'un
 </div>
 </main>
 
-<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Votre assistant</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><span aria-current="page">Automatisations</span></li></ul></div><div class="groupe"><p class="famille-nom">Comment le livre est vérifié</p><ul><li><a href="verifications.html">Vérifications</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:iapourlebureau@lbi1.anonaddy.com">iapourlebureau@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 26/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du site. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle une : le tri de la boîte mail au chapitre 20.", "cibles": ["automatisations.html", "P20"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger dans un projet ou un assistant personnalisé. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date indiquée, sur l'offre écrite sous son nom. Si votre assistant cale sur un prompt long, essayez sa version courte, sur la même fiche. Si le livre lui-même se trompe, la page Corrections le dit.", "cibles": ["regler-son-assistant.html", "capacites.html", "errata.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "iapourlebureau@lbi1.anonaddy.com", "href": "mailto:iapourlebureau@lbi1.anonaddy.com"}, "errata.html": {"libelle": "Corrections", "detail": "Les corrections apportées au livre depuis sa parution.", "href": "errata.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, entraînement, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
+<footer><div class="carte"><div class="groupe"><p class="famille-nom">Les prompts du livre</p><ul><li><a href="index.html">Les prompts</a></li><li><a href="adapter-les-prompts.html">Adapter les prompts</a></li><li><a href="votre-metier.html">Votre métier</a></li><li><a href="bonus-questionnaire-securite.html">Cas bonus</a></li></ul></div><div class="groupe"><p class="famille-nom">Votre assistant</p><ul><li><a href="regler-son-assistant.html">Régler son assistant</a></li><li><a href="capacites.html">Capacités observées</a></li><li><a href="assistants-personnalises.html">Assistants personnalisés</a></li></ul></div><div class="groupe"><p class="famille-nom">Pour aller plus loin</p><ul><li><span aria-current="page">Automatisations</span></li></ul></div><div class="groupe"><p class="famille-nom">Comment le livre est vérifié</p><ul><li><a href="verifications.html">Vérifications</a></li><li><a href="sources.html">Sources officielles</a></li><li><a href="errata.html">Corrections</a></li></ul></div></div><p class="contact">Une erreur, une question, un passage qui ne se comporte plus comme le livre l'annonce&nbsp;: écrivez à <a href="mailto:iapourlebureau@lbi1.anonaddy.com">iapourlebureau@lbi1.anonaddy.com</a>.</p><p class="contact">Site indépendant, écrit à titre personnel, sans lien avec Anthropic, Google, Microsoft, Mistral AI ni OpenAI : aucun de ces éditeurs n&#x27;a relu, financé ni approuvé ce livre.</p><p class="cloture">iapourlebureau.github.io · mis à jour le 27/11/2026</p></footer><script type="application/json" id="guide-donnees">{"debut": "accueil", "etapes": {"accueil": {"message": "Bonjour ! Je vous aide à trouver le bon prompt ou la bonne page du site. Qu'est-ce qui vous amène ?", "choix": [{"libelle": "Je débute avec mon assistant", "vers": "debuter"}, {"libelle": "Je cherche le prompt d'une tâche", "vers": "familles"}, {"libelle": "Je veux qu'une tâche revienne toute seule", "vers": "automatiser"}, {"libelle": "Mon assistant ne fait pas ce que dit le livre", "vers": "regler"}]}, "debuter": {"message": "Bonne nouvelle : un seul prompt suffit pour démarrer, celui qui fait votre connaissance et écrit vos instructions permanentes. Le second se lit plutôt qu'il ne se lance : il montre les quatre principes d'un bon prompt sur l'exemple d'Hervé. Le troisième transforme une conversation de brouillon en prompt propre.", "cibles": ["P2", "P1", "R", "regler-son-assistant.html"]}, "automatiser": {"message": "Dix-sept tâches sont prêtes à régler sur la page Automatisations. Le livre en règle une : le tri de la boîte mail au chapitre 20.", "cibles": ["automatisations.html", "P20"]}, "familles": {"message": "Avec plaisir. Quel genre de tâche ?", "choix": [{"libelle": "Un document à partir de mes fichiers", "vers": "documents"}, {"libelle": "Un client, une vente, un appel d'offres", "vers": "commerce"}, {"libelle": "Suivre une activité ou une équipe", "vers": "suivi"}, {"libelle": "Ma tâche n'est pas dans le livre", "vers": "introuvable"}]}, "documents": {"message": "Lequel ?", "choix": [{"libelle": "Un rapport à partir d'exports", "cibles": ["P4"]}, {"libelle": "Les suites d'une réunion", "cibles": ["P6"]}, {"libelle": "Une note de veille", "cibles": ["P7"]}, {"libelle": "Un livret d'accueil pour un nouvel arrivant", "cibles": ["P14"]}]}, "commerce": {"message": "À quelle étape en êtes-vous ?", "choix": [{"libelle": "Repérer des prospects", "cibles": ["P8", "P9"]}, {"libelle": "Tout savoir d'un compte", "cibles": ["P5"]}, {"libelle": "Comparer des concurrents", "cibles": ["P12"]}, {"libelle": "Analyser un appel d'offres", "cibles": ["P11"]}, {"libelle": "Rédiger une proposition commerciale", "cibles": ["P10"]}, {"libelle": "Préparer une négociation", "cibles": ["P15"]}]}, "suivi": {"message": "Que voulez-vous suivre ?", "choix": [{"libelle": "Des chiffres, dans un tableau de bord", "cibles": ["P13"]}, {"libelle": "Un portefeuille de projets", "cibles": ["P16"]}, {"libelle": "Ma boîte mail", "cibles": ["P20"]}, {"libelle": "Un objectif à plusieurs étapes", "cibles": ["P21"]}]}, "introuvable": {"message": "C'est prévu : le chapitre 19 vous apprend à écrire le prompt de votre propre tâche, puis à le ranger dans un projet ou un assistant personnalisé. Si une question reste sans réponse, écrivez à l'auteur.", "cibles": ["P17", "assistants-personnalises.html", "contact"]}, "regler": {"message": "Les réglages changent de nom plus vite que le papier : la page Régler son assistant les décrit par leur fonction, et la page Capacités observées dit ce que chaque assistant faisait à la date indiquée, sur l'offre écrite sous son nom. Si votre assistant cale sur un prompt long, essayez sa version courte, sur la même fiche. Si le livre lui-même se trompe, la page Corrections le dit.", "cibles": ["regler-son-assistant.html", "capacites.html", "errata.html"]}}, "liens": {"P1": {"libelle": "P1 · Les quatre principes d'un bon prompt", "detail": "Chapitre 3", "href": "index.html#prompt-p1"}, "P10": {"libelle": "P10 · Proposition commerciale structurée en 45 minutes", "detail": "Chapitre 12", "href": "index.html#prompt-p10"}, "P11": {"libelle": "P11 · Appel d'offres : extraire les critères importants en une heure", "detail": "Chapitre 13", "href": "index.html#prompt-p11"}, "P12": {"libelle": "P12 · Benchmark concurrentiel depuis les sources que vous joignez", "detail": "Chapitre 14", "href": "index.html#prompt-p12"}, "P13": {"libelle": "P13 · Un tableau de bord de projets qui s'ouvre dans n'importe quel navigateur", "detail": "Chapitre 15", "href": "index.html#prompt-p13"}, "P14": {"libelle": "P14 · Dossier d'accueil personnalisé pour chaque nouvel arrivant", "detail": "Chapitre 16", "href": "index.html#prompt-p14"}, "P15": {"libelle": "P15 · Préparer une négociation difficile en 30 minutes", "detail": "Chapitre 17", "href": "index.html#prompt-p15"}, "P16": {"libelle": "P16 · Tableau de bord de portefeuille depuis vos comptes-rendus", "detail": "Chapitre 18", "href": "index.html#prompt-p16"}, "P17": {"libelle": "P17 · Écrire le prompt d'une tâche à partir d'un livrable réussi", "detail": "Chapitre 19", "href": "index.html#prompt-p17"}, "P2": {"libelle": "P2 · L'entretien qui écrit vos instructions", "detail": "Chapitre 5", "href": "index.html#prompt-p2"}, "P20": {"libelle": "P20 · Trier votre messagerie chaque matin, sans vous", "detail": "Chapitre 20", "href": "index.html#prompt-p20"}, "P21": {"libelle": "P21 · Confier un objectif complexe à un agent", "detail": "Chapitre 20", "href": "index.html#prompt-p21"}, "P4": {"libelle": "P4 · Rapport consolidé depuis vos systèmes métier", "detail": "Chapitre 7", "href": "index.html#prompt-p4"}, "P5": {"libelle": "P5 · Fiche compte complète depuis vos sources dispersées", "detail": "Chapitre 8", "href": "index.html#prompt-p5"}, "P6": {"libelle": "P6 · Du compte-rendu de réunion aux livrables opérationnels", "detail": "Chapitre 9", "href": "index.html#prompt-p6"}, "P7": {"libelle": "P7 · Votre synthèse de veille du lundi en un quart d'heure", "detail": "Chapitre 10", "href": "index.html#prompt-p7"}, "P8": {"libelle": "P8 · Détecter et qualifier des prospects à partir de signaux publics", "detail": "Chapitre 11", "href": "index.html#prompt-p8"}, "P9": {"libelle": "P9 · Détecter et qualifier des prospects à partir de signaux publics, second prompt", "detail": "Chapitre 11", "href": "index.html#prompt-p9"}, "R": {"libelle": "R · Reformuler un brouillon en prompt propre", "detail": "Chapitre 3", "href": "index.html#prompt-reformuler"}, "assistants-personnalises.html": {"libelle": "Assistants personnalisés", "detail": "Ranger une instruction qui revient dans un assistant personnalisé.", "href": "assistants-personnalises.html"}, "automatisations.html": {"libelle": "Automatisations", "detail": "Dix-sept tâches qui reviennent toutes seules.", "href": "automatisations.html"}, "capacites.html": {"libelle": "Capacités observées", "detail": "Les cinq capacités, assistant par assistant, datées et sourcées.", "href": "capacites.html"}, "contact": {"libelle": "Écrire à l'auteur", "detail": "iapourlebureau@lbi1.anonaddy.com", "href": "mailto:iapourlebureau@lbi1.anonaddy.com"}, "errata.html": {"libelle": "Corrections", "detail": "Les corrections apportées au livre depuis sa parution.", "href": "errata.html"}, "regler-son-assistant.html": {"libelle": "Régler son assistant", "detail": "Projets, instructions permanentes, mémoire, entraînement, pièces jointes : où les trouver, par fonction.", "href": "regler-son-assistant.html"}}}</script>
 <script>
 document.querySelectorAll('.copier').forEach(function (bouton) {
   bouton.addEventListener('click', function () {
@@ -2151,6 +2166,13 @@ document.querySelectorAll('.copier').forEach(function (bouton) {
   panneau.appendChild(fil);
   panneau.appendChild(actions);
 
+  // La pile des etapes affichees, pour revenir a la question precedente
+  // (bilan du 23 novembre 2026 : « on ne peut pas revenir en arriere »).
+  // finChoix : la derniere reponse a mene a des liens sans changer d'etape,
+  // la question a reposer est donc celle du sommet de la pile.
+  var pile = [];
+  var finChoix = false;
+
   function bulle(texte, qui) {
     fil.appendChild(el('p', 'guide-bulle guide-' + qui, texte));
     fil.scrollTop = fil.scrollHeight;
@@ -2179,6 +2201,7 @@ document.querySelectorAll('.copier').forEach(function (bouton) {
     fil.appendChild(liste);
     fil.scrollTop = fil.scrollHeight;
     actions.textContent = '';
+    if (finChoix || pile.length > 1) { bouton_choix('Question précédente', retour); }
     bouton_choix('Recommencer', recommencer);
     var premier = liste.querySelector('a');
     if (premier) { premier.focus(); }
@@ -2186,6 +2209,8 @@ document.querySelectorAll('.copier').forEach(function (bouton) {
 
   function etape(nom) {
     var e = g.etapes[nom];
+    pile.push(nom);
+    finChoix = false;
     bulle(e.message, 'livre');
     actions.textContent = '';
     if (e.cibles) { liens(e.cibles); return; }
@@ -2194,17 +2219,28 @@ document.querySelectorAll('.copier').forEach(function (bouton) {
       var b = bouton_choix(c.libelle, function () {
         bulle(c.libelle, 'vous');
         if (c.vers) { etape(c.vers); return; }
+        finChoix = true;
         bulle(c.cibles.length > 1 ? 'Voici les prompts qu\u2019il vous faut\u00a0:'
                                   : 'Voici le prompt qu\u2019il vous faut\u00a0:', 'livre');
         liens(c.cibles);
       });
       if (!premier) { premier = b; }
     });
+    if (pile.length > 1) { bouton_choix('Question précédente', retour); }
     if (premier) { premier.focus(); }
+  }
+
+  function retour() {
+    if (!finChoix) { pile.pop(); }
+    var nom = pile.pop();
+    if (!nom) { recommencer(); return; }
+    bulle('Question précédente', 'vous');
+    etape(nom);
   }
 
   function recommencer() {
     fil.textContent = '';
+    pile = [];
     etape(g.debut);
   }
 
@@ -2227,6 +2263,18 @@ document.querySelectorAll('.copier').forEach(function (bouton) {
   });
   document.body.appendChild(panneau);
   document.body.appendChild(bouton);
+
+  var dernierY = window.scrollY;
+  window.addEventListener('scroll', function () {
+    var y = window.scrollY;
+    var bas = y + window.innerHeight >= document.documentElement.scrollHeight - 40;
+    if (!panneau.hidden || bas || y < dernierY - 6) {
+      bouton.classList.remove('guide-efface');
+    } else if (y > dernierY + 6) {
+      bouton.classList.add('guide-efface');
+    }
+    dernierY = y;
+  }, { passive: true });
 })();
 </script>
 <script>
